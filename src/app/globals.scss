@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "antd-message-react/dist/index.css";
+
+body,
+html {
+  height: 100%;
+}
+
+.max-main {
+  max-height: calc(100vh - 64px);
+}
+
+.overflow-overlay {
+  overflow: overlay;
+}
+
+.ant-message-custom-content {
+  display: flex;
+  align-items: center;
+}
