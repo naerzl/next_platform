@@ -27,10 +27,12 @@ function SideBar(props: Props) {
   const [collapseOpen, setCollapseOpen] = React.useState(-1)
   const [subClassList, setSubClassList] = React.useState<DictionaryClassData[]>([])
 
+  // 获取字典分类api
   const { trigger: getDictionaryClassApi } = useSWRMutation(
     "/dictionary-class",
     reqGetDictionaryClass,
   )
+  // 删除字典分类api
   const { trigger: deleteDictionaryClassApi } = useSWRMutation(
     "/dictionary-class",
     reqDeleteDictionaryClass,
@@ -41,16 +43,19 @@ function SideBar(props: Props) {
     setOpenDialog(false)
   }
 
+  // 添加一级分类
   const handleClickAddClass = () => {
     setParentId(undefined)
     setOpenDialog(true)
   }
 
+  // 查找图标方法
   const findIcon = (iconName: string) => {
     const obj = iconList.find((icon) => icon.name == iconName)
     return obj ? obj.component : <DraftsIcon fontSize="small" />
   }
 
+  // 添加子集分类
   const handleClickAddSub = (side: DictionaryClassData) => {
     // 向dialog组件传递父级id
     setParentId(side.id)
@@ -59,7 +64,8 @@ function SideBar(props: Props) {
   }
 
   // 获取子集分类数据
-  const getSubClassList = React.useCallback(async (id: number) => {
+  const getSubClassList = React.useCallback(async (id: number, isEmpty?: boolean) => {
+    isEmpty && setSubClassList([])
     const res = await getDictionaryClassApi({ page: 1, limit: 15, parent_id: id })
     if (res.code !== STATUS_SUCCESS) return
     setSubClassList(res.data.items)
@@ -72,55 +78,43 @@ function SideBar(props: Props) {
       if (collapseOpen != id) {
         setCollapseOpen(id)
         // 防止切换其它子集数据错乱的情况
-        setSubClassList([])
-        getSubClassList(id)
+        getSubClassList(id, true)
       }
     }
     getDictionaryData({ class_id: id })
     ctx.changeCurrentClassId(id)
   }
 
-  const handleClickDelete = (id: number, isFirstClass: boolean) => {
-    // 判断是否是一级菜单
+  // 一级菜单删除
+  const isClassDelete = (preSideItemId: number, isFirstClass?: Boolean) => {
+    // 如果是删除的一级菜单 打开上一个或者下一个一级分类的下拉选项
     if (isFirstClass) {
-      // 获取菜单的下表
-      const index = ctx.sideBarList.findIndex((item) => item.id === id)
-      const length = ctx.sideBarList.length
-      // 判断是否是第一个
-      if (index - 1 >= 0 && length > 1) {
-        const preSideItem = ctx.sideBarList[index - 1]
-        setCollapseOpen(preSideItem.id)
-        ctx.changeCurrentClassId(preSideItem.id)
-        getDictionaryData({ class_id: preSideItem.id })
-      } else if (index - 1 < 0 && length > 1) {
-        const preSideItem = ctx.sideBarList[index + 1]
-        setCollapseOpen(preSideItem.id)
-        ctx.changeCurrentClassId(preSideItem.id)
-        getDictionaryData({ class_id: preSideItem.id })
-      }
-      deleteDictionaryClassApi({ id }).then((res) => {
-        if (res.code !== STATUS_SUCCESS) return message.error(res.msg)
-        message.success("删除成功")
-        ctx.changeSideBarList()
-      })
-    } else {
-      const index = subClassList.findIndex((item) => item.id === id)
-      const length = subClassList.length
-      if (index - 1 >= 0 && length > 1) {
-        const preSideItem = ctx.sideBarList[index - 1]
-        ctx.changeCurrentClassId(preSideItem.id)
-        getDictionaryData({ class_id: preSideItem.id })
-      } else if (index - 1 < 0 && length > 1) {
-        const preSideItem = ctx.sideBarList[index + 1]
-        ctx.changeCurrentClassId(preSideItem.id)
-        getDictionaryData({ class_id: preSideItem.id })
-      }
-      deleteDictionaryClassApi({ id }).then((res) => {
-        if (res.code !== STATUS_SUCCESS) return message.error(res.msg)
-        message.success("删除成功")
-        getSubClassList(collapseOpen)
-      })
+      setCollapseOpen(preSideItemId)
+      getSubClassList(preSideItemId, true)
     }
+    // 更改上下文里面选中的当前id
+    ctx.changeCurrentClassId(preSideItemId)
+    // 更新右侧字典表格
+    getDictionaryData({ class_id: preSideItemId })
+  }
+
+  // 删除字典分类方法
+  const handleClickDelete = (id: number, e: Event, isFirstClass: boolean) => {
+    // 阻止时间冒泡到按钮 获取侧边栏的影响
+    e.stopPropagation()
+    const arr = isFirstClass ? ctx.sideBarList : subClassList
+    // 判断是否是一级菜单
+    // 获取菜单的下表
+    const index = arr.findIndex((item) => item.id === id)
+    const length = arr.length
+    // 判断是否是第一个
+    length > 1 && isClassDelete(index - 1 >= 0 ? arr[index - 1].id : arr[index + 1].id, true)
+    // 删除字典接口
+    deleteDictionaryClassApi({ id }).then((res) => {
+      if (res.code !== STATUS_SUCCESS) return message.error(res.msg)
+      message.success("删除成功")
+      ctx.changeSideBarList()
+    })
   }
   return (
     <>
@@ -145,7 +139,7 @@ function SideBar(props: Props) {
                 <AddOutlinedIcon onClick={() => handleClickAddSub(item)} fontSize="small" />
                 <DeleteOutlinedIcon
                   fontSize="small"
-                  onClick={() => handleClickDelete(item.id, true)}
+                  onClick={(e: any) => handleClickDelete(item.id, e, true)}
                 />
               </ListItemIcon>
             </ListItemButton>
@@ -162,7 +156,7 @@ function SideBar(props: Props) {
                       <ListItemIcon className="w-6 justify-end min-w-0">
                         <DeleteOutlinedIcon
                           fontSize="small"
-                          onClick={() => handleClickDelete(item.id, false)}
+                          onClick={(e: any) => handleClickDelete(item.id, e, false)}
                         />
                       </ListItemIcon>
                     </ListItemButton>

@@ -10,6 +10,7 @@ import useSWRMutation from "swr/mutation"
 import { DictionaryClassData, DictionaryData, ReqGetDictionaryParams } from "./types"
 import { reqGetDictionary, reqGetDictionaryClass } from "./api"
 import SideContext from "./context/sideContext"
+import { DICTIONARY_CLASS_LIMIT, DICTIONARY_LIMIT } from "./const"
 
 // 获取字典列表数据函数的参数类型
 export interface GetDictionaryDataOption {
@@ -20,7 +21,7 @@ export interface GetDictionaryDataOption {
 function Dictionary() {
   // 控制添加字典dialog显示隐藏
   const [params, setParams] = React.useState<ReqGetDictionaryParams>({
-    limit: 20,
+    limit: DICTIONARY_LIMIT,
     page: 1,
     order: "serial",
     order_by: "desc",
@@ -44,7 +45,7 @@ function Dictionary() {
 
   const getDictionaryClassData = React.useCallback(async () => {
     // 获取字典分类
-    const res = await getDictionaryClassApi({ page: 1, limit: 15 })
+    const res = await getDictionaryClassApi({ page: 1, limit: DICTIONARY_CLASS_LIMIT })
     if (res.code !== STATUS_SUCCESS) return
     setSideBarList(res.data.items)
   }, [])

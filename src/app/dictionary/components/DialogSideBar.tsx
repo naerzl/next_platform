@@ -5,11 +5,11 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  InputBase,
   InputLabel,
   ListItemIcon,
   MenuItem,
   Select,
+  TextField,
 } from "@mui/material"
 import React from "react"
 import useDebounce from "@/hooks/useDebounce"
@@ -20,6 +20,8 @@ import message from "antd-message-react"
 import { STATUS_SUCCESS } from "@/libs/const"
 import { iconList } from "./icon"
 import SideContext from "../context/sideContext"
+import { useForm, SubmitHandler } from "react-hook-form"
+import { ErrorMessage } from "@hookform/error-message"
 
 interface Props {
   open: boolean
@@ -38,16 +40,20 @@ function DialogSideBar(props: Props) {
   const { open, close, parent_id, getSubClassList } = props
   const ctx = React.useContext(SideContext)
   const { trigger: apiTrigger } = useSWRMutation("/dictionary-class", reqPostDictionaryClass)
-  const [formData, setFormData] = React.useState<IForm>({
-    icon: "",
-    name: "",
-  })
 
-  const { run: onSubmit } = useDebounce(() => {
-    console.log(formData)
-    if (formData.icon === "" || formData.name === "") return message.error("请将数据填写完整")
+  // 表单控制hooks
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<IForm>()
+
+  // 表单提交事件
+  const { run: onSubmit }: { run: SubmitHandler<IForm> } = useDebounce((values: IForm) => {
+    // 拼接出请求需要的参数
     const obj: ReqAddDictionaryClassParams = {
-      ...formData,
+      ...values,
       relationship: parent_id ? [parent_id] : [],
       serial: 1,
       parent_id: parent_id || null,
@@ -55,61 +61,79 @@ function DialogSideBar(props: Props) {
     apiTrigger(obj).then((res) => {
       if (res.code !== STATUS_SUCCESS) return message.error("操作失败")
       message.success("操作成功")
+      // 重新获取侧边分类
       ctx.changeSideBarList()
+      // 如果有父类id则获取子集分类
       parent_id && getSubClassList(parent_id as number)
       handleClose()
     })
   })
 
+  // 关闭弹窗
   const handleClose = () => {
     close()
-    setFormData({
-      icon: "",
-      name: "",
-    })
+    reset()
   }
 
-  const handleChange = (type: string, e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormData((pre) => ({ ...pre, [type]: e.target.value }))
-  }
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>添加目录项</DialogTitle>
       <DialogContent sx={{ width: 500 }}>
-        <div className="flex items-center mb-4">
-          <InputLabel htmlFor="name" className="mr-3 w-20 text-right inline-block">
-            字典名称:
-          </InputLabel>
-          <InputBase
-            id="name"
-            margin="dense"
-            placeholder="请输入字典名称"
-            className="flex-1 border p-1 block h-14 py-3"
-            value={formData.name}
-            onChange={(e: any) => handleChange("name", e)}
-          />
-        </div>
-        <div className="flex items-center mb-4">
-          <InputLabel htmlFor="icon" className="mr-3 w-20 text-right">
-            icon:
-          </InputLabel>
-          <Select
-            sx={{ flex: 1 }}
-            id="icon"
-            placeholder="请选择图标"
-            value={formData.icon}
-            onChange={(e: any) => handleChange("icon", e)}>
-            {iconList.map((icon) => (
-              <MenuItem value={icon.name} key={icon.name}>
-                <ListItemIcon>{icon.component}</ListItemIcon>
-              </MenuItem>
-            ))}
-          </Select>
-        </div>
-        <DialogActions>
-          <Button onClick={handleClose}>取消</Button>
-          <Button onClick={() => onSubmit()}>确定</Button>
-        </DialogActions>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="mb-4">
+            <div className="flex items-center">
+              <InputLabel htmlFor="name" className="mr-3 w-20 text-right inline-block">
+                字典名称:
+              </InputLabel>
+              <TextField
+                id="name"
+                error={Boolean(errors.name)}
+                variant="outlined"
+                placeholder="请输入字典名称"
+                className="flex-1"
+                {...register("name", { required: "请输入字典名称" })}
+              />
+            </div>
+            <ErrorMessage
+              errors={errors}
+              name="name"
+              render={({ message }) => (
+                <p className="text-railway_error text-sm pl-24">{message}</p>
+              )}
+            />
+          </div>
+          <div className="mb-4">
+            <div className="flex items-center">
+              <InputLabel htmlFor="icon" className="mr-3 w-20 text-right">
+                icon:
+              </InputLabel>
+              <Select
+                error={Boolean(errors.icon)}
+                sx={{ flex: 1 }}
+                id="icon"
+                placeholder="请选择一个图标"
+                defaultValue={"FolderOpenSharpIcon"}
+                {...register("icon", { required: "请选择一个图标" })}>
+                {iconList.map((icon) => (
+                  <MenuItem value={icon.name} key={icon.name}>
+                    <ListItemIcon>{icon.component}</ListItemIcon>
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
+            <ErrorMessage
+              errors={errors}
+              name="icon"
+              render={({ message }) => (
+                <p className="text-railway_error text-sm pl-24">{message}</p>
+              )}
+            />
+          </div>
+          <DialogActions>
+            <Button onClick={handleClose}>取消</Button>
+            <Button type="submit">确定</Button>
+          </DialogActions>
+        </form>
       </DialogContent>
     </Dialog>
   )
