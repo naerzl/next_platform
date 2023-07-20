@@ -1,6 +1,6 @@
+import LrsFormData from "@zctc/edms-lrs-oauth1.0/formdata"
 import LrsOauthClient from "@zctc/edms-lrs-oauth1.0"
-import LrsFormData from "@/class/LrsFormDate"
-import { LrsOauth2 } from "@/class"
+import { LrsOauth2 } from "@zctc/edms-oauth2.0-npm"
 
 export let OauthObj = new LrsOauthClient(
   {

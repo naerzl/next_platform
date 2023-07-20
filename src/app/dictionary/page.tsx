@@ -68,9 +68,11 @@ function Dictionary() {
     })
   }, [])
   React.useEffect(() => {
-    getDictionaryClassData().then(() => {
-      if (sideBarList.length == 0) return
-      getDictionaryData({ class_id: sideBarList[0].id })
+    getDictionaryClassApi({ page: 1, limit: DICTIONARY_CLASS_LIMIT }).then((res) => {
+      if (res.code !== STATUS_SUCCESS) return
+      setSideBarList(res.data.items)
+      if (res.data.items.length == 0) return
+      getDictionaryData({ class_id: res.data.items[0].id })
     })
   }, [getDictionaryData, getDictionaryClassData])
 
