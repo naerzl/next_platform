@@ -136,7 +136,7 @@ export default function DataTable(props: Props) {
 
   // 删除字典万
   const handleClickDelete = (row: DictionaryData) => {
-    deleteDictionaryApi({ id: row.id }).then((res) => {
+    deleteDictionaryApi(row.id).then((res) => {
       if (res.code !== STATUS_SUCCESS) return message.error("删除失败")
       message.success("删除成功")
       getDictionaryData({ order_by: order, class_id: ctx.currentClassId })

@@ -110,7 +110,7 @@ function SideBar(props: Props) {
     // 判断是否是第一个
     length > 1 && isClassDelete(index - 1 >= 0 ? arr[index - 1].id : arr[index + 1].id, true)
     // 删除字典接口
-    deleteDictionaryClassApi({ id }).then((res) => {
+    deleteDictionaryClassApi(id).then((res) => {
       if (res.code !== STATUS_SUCCESS) return message.error(res.msg)
       message.success("删除成功")
       ctx.changeSideBarList()

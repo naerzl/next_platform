@@ -3,7 +3,7 @@ import { lrsOAuth2Instance } from "@/libs/init_oauth"
 import { getCookie, setCookie } from "@/libs/cookies"
 import { useSearchParams, useRouter } from "next/navigation"
 import React from "react"
-const auth2_url = process.env.NEXT_PUBLIC_AUTH2_URL
+import { getV1BaseURL } from "@/libs/fetch"
 const AUTH2PATHFROM = process.env.NEXT_PUBLIC_OAUTH2_PATHNAME_FROM
 
 function Auth2() {
@@ -11,7 +11,7 @@ function Auth2() {
   const router = useRouter()
   React.useEffect(() => {
     lrsOAuth2Instance
-      .lrsOAuth2GetToken(`${auth2_url}/oauth2`, {
+      .lrsOAuth2GetToken(getV1BaseURL("/oauth2"), {
         code: searchParams.get("code") as string,
         state: searchParams.get("state") as string,
       })

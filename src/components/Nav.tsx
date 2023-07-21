@@ -23,7 +23,8 @@ import { setCookie } from "@/libs/cookies"
 import { generateRandomString } from "@/libs/methods"
 import { lrsOAuth2Instance } from "@/libs/init_oauth"
 import { useRouter } from "next/navigation"
-const auth2_url = process.env.NEXT_PUBLIC_AUTH2_URL
+import { getV1BaseURL } from "@/libs/fetch"
+
 const AUTH2PATHFROM = process.env.NEXT_PUBLIC_OAUTH2_PATHNAME_FROM
 
 function Nav() {
@@ -48,17 +49,19 @@ function Nav() {
   const handleClickOauth2 = () => {
     const state = generateRandomString()
     lrsOAuth2Instance
-      .lrsOAuth2Initiate(`${auth2_url}/initiate`, {
+      .lrsOAuth2Initiate(getV1BaseURL("/initiate"), {
         state,
         redirect_url: location.origin + "/auth2",
       })
       .then((res) => {
         if (res.code === 2000) {
+          debugger
           setCookie(AUTH2PATHFROM as string, location.href)
           router.push(res.data.location)
         }
       })
   }
+
   return (
     <AppBar position="static" className="bg-[#fff] shadow-none max-h-16">
       <Toolbar className="flex justify-between">
