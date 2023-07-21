@@ -1,3 +1,4 @@
+import { OAUTH2_ACCESS_TOKEN } from "./const"
 import { getCookie } from "./cookies"
 
 // oauth1.0发送statement
@@ -22,7 +23,6 @@ export function generateRandomString() {
 }
 
 // 从cookie里面获取access_token
-const OAUTH2_ACCESS_TOKEN = process.env.NEXT_PUBLIC_OAUTH2_ACCESS_TOKEN as string
 export function getCookieAccessToken() {
   const authCodeOfCookie =
     getCookie(OAUTH2_ACCESS_TOKEN as string) &&

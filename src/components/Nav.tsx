@@ -24,14 +24,13 @@ import { generateRandomString } from "@/libs/methods"
 import { lrsOAuth2Instance } from "@/libs/init_oauth"
 import { useRouter } from "next/navigation"
 import { getV1BaseURL } from "@/libs/fetch"
-
-const AUTH2PATHFROM = process.env.NEXT_PUBLIC_OAUTH2_PATHNAME_FROM
+import { OAUTH2_PATH_FROM } from "@/libs/const"
 
 function Nav() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [anchorEl1, setAnchorEl1] = React.useState<null | HTMLElement>(null)
-  const open = Boolean(anchorEl)
-  const open1 = Boolean(anchorEl1)
+  const avatarOpen = Boolean(anchorEl)
+  const languageOpen = Boolean(anchorEl1)
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
@@ -40,11 +39,13 @@ function Nav() {
     setAnchorEl1(event.currentTarget)
   }
 
+  // 管理菜单
   const handleClose = () => {
     setAnchorEl(null)
     setAnchorEl1(null)
   }
 
+  //  跳转到登录的（后期删掉）
   const router = useRouter()
   const handleClickOauth2 = () => {
     const state = generateRandomString()
@@ -55,8 +56,7 @@ function Nav() {
       })
       .then((res) => {
         if (res.code === 2000) {
-          debugger
-          setCookie(AUTH2PATHFROM as string, location.href)
+          setCookie(OAUTH2_PATH_FROM as string, location.href)
           router.push(res.data.location)
         }
       })
@@ -65,6 +65,7 @@ function Nav() {
   return (
     <AppBar position="static" className="bg-[#fff] shadow-none max-h-16">
       <Toolbar className="flex justify-between">
+        {/* 导航左侧 */}
         <div>
           <IconButton
             size="large"
@@ -92,17 +93,19 @@ function Nav() {
           />
         </div>
 
+        {/* 导航右侧 */}
         <div className="text-railway_blue  flex justify-between items-center">
+          {/* 语言 */}
           <Button
             id="language"
             sx={{ color: "#707070" }}
             startIcon={<PublicIcon sx={{ mr: -1.5 }} />}
-            endIcon={open ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+            endIcon={languageOpen ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
             onClick={handleClick1}></Button>
           <Menu
             id="language"
             anchorEl={anchorEl1}
-            open={open1}
+            open={languageOpen}
             onClose={handleClose}
             MenuListProps={{
               "aria-labelledby": "basic-button",
@@ -112,6 +115,8 @@ function Nav() {
             <MenuItem onClick={handleClose}>方言</MenuItem>
           </Menu>
           <Divider sx={{ height: 28, m: 2 }} orientation="vertical" />
+
+          {/* 信息 */}
           <Badge color="error" variant="dot">
             <MailOutlineIcon sx={{ color: "#707070" }} />
           </Badge>
@@ -119,22 +124,23 @@ function Nav() {
             <NotificationsNoneIcon sx={{ ml: 2.5, color: "#707070" }} />
           </Badge>
           <Divider sx={{ height: 28, m: 2 }} orientation="vertical" />
+
+          {/* 用户头像一些操作 */}
           <Avatar sx={{ bgcolor: "#ff8a48" }}>MA</Avatar>
           <Button
-            className=""
             id="basic-button"
             sx={{ color: "#757575" }}
-            aria-controls={open ? "basic-menu" : undefined}
+            aria-controls={avatarOpen ? "basic-menu" : undefined}
             aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
+            aria-expanded={avatarOpen ? "true" : undefined}
             onClick={handleClick}
-            endIcon={open ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}>
+            endIcon={avatarOpen ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}>
             Mark Anderson
           </Button>
           <Menu
             id="basic-menu"
             anchorEl={anchorEl}
-            open={open}
+            open={avatarOpen}
             onClose={handleClose}
             MenuListProps={{
               "aria-labelledby": "basic-button",

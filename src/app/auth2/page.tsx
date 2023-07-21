@@ -4,7 +4,7 @@ import { getCookie, setCookie } from "@/libs/cookies"
 import { useSearchParams, useRouter } from "next/navigation"
 import React from "react"
 import { getV1BaseURL } from "@/libs/fetch"
-const AUTH2PATHFROM = process.env.NEXT_PUBLIC_OAUTH2_PATHNAME_FROM
+import { OAUTH2_ACCESS_TOKEN, OAUTH2_PATH_FROM } from "@/libs/const"
 
 function Auth2() {
   const searchParams = useSearchParams()
@@ -17,11 +17,11 @@ function Auth2() {
       })
       .then((res) => {
         if (res.code !== 2000) return
-        setCookie(process.env.NEXT_PUBLIC_OAUTH2_ACCESS_TOKEN as string, JSON.stringify(res.data))
+        setCookie(OAUTH2_ACCESS_TOKEN as string, JSON.stringify(res.data))
         if (searchParams.get("is_first_login") == "true") {
           router.push("http://192.168.2.17:3000/firstchangepassword")
         } else {
-          router.push(getCookie(AUTH2PATHFROM as string) || "/")
+          router.push(getCookie(OAUTH2_PATH_FROM as string) || "/")
         }
       })
     // @ts-ignore
