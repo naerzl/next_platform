@@ -26,6 +26,7 @@ build-job:       # This job runs in the build stage, which runs first.
   tags:
     - "feature/design-data"
   script:
+    - npm i
     - npm run build
     - echo "Compiling the code..."
     - echo "Compile complete."
