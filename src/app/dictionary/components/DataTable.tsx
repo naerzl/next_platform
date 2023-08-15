@@ -1,81 +1,23 @@
 "use client"
 import * as React from "react"
-import Box from "@mui/material/Box"
-import Table from "@mui/material/Table"
-import TableBody from "@mui/material/TableBody"
-import TableCell from "@mui/material/TableCell"
-import TableContainer from "@mui/material/TableContainer"
-import TableHead from "@mui/material/TableHead"
-import TablePagination from "@mui/material/TablePagination"
-import TableRow from "@mui/material/TableRow"
-import Button from "@mui/material/Button"
-import TableSortLabel from "@mui/material/TableSortLabel"
-import useSWRMutation from "swr/mutation"
-import InputBase from "@mui/material/InputBase"
-import { reqDeleteDictionary, reqPutDictionary } from "../api"
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridColDef,
+  GridRowId,
+  GridSortModel,
+} from "@mui/x-data-grid"
+import { GetDictionaryDataOption } from "./Main"
 import { DictionaryData } from "../types"
-import message from "antd-message-react"
-import { STATUS_SUCCESS } from "@/libs/const"
-import { GetDictionaryDataOption } from "../page"
+import DeleteIcon from "@mui/icons-material/DeleteOutlined"
+import useSWRMutation from "swr/mutation"
+import { reqDeleteDictionary, reqPutDictionary } from "../api"
 import SideContext from "../context/sideContext"
+import message from "antd-message-react"
+import { checkObjectEquality } from "@/libs/methods"
 
 // 排序方式（正序倒序）
 type Order = "asc" | "desc"
-
-interface HeadCell {
-  id?: keyof DictionaryData
-  label: string
-  numeric: boolean
-}
-
-// table头
-const headCells: readonly HeadCell[] = [
-  {
-    id: "name",
-    numeric: false,
-    label: "项目名称",
-  },
-  {
-    id: "serial",
-    numeric: true,
-    label: "排序",
-  },
-  {
-    numeric: true,
-    label: "操作",
-  },
-]
-
-interface EnhancedTableProps {
-  // eslint-disable-next-line no-unused-vars
-  onRequestSort: (event: React.MouseEvent<unknown>) => void
-  order: Order
-}
-
-function EnhancedTableHead(props: EnhancedTableProps) {
-  const { order, onRequestSort } = props
-  const createSortHandler = () => (event: React.MouseEvent<unknown>) => {
-    onRequestSort(event)
-  }
-
-  return (
-    <TableHead>
-      <TableRow>
-        {headCells.map((headCell, index) => (
-          <TableCell key={index} align="center" sortDirection={order} className="border">
-            {headCell.id === "serial" ? (
-              <TableSortLabel active={true} direction={order} onClick={createSortHandler()}>
-                {headCell.label}
-              </TableSortLabel>
-            ) : (
-              headCell.label
-            )}
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  )
-}
 
 interface Props {
   tableData: DictionaryData[]
@@ -84,134 +26,99 @@ interface Props {
   // eslint-disable-next-line no-unused-vars
   handleSortTable: (order: Order) => void
 }
+
 export default function DataTable(props: Props) {
   const { tableData, getDictionaryData, handleSortTable } = props
-  // 排序类型（正序倒序）
-  const [order, setOrder] = React.useState<Order>("desc")
 
-  const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = React.useState(20)
-  const ctx = React.useContext(SideContext)
-  // swr发送请求
-
-  const { trigger: deleteDictionaryApi } = useSWRMutation("/dictionary", reqDeleteDictionary)
   const { trigger: putDictionaryApi } = useSWRMutation("/dictionary", reqPutDictionary)
+  const { trigger: deleteDictionaryApi } = useSWRMutation("/dictionary", reqDeleteDictionary)
 
-  // 切换排序方法
-  const handleRequestSort = () => {
-    const newOrder = order === "asc" ? "desc" : "asc"
-    setOrder(newOrder)
-    handleSortTable(newOrder)
-  }
-  // 修改分页页码变化
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage)
+  const ctx = React.useContext(SideContext)
+
+  if (tableData.length <= 0) {
+    return <div>空空如也。。。</div>
   }
 
-  // 修改页数变化
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
-  }
-
-  // 点击表格单元格设置变量控制input显示
-  const [select, setSelect] = React.useState("")
-  const handleClickTableCell = (type: keyof DictionaryData, row: DictionaryData) => {
-    setSelect(`${type}-${row.id}`)
-  }
-
-  const handleInputBlur = (
-    type: keyof DictionaryData,
-    row: DictionaryData,
-    e: React.FocusEvent<HTMLInputElement>,
-  ) => {
-    if (e.target.value === "") return setSelect("")
-    putDictionaryApi({ ...row, [type]: e.target.value }).then((res) => {
-      if (res.code !== STATUS_SUCCESS) return message.error(res.msg)
+  // 处理行修改
+  const hanldeRowDataUpdate = (newData: any, oldData: any) => {
+    if (checkObjectEquality(newData, oldData)) return newData
+    putDictionaryApi(newData).then(() => {
       message.success("修改成功")
-      getDictionaryData({ order_by: order, class_id: ctx.currentClassId })
+      getDictionaryData({ class_id: ctx.currentClassId })
     })
-    setSelect("")
+    return newData
   }
 
-  // 删除字典万
-  const handleClickDelete = (row: DictionaryData) => {
-    deleteDictionaryApi(row.id).then((res) => {
-      if (res.code !== STATUS_SUCCESS) return message.error("删除失败")
+  const handleDeleteClick = (id: GridRowId) => () => {
+    deleteDictionaryApi({ id }).then(() => {
       message.success("删除成功")
-      getDictionaryData({ order_by: order, class_id: ctx.currentClassId })
+      getDictionaryData({ class_id: ctx.currentClassId })
     })
   }
+
+  const columns: GridColDef[] = [
+    {
+      field: "name",
+      headerName: "字典名称",
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+      editable: true,
+      maxWidth: 630,
+      sortable: false,
+      disableColumnMenu: true,
+    },
+    {
+      field: "serial",
+      headerName: "排序",
+      type: "number",
+      editable: true,
+      align: "center",
+      headerAlign: "center",
+      filterable: false,
+      maxWidth: 630,
+      flex: 1,
+      disableColumnMenu: true,
+    },
+    {
+      field: "actions",
+      type: "actions",
+      headerName: "操作",
+      flex: 1,
+      maxWidth: 130,
+      cellClassName: "actions",
+      getActions: ({ id }) => {
+        return [
+          <GridActionsCellItem
+            key={id}
+            icon={<DeleteIcon />}
+            label="Delete"
+            onClick={handleDeleteClick(id)}
+            color="inherit"
+          />,
+        ]
+      },
+    },
+  ]
+
+  const handleSortChange = ([model]: GridSortModel) => {
+    handleSortTable(model.sort as Order)
+  }
+
   return (
-    <Box className="flex flex-col" sx={{ width: "100%", height: "100%", overflow: "auto" }}>
-      <TableContainer className="flex-1">
-        <Table stickyHeader aria-labelledby="tableTitle">
-          <EnhancedTableHead order={order} onRequestSort={handleRequestSort} />
-          <TableBody>
-            {tableData.map((row) => {
-              return (
-                <TableRow
-                  hover
-                  role="checkbox"
-                  tabIndex={-1}
-                  key={row.id}
-                  sx={{ cursor: "pointer" }}>
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    align="center"
-                    className="border text-center w-1/2"
-                    onClick={() => handleClickTableCell("name", row)}>
-                    {select == `name-${row.id}` ? (
-                      <InputBase
-                        className="border text-center"
-                        autoFocus
-                        onBlur={(e: React.FocusEvent<HTMLInputElement>) =>
-                          handleInputBlur("name", row, e)
-                        }
-                      />
-                    ) : (
-                      <p>{row.name}</p>
-                    )}
-                  </TableCell>
-                  <TableCell
-                    className="border"
-                    align="center"
-                    onClick={() => handleClickTableCell("serial", row)}>
-                    {select == `serial-${row.id}` ? (
-                      <InputBase
-                        className="border text-center"
-                        autoFocus
-                        onBlur={(e: React.FocusEvent<HTMLInputElement>) =>
-                          handleInputBlur("serial", row, e)
-                        }
-                      />
-                    ) : (
-                      <p>{row.serial}</p>
-                    )}
-                  </TableCell>
-                  <TableCell className="border w-8" align="center">
-                    <Button variant="text" color="inherit" onClick={() => handleClickDelete(row)}>
-                      删除
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        labelRowsPerPage="页码大小"
-        className="h-13"
-        rowsPerPageOptions={[10, 20]}
-        component="div"
-        count={tableData.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+    <div style={{ width: "100%" }}>
+      <DataGrid
+        sortingOrder={["asc", "desc"]}
+        rows={tableData}
+        editMode="row"
+        initialState={{ pagination: { paginationModel: { pageSize: 15 } } }}
+        showColumnVerticalBorder
+        showCellVerticalBorder
+        columns={columns}
+        processRowUpdate={hanldeRowDataUpdate}
+        onSortModelChange={handleSortChange}
+        pageSizeOptions={[10, 15, 20]}
       />
-    </Box>
+    </div>
   )
 }

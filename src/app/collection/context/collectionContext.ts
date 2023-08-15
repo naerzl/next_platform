@@ -1,8 +1,8 @@
 import React from "react"
-import { DictionaryClassData } from "../types"
+import { ReqGetAddCollectionClassResponse } from "../types"
 
-const SideContext = React.createContext<{
-  sideBarList: DictionaryClassData[]
+const CollectionContext = React.createContext<{
+  sideBarList: ReqGetAddCollectionClassResponse[]
   changeSideBarList: () => void
   currentClassId: number
   // eslint-disable-next-line no-unused-vars
@@ -17,4 +17,4 @@ const SideContext = React.createContext<{
   getSubClassList: () => {},
 })
 
-export default SideContext
+export default CollectionContext

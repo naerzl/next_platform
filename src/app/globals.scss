@@ -20,3 +20,28 @@ html {
   display: flex;
   align-items: center;
 }
+
+.design_data {
+  .tags_box:hover {
+    .tags_item {
+      display: flex !important;
+    }
+  }
+  ._fff > .MuiTreeItem-content {
+    background-color: #f8fafb;
+  }
+
+  ._ff8a48 > .MuiTreeItem-content {
+    background-color: #ff8a48;
+  }
+}
+
+.page_main {
+  height: calc(100% - 2.5rem - 2.75rem);
+}
+
+.bg-transparent {
+  .ant-select-selector {
+    background-color: transparent !important;
+  }
+}

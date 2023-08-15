@@ -14,19 +14,21 @@ import DragIndicatorIcon from "@mui/icons-material/DragIndicator"
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined"
 import DialogSideBar from "./DialogSideBar"
 import useMutation from "swr/mutation"
-import { DictionaryClassData } from "../types"
+import { reqDelCollectionClass } from "../api"
+import CollectionContext from "../context/collectionContext"
+import { ReqGetAddCollectionClassResponse, ReqGetAddCollectionResponse } from "../types"
 import message from "antd-message-react"
-import SideContext from "../context/sideContext"
-import { reqDeleteDictionaryClass } from "../api"
-import { iconList } from "./icon"
+import { usePathname, useRouter } from "next/navigation"
 
 export default function SideBar() {
   // 获取上下文来共享全局变量
-  const ctx = React.useContext(SideContext)
+  const ctx = React.useContext(CollectionContext)
   // 控制菜单的位置
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   // 控制菜单关闭和打开
   const open = Boolean(anchorEl)
+  const pathName = usePathname()
+  const router = useRouter()
 
   // 获取到点击菜单要处理的Class 的id
   const [handleId, setHandleId] = React.useState(0)
@@ -64,9 +66,9 @@ export default function SideBar() {
   }
 
   // 删除分类接口
-  const { trigger: delDictionaryClassApi } = useMutation(
-    "/dictionary-class",
-    reqDeleteDictionaryClass,
+  const { trigger: delCollectionClassApi } = useMutation(
+    "/structure-collection-class",
+    reqDelCollectionClass,
   )
 
   // 控制分类的展开折叠  存储格式为层级（xxx-xxx-xxx）
@@ -84,12 +86,16 @@ export default function SideBar() {
     // 获取对象的子集数据
     ctx.getSubClassList(id, indexStr)
     // 如果是在其他的页面则跳转collection页面
+    if (pathName !== "/collection") {
+      router.push("/collection")
+    }
   }
 
   // 存储编辑的对象
-  const [editItem, setEditItem] = React.useState<undefined | DictionaryClassData>()
+  const [editItem, setEditItem] = React.useState<undefined | ReqGetAddCollectionClassResponse>()
   // 点击菜单编辑按钮
   const handleClickMenuEdit = () => {
+    console.log(addIndexStr)
     const indexArr = addIndexStr.split("-")
     // eslint-disable-next-line no-unused-vars
     const arr = ctx.sideBarList
@@ -110,14 +116,14 @@ export default function SideBar() {
 
     const id = eval(`arr[${resultArr.join("].children[")}].id`)
     handleCloseMenu()
-    await delDictionaryClassApi({ id: handleId })
+    await delCollectionClassApi({ id: handleId })
     message.success("删除成功")
 
     ctx.getSubClassList(id, indexArr.length > 1 ? resultArr.join("-") : "")
   }
 
   // 添加子集分类
-  const handleClickAddSub = (e: any, side: DictionaryClassData, indexStr: string) => {
+  const handleClickAddSub = (e: any, side: ReqGetAddCollectionResponse, indexStr: string) => {
     e.stopPropagation()
     setAddIndexStr(indexStr)
     // 向dialog组件传递父级id
@@ -144,9 +150,7 @@ export default function SideBar() {
               pl: indexStr ? indexStr?.split("-").length * 2 : 0,
             }}
             onClick={() => handleClickListItemButton(item.id, str)}>
-            <ListItemIcon>
-              {iconList.find((icon) => icon.name == item.icon)?.component}
-            </ListItemIcon>
+            <ListItemIcon></ListItemIcon>
             <ListItemText>{item.name}</ListItemText>
             <ListItemIcon className="w-14 justify-end">
               {str?.split("-").length < 3 && (

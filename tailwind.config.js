@@ -12,13 +12,15 @@ module.exports = {
         'railway_blue': '#0162B1',
         'primary': '#4096ff',
         'railway_gray': "#8697A8",
-        'railway_error': '#d32f2f'
+        'railway_error': '#d32f2f',
+        'railway_303': '#303133'
       },
       backgroundImage: {
         'login': 'url(/WaveLine.svg)',
       },
       spacing: {
         "13": '3.25rem',
+        "100": '25rem',
         '150': '9.375rem',
         '161': '40.25rem',
       },

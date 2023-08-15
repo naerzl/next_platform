@@ -1,9 +1,9 @@
-import { FetchParams } from "@/types/api"
 import { getCookie, setCookie } from "./cookies"
 import { formDataInstance, lrsOAuth2Instance } from "./init_oauth"
 import { OAUTH2_ACCESS_TOKEN, OAUTH2_PATH_FROM, STATUS_SUCCESS } from "./const"
 import { StatusCodes } from "http-status-codes"
 import { generateRandomString } from "./methods"
+import message from "antd-message-react"
 
 // 拼接接口地址
 export const getV1BaseURL = (url: string): string => {
@@ -15,30 +15,35 @@ type MethodsType = "get" | "post" | "put" | "delete" | "patch"
 interface FetcherOptions<T> {
   url: string
   method?: MethodsType
-  data: FetchParams<T>
+  arg?: T
+  isJSON?: boolean
 }
 
+const handleGetUrl = (url: string) => {
+  const flag = url.includes("?")
+  return flag ? url.split("?")[0] : url
+}
 //
 export function fetcher<T>(params: FetcherOptions<T>) {
-  let {
-    url,
-    data: { arg },
-    method,
-  } = params
-
+  let { url, arg, method, isJSON } = params
+  if (!method || method == "get") {
+    url = handleGetUrl(url)
+  }
   // 拿到传进来的路由拼接完整的api地址
   url = getV1BaseURL(url)
   let body: any = null
   switch (method) {
     case "post":
     case "put":
-      body = formDataInstance.convertModelToFormData(arg)
+      body = isJSON ? JSON.stringify(arg) : formDataInstance.convertModelToFormData(arg)
       break
     case "delete":
-      url += "/" + arg
+      url += "/" + (arg as any).id
+      body = isJSON ? JSON.stringify(arg) : formDataInstance.convertModelToFormData(arg)
       break
     default:
-      url += "?" + new URLSearchParams(arg as Record<string, string>).toString()
+      const str = new URLSearchParams(arg as Record<string, string>).toString()
+      str.length > 0 && (url += "?" + str)
   }
 
   // 判断请求状态码是否是成功的状态
@@ -67,7 +72,6 @@ export function fetcher<T>(params: FetcherOptions<T>) {
     // 判断请求http状态码是否为401
     try {
       if (res.status == StatusCodes.UNAUTHORIZED) {
-        debugger
         isStatusOk = false
         const res = await lrsOAuth2Instance.lrsOAuth2rRefreshToken(
           getV1BaseURL("/refresh"),
@@ -101,5 +105,14 @@ export function fetcher<T>(params: FetcherOptions<T>) {
     // 当通用请求fetcher http状态码不为401直接返回结果
     return res
   })
-  return (isStatusOk ? result : ufetch()).then((res) => res.json())
+
+  return (isStatusOk ? result : ufetch())
+    .then((res) => res.json())
+    .then((res) => {
+      if (res.code !== STATUS_SUCCESS) {
+        message.error(res.msg)
+        return Promise.reject(res.msg)
+      }
+      return res.data
+    })
 }

@@ -1,27 +1,15 @@
 "use client"
 import React from "react"
-import InboxIcon from "@mui/icons-material/MoveToInbox"
 import DraftsIcon from "@mui/icons-material/Drafts"
 import SendIcon from "@mui/icons-material/Send"
-import ExpandLess from "@mui/icons-material/ExpandLess"
-import ExpandMore from "@mui/icons-material/ExpandMore"
-import StarBorder from "@mui/icons-material/StarBorder"
-import {
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  ListSubheader,
-  Collapse,
-} from "@mui/material"
+import BallotIcon from "@mui/icons-material/Ballot"
+import { List, ListItemButton, ListItemIcon, ListItemText, ListSubheader } from "@mui/material"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+
 function Side() {
-  const logo = "static/images/logo.png"
-  const [open, setOpen] = React.useState(true)
-
-  const handleClick = () => {
-    setOpen(!open)
-  }
-
+  const logo = "/static/images/logo.png"
+  const pathName = usePathname()
   return (
     <List
       sx={{ width: "100%", maxWidth: "15rem", bgcolor: "background.paper" }}
@@ -37,38 +25,32 @@ function Side() {
           <div>中铁六局</div>
         </ListSubheader>
       }>
-      <ListItemButton color="#bfa">
-        <ListItemIcon>
-          <SendIcon fontSize="small" />
-        </ListItemIcon>
-        <ListItemText>123</ListItemText>
-      </ListItemButton>
+      <Link href={"/design-data"}>
+        <ListItemButton sx={pathName == "/design-data" ? { bgcolor: "#eef0f1" } : {}}>
+          <ListItemIcon>
+            <SendIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>设计数据</ListItemText>
+        </ListItemButton>
+      </Link>
 
-      <ListItemButton>
-        <ListItemIcon>
-          <DraftsIcon fontSize="small" />
-        </ListItemIcon>
-        <ListItemText primary="calendar" />
-      </ListItemButton>
+      <Link href={"/dictionary"}>
+        <ListItemButton sx={pathName == "/dictionary" ? { bgcolor: "#eef0f1" } : {}}>
+          <ListItemIcon>
+            <DraftsIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>数据字典</ListItemText>
+        </ListItemButton>
+      </Link>
 
-      <ListItemButton onClick={handleClick}>
-        <ListItemIcon>
-          <InboxIcon fontSize="small" />
-        </ListItemIcon>
-        <ListItemText primary="Inbox" />
-        {open ? <ExpandLess /> : <ExpandMore />}
-      </ListItemButton>
-
-      <Collapse in={open} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <ListItemButton sx={{ pl: 4 }}>
-            <ListItemIcon>
-              <StarBorder fontSize="small" />
-            </ListItemIcon>
-            <ListItemText primary="Starred" />
-          </ListItemButton>
-        </List>
-      </Collapse>
+      <Link href={"/collection"}>
+        <ListItemButton sx={pathName == "/collection" ? { bgcolor: "#eef0f1" } : {}}>
+          <ListItemIcon>
+            <BallotIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>表结构库</ListItemText>
+        </ListItemButton>
+      </Link>
     </List>
   )
 }

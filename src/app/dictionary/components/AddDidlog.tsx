@@ -9,13 +9,12 @@ import {
   InputLabel,
 } from "@mui/material"
 import React from "react"
-import { useForm, SubmitHandler } from "react-hook-form"
+import { SubmitHandler, useForm } from "react-hook-form"
 import useDebounce from "@/hooks/useDebounce"
 import useSWRMutation from "swr/mutation"
 import { reqPostAddDictionary } from "../api"
-import { STATUS_SUCCESS } from "@/libs/const"
 import message from "antd-message-react"
-import { GetDictionaryDataOption } from "../page"
+import { GetDictionaryDataOption } from "./Main"
 import { ErrorMessage } from "@hookform/error-message"
 
 interface Props {
@@ -48,8 +47,7 @@ function AddDidlog(props: Props) {
   })
 
   const { run: onSubmit }: { run: SubmitHandler<IForm> } = useDebounce((values: IForm) => {
-    apiTrigger({ ...values, class_id }).then((res) => {
-      if (res.code !== STATUS_SUCCESS) return message.error(res.msg)
+    apiTrigger({ ...values, class_id }).then(() => {
       message.success("操作成功")
       getDictionaryData({ class_id })
       handleClose()

@@ -48,6 +48,7 @@ export interface DictionaryClassData {
   icon: string
   relationship: string
   collapse_open?: boolean // 自己加的控制二级展开合并的
+  children?: DictionaryClassData[]
 }
 
 // 获取数据列表分类响应数据
@@ -63,7 +64,7 @@ export interface ReqAddDictionaryClassParams {
   name: string
   icon: string
   serial: number
-  relationship: (string | number)[]
+  relationship: (string | number)[] | any[]
   parent_id?: number | null | undefined
 }
 
