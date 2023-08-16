@@ -2,19 +2,12 @@
 import React from "react"
 import { MenuItem, Select } from "@mui/material"
 import useSWRMutation from "swr/mutation"
-import {
-  reqDeleteEBSTags,
-  reqDesignDataBaseData,
-  reqGetCollection,
-  reqGetEBSTags,
-  reqPostAddEBSTags,
-} from "../api"
+import { reqDeleteEBSTags, reqGetCollection, reqGetEBSTags, reqPostAddEBSTags } from "../api"
 import DesignDataContext from "../context/useDesignData"
 import { ReqPostEBSAddTagsResponce } from "../types"
 import CloseIcon from "@mui/icons-material/Close"
 import MainHeader from "./MainHeader"
 import DataList from "./DataList"
-import { reqGetEBSStructure } from "@/app/collection/api"
 
 interface Props {
   // eslint-disable-next-line no-unused-vars

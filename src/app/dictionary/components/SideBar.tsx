@@ -18,7 +18,7 @@ import { DictionaryClassData } from "../types"
 import message from "antd-message-react"
 import SideContext from "../context/sideContext"
 import { reqDeleteDictionaryClass } from "../api"
-import { iconList } from "./icon"
+import { iconList } from "./IconEnum"
 
 export default function SideBar() {
   // 获取上下文来共享全局变量

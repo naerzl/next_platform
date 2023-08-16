@@ -23,7 +23,7 @@ import {
   ReqAddDictionaryClassParams,
   ReqPutDictionaryClassParams,
 } from "../types"
-import { iconList } from "./icon"
+import { iconList } from "./IconEnum"
 import SideContext from "../context/sideContext"
 
 interface Props {
