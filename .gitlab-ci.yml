@@ -30,10 +30,9 @@ build-job:       # This job runs in the build stage, which runs first.
     - npm config set registry https://registry.npm.taobao.org
     - npm i
     - npm run build
-    - fileName=`date +"%Y/%m/%d %H:%M"`
-    - tar cf $fileName".tar" out
+    - tar cf out.tar out
     - scp out.tar root@121.37.83.16:/www/edms-platform
-    - ssh root@121.37.83.16 "rm -rf /www/edms-platform/out && tar -xvf /www/out.tar -C /www/edms-platform"
+    - ssh root@121.37.83.16 "cp -rf /www/edms-platform/out /www/edms-platform/out.old && tar -xvf /www/out.tar -C /www/edms-platform"
     - echo "Compiling the code..."
     - echo "Compile complete."
 
