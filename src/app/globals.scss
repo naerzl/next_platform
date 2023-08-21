@@ -1,13 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "antd-message-react/dist/index.css";
+@import "https://at.alicdn.com/t/c/font_4191244_7dgdgul6cul.css?spm=a313x.manage_type_myprojects.i1.9.74a53a81ltAP4C&file=font_4191244_7dgdgul6cul.css";
 
 body,
 html {
   height: 100%;
 }
-
+.color {
+  color: #bfa;
+}
 .max-main {
   max-height: calc(100vh - 64px);
 }

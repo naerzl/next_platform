@@ -3,6 +3,7 @@ import React from "react"
 import DraftsIcon from "@mui/icons-material/Drafts"
 import SendIcon from "@mui/icons-material/Send"
 import BallotIcon from "@mui/icons-material/Ballot"
+import DatasetLinkedIcon from "@mui/icons-material/DatasetLinked"
 import { List, ListItemButton, ListItemIcon, ListItemText, ListSubheader } from "@mui/material"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -49,6 +50,15 @@ function Side() {
             <BallotIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>表结构库</ListItemText>
+        </ListItemButton>
+      </Link>
+
+      <Link href={"/ebs-data"}>
+        <ListItemButton sx={pathName == "/collection" ? { bgcolor: "#eef0f1" } : {}}>
+          <ListItemIcon>
+            <DatasetLinkedIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>EBS数据</ListItemText>
         </ListItemButton>
       </Link>
     </List>

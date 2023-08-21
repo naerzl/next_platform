@@ -4,5 +4,10 @@ export const metadata = {
 }
 
 export default function Home() {
-  return <main>123</main>
+  return (
+    <main>
+      123
+      <i className="iconfont icon-duanxinguanli"></i>
+    </main>
+  )
 }
