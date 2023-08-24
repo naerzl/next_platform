@@ -13,7 +13,7 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined"
 import useSWRMutation from "swr/mutation"
 import { reqDeleteDictionary, reqPutDictionary } from "../api"
 import SideContext from "../context/sideContext"
-import message from "antd-message-react"
+import { message } from "antd"
 import { checkObjectEquality } from "@/libs/methods"
 
 // 排序方式（正序倒序）

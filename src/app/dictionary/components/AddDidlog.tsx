@@ -13,7 +13,7 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import useDebounce from "@/hooks/useDebounce"
 import useSWRMutation from "swr/mutation"
 import { reqPostAddDictionary } from "../api"
-import message from "antd-message-react"
+import { message } from "antd"
 import { GetDictionaryDataOption } from "./Main"
 import { ErrorMessage } from "@hookform/error-message"
 

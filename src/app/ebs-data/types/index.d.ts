@@ -1,9 +1,8 @@
 /*获取EBS结构列表 请求参数*/
 export interface TypeApiGetEBSParams {
-  project_id: number
   code?: string
   level?: number
-  is_hidde?: 0 | 1
+  name?: string
 }
 
 /*获取EBS结构列表 响应数据*/
@@ -12,13 +11,19 @@ export interface TypeApiGetEBSParams {
 export interface TypeEBSDataList {
   key?: string
   id: number
+  created_at: string
+  updated_at: string
+  h_subpart_code: string
+  n_subpart_code: string
+  subpart_class: string
+  subpart_type: string
   parent_id: number
   code: string
   define_code: string
   name: string
   level: number
   unit: string
-  is_loop: string
+  is_loop: "yes" | "no"
   is_system: "platform" | "system" | "userdefined" | "null"
   has_structure: string
   structure_status: string
@@ -29,12 +34,11 @@ export interface TypeEBSDataList {
 
 /*创建EBS结构 请求参数*/
 export interface TypeApiPostEBSParams {
-  is_copy: 0 | 1
-  ebs_id: number
-  name?: string
-  project_id: number
-  next_ebs_id?: number
-  is_system: "platform" | "system" | "userdefined" | "null"
+  parent_id: number
+  name: string
+  unit: string
+  is_loop: "yes" | "no"
+  subpart_class: string
 }
 
 /*创建EBS结构 响应结果*/
@@ -50,4 +54,8 @@ export interface TypeApiPostEBSResponse {
 export interface TypeApiPutEBSParams {
   id: number
   name: string
+  h_subpart_code: string
+  n_subpart_code: string
+  subpart_class: string
+  is_loop: "yes" | "no"
 }

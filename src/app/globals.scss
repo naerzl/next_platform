@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "https://at.alicdn.com/t/c/font_4191244_7dgdgul6cul.css?spm=a313x.manage_type_myprojects.i1.9.74a53a81ltAP4C&file=font_4191244_7dgdgul6cul.css";
+@import "//at.alicdn.com/t/c/font_4191244_qqll2j9wyy.css";
 
 body,
 html {
@@ -30,7 +30,7 @@ html {
     }
   }
   ._fff > .MuiTreeItem-content {
-    background-color: #f8fafb;
+    background-color: #fff;
   }
 
   ._ff8a48 > .MuiTreeItem-content {
@@ -45,5 +45,11 @@ html {
 .bg-transparent {
   .ant-select-selector {
     background-color: transparent !important;
+  }
+}
+
+.ebs_data {
+  .ant-switch-checked {
+    background-color: #0162b1 !important;
   }
 }

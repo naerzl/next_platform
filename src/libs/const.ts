@@ -12,3 +12,17 @@ export const STATUS_SUCCESS = 2000
 export const OAUTH2_ACCESS_TOKEN = "oauth2_access_token"
 
 export const OAUTH2_PATH_FROM = "oauth2_path_from"
+
+export const ENUM_SUBPARY_CLASS = [
+  { label: "专业", value: "field" },
+  { label: "分部", value: "subpart" },
+  { label: "分项", value: "subitem" },
+  { label: "检验批", value: "examination" },
+]
+
+export const ENUM_ATTRIBUTION = [
+  { label: "平台", value: "platform" },
+  { label: "规范", value: "system" },
+  { label: "自定义", value: "userdefined" },
+  { label: "空", value: "null" },
+]

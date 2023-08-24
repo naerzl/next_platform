@@ -7,5 +7,5 @@ export default function Page() {
 }
 
 export const metadata: Metadata = {
-  title: "EBS数据-客户端",
+  title: "EBS数据",
 }

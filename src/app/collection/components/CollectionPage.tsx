@@ -3,7 +3,7 @@ import React from "react"
 import useSWRMutation from "swr/mutation"
 import { reqGetCollection, reqPostAddCollection } from "../api"
 import { Button, InputBase } from "@mui/material"
-import message from "antd-message-react"
+import { message } from "antd"
 import CollectionContext from "../context/collectionContext"
 import { ReqGetAddCollectionClassResponse } from "../types"
 import Table from "./Table"
@@ -43,7 +43,7 @@ export default function CollectionPage() {
   }, [ctx.currentClassId])
 
   return (
-    <div className="flex-1 flex-shrink-0 overflow-hidden bg-white">
+    <div className="flex-1 flex flex-col  gap-y-2">
       {/* 头部搜索 */}
       <header className="h-12 flex items-center justify-between px-4">
         <div className="flex items-center h-full w-100">

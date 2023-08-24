@@ -2,7 +2,7 @@
 import React from "react"
 import SideBar from "../components/SideBar"
 import DataTable from "../components/DataTable"
-import { Button, IconButton, InputAdornment, InputBase } from "@mui/material"
+import { Breadcrumbs, Button, IconButton, InputAdornment, InputBase } from "@mui/material"
 import AddDidlog from "../components/AddDidlog"
 import SearchIcon from "@mui/icons-material/Search"
 import useSWRMutation from "swr/mutation"
@@ -11,6 +11,8 @@ import { DictionaryData, ReqGetDictionaryParams } from "../types"
 import { reqGetDictionary, reqGetDictionaryClass } from "../api"
 import SideContext from "../context/sideContext"
 import { DICTIONARY_CLASS_LIMIT, DICTIONARY_LIMIT } from "../const"
+import Link from "@mui/material/Link"
+import Typography from "@mui/material/Typography"
 
 // 获取字典列表数据函数的参数类型
 export interface GetDictionaryDataOption {
@@ -141,52 +143,62 @@ export default function DictionaryMain() {
         changeCurrentClassId,
         getSubClassList,
       }}>
-      <div className="h-full flex">
-        {/* 左侧导航 */}
-        <aside className="w-60 h-full  mr-3 bg-white">
-          <SideBar />
-        </aside>
-        <div className="flex-1 flex flex-col  gap-y-2">
-          {/* 头部搜索 */}
-          <header className="h-12 flex items-center ">
-            <Button variant="outlined" onClick={handleClickOpen}>
-              新增字典
-            </Button>
-            <InputBase
-              className="w-72 bg-[#f8fafb] border rounded-md px-2 mx-3"
-              placeholder="Search..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    type="button"
-                    edge="end"
-                    sx={{ p: "10px" }}
-                    aria-label="search"
-                    disableRipple
-                    onClick={handleClickSearch}>
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-          </header>
-          {/* 表格主体 */}
-          <div className="flex-1 border">
-            <DataTable
-              tableData={tableData}
-              getDictionaryData={getDictionaryData}
-              handleSortTable={handleSortTable}
-            />
+      <h3 className="font-bold text-[1.875rem]">数据字典</h3>
+      <Breadcrumbs aria-label="breadcrumb" className="my-2">
+        <Link underline="hover" color="inherit" href="/">
+          首页
+        </Link>
+        <Typography color="text.primary">数据字典</Typography>
+      </Breadcrumbs>
+
+      <div className="flex-1 flex-shrink-0 overflow-auto bg-white">
+        <div className="h-full flex">
+          {/* 左侧导航 */}
+          <aside className="w-60 h-full  mr-3 bg-white">
+            <SideBar />
+          </aside>
+          <div className="flex-1 flex flex-col  gap-y-2">
+            {/* 头部搜索 */}
+            <header className="h-12 flex items-center ">
+              <Button variant="outlined" onClick={handleClickOpen}>
+                新增字典
+              </Button>
+              <InputBase
+                className="w-72 bg-[#f8fafb] border rounded-md px-2 mx-3"
+                placeholder="Search..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      type="button"
+                      edge="end"
+                      sx={{ p: "10px" }}
+                      aria-label="search"
+                      disableRipple
+                      onClick={handleClickSearch}>
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+            </header>
+            {/* 表格主体 */}
+            <div className="flex-1 border">
+              <DataTable
+                tableData={tableData}
+                getDictionaryData={getDictionaryData}
+                handleSortTable={handleSortTable}
+              />
+            </div>
           </div>
+          <AddDidlog
+            open={open}
+            close={handleClose}
+            getDictionaryData={getDictionaryData}
+            class_id={currentClassId}
+          />
         </div>
-        <AddDidlog
-          open={open}
-          close={handleClose}
-          getDictionaryData={getDictionaryData}
-          class_id={currentClassId}
-        />
       </div>
     </SideContext.Provider>
   )

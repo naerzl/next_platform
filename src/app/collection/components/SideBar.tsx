@@ -17,7 +17,7 @@ import useMutation from "swr/mutation"
 import { reqDelCollectionClass } from "../api"
 import CollectionContext from "../context/collectionContext"
 import { ReqGetAddCollectionClassResponse, ReqGetAddCollectionResponse } from "../types"
-import message from "antd-message-react"
+import { message } from "antd"
 import { usePathname, useRouter } from "next/navigation"
 
 export default function SideBar() {

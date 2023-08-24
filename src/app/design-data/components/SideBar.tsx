@@ -37,8 +37,6 @@ export default function SideBar(props: Props) {
   const handleSelectTree = async (event: React.SyntheticEvent, value: string) => {
     // 拆分选择节点拿到的对应参数
     ctx.changeTreeStr(value)
-    console.log(value)
-
     const strArr = value.split("-")
     ctx.changeEBSId(strArr[1])
     getSubEBSList(value.split("-")[0], strArr.slice(2) as any)

@@ -17,7 +17,7 @@ import useSWRMutation from "swr/mutation"
 import { useForm, SubmitHandler } from "react-hook-form"
 import { ErrorMessage } from "@hookform/error-message"
 import { reqPostDictionaryClass, reqPutDictionaryClass } from "../api"
-import message from "antd-message-react"
+import { message } from "antd"
 import {
   DictionaryClassData,
   ReqAddDictionaryClassParams,

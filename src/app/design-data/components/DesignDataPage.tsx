@@ -7,14 +7,31 @@ import useSWR from "swr"
 import { reqGetEBSList } from "../api"
 import DesignDataContext from "../context/useDesignData"
 import { EBSTreeData } from "../types"
+import { useSearchParams } from "next/navigation"
+import { Breadcrumbs } from "@mui/material"
+import Link from "@mui/material/Link"
+import Typography from "@mui/material/Typography"
 
 export default function DesignDataPage() {
+  const searchParams = useSearchParams()
   const { data, isLoading, mutate } = useSWR(
     "/ebs",
-    (url) => reqGetEBSList(url, { arg: { level: 1 } }),
-    { revalidateIfStale: false, revalidateOnFocus: false, revalidateOnReconnect: false },
+    (url) =>
+      reqGetEBSList(url, {
+        arg: searchParams.get("code")
+          ? { level: 2, code: searchParams.get("code") as string }
+          : { level: 1 },
+      }),
+    {
+      onSuccess(data) {
+        if (ebsId <= 0) {
+          setEbsId(data[0].id)
+          setTreeItem(data[0])
+        }
+      },
+    },
   )
-  const { trigger: getEBSListApi } = useSWRMutation("/ebs?code=01&level=2", reqGetEBSList)
+  const { trigger: getEBSListApi } = useSWRMutation("/ebs", reqGetEBSList)
 
   const [ebsId, setEbsId] = React.useState(0)
   const [treeItem, setTreeItem] = React.useState<EBSTreeData>({} as EBSTreeData)
@@ -49,13 +66,6 @@ export default function DesignDataPage() {
     setEbsId(+id)
   }
 
-  React.useEffect(() => {
-    if (data && data.length > 0 && ebsId <= 0) {
-      setEbsId(data[0].id)
-      setTreeItem(data[0])
-    }
-  }, [data])
-
   const [treeStr, setTreeStr] = React.useState("")
 
   const changeTreeStr = (str: string) => {
@@ -77,13 +87,25 @@ export default function DesignDataPage() {
         treeStr,
         changeTreeStr,
       }}>
-      <div className="flex w-full page_main design_data">
-        <aside className="w-96 border min-w-[24rem] h-full">
-          <SideBar getSubEBSList={getSubEBSList} />
-        </aside>
-        <main className="flex-1 flex-shrink-0 ml-3 border min-w-[62.5rem] overflow-auto">
-          <Main getSubEBSList={getSubEBSList} />
-        </main>
+      <h3 className="font-bold text-[1.875rem]">设计数据模板</h3>
+      <Breadcrumbs aria-label="breadcrumb" className="my-2">
+        <Link underline="hover" color="inherit" href="/">
+          首页
+        </Link>
+        <Link underline="hover" color="inherit" href="/design-data-list">
+          设计数据列表
+        </Link>
+        <Typography color="text.primary">设计数据模板</Typography>
+      </Breadcrumbs>
+      <div className="flex-1 flex-shrink-0 overflow-auto bg-white">
+        <div className="flex w-full h-full page_main design_data">
+          <aside className="w-96 border min-w-[24rem] h-full">
+            <SideBar getSubEBSList={getSubEBSList} />
+          </aside>
+          <main className="flex-1 flex-shrink-0 ml-3 border min-w-[62.5rem] overflow-auto">
+            <Main getSubEBSList={getSubEBSList} />
+          </main>
+        </div>
       </div>
     </DesignDataContext.Provider>
   )

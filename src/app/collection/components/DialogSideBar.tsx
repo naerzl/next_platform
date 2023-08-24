@@ -15,7 +15,7 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { ErrorMessage } from "@hookform/error-message"
 import { reqPostCollectionClass, reqPutCollectionClass } from "../api"
 import CollectionContext from "../context/collectionContext"
-import message from "antd-message-react"
+import { message } from "antd"
 import { ReqGetAddCollectionClassResponse } from "../types"
 
 interface Props {

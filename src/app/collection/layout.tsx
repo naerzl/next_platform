@@ -5,6 +5,9 @@ import useSWRMutation from "swr/mutation"
 import { reqGetCollectionClass } from "./api"
 import SideBar from "./components/SideBar"
 import CollectionContext from "./context/collectionContext"
+import { Breadcrumbs } from "@mui/material"
+import Link from "@mui/material/Link"
+import Typography from "@mui/material/Typography"
 
 export default function CollectionLayout({ children }: { children: React.ReactNode }) {
   // 获取集合分类接口
@@ -54,15 +57,22 @@ export default function CollectionLayout({ children }: { children: React.ReactNo
     return <></>
   }
   return (
-    <div className="flex h-full w-full overflow-hidden">
-      <CollectionContext.Provider
-        value={{
-          sideBarList: data ? data : [],
-          changeSideBarList: getCollectionClassData,
-          currentClassId,
-          changeCurrentClassId,
-          getSubClassList,
-        }}>
+    <CollectionContext.Provider
+      value={{
+        sideBarList: data ? data : [],
+        changeSideBarList: getCollectionClassData,
+        currentClassId,
+        changeCurrentClassId,
+        getSubClassList,
+      }}>
+      <h3 className="font-bold text-[1.875rem]">表结构库</h3>
+      <Breadcrumbs aria-label="breadcrumb" className="my-2">
+        <Link underline="hover" color="inherit" href="/">
+          首页
+        </Link>
+        <Typography color="text.primary">表结构库</Typography>
+      </Breadcrumbs>
+      <div className="flex-1 flex-shrink-0 overflow-auto bg-white flex">
         <div className="h-full flex">
           {/* 左侧导航 */}
           <aside className="w-60 h-full  mr-3 bg-white">
@@ -70,7 +80,7 @@ export default function CollectionLayout({ children }: { children: React.ReactNo
           </aside>
         </div>
         {children}
-      </CollectionContext.Provider>
-    </div>
+      </div>
+    </CollectionContext.Provider>
   )
 }

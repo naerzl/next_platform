@@ -19,18 +19,23 @@ import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp"
 import MailOutlineIcon from "@mui/icons-material/MailOutline"
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone"
 import PublicIcon from "@mui/icons-material/Public"
-import { setCookie } from "@/libs/cookies"
+import { removeCookie, setCookie } from "@/libs/cookies"
 import { generateRandomString } from "@/libs/methods"
 import { lrsOAuth2Instance } from "@/libs/init_oauth"
 import { useRouter } from "next/navigation"
 import { getV1BaseURL } from "@/libs/fetch"
-import { OAUTH2_PATH_FROM } from "@/libs/const"
+import { OAUTH2_ACCESS_TOKEN, OAUTH2_PATH_FROM } from "@/libs/const"
 
-function Nav() {
+interface Props {
+  changeCollapsed: (bool: boolean) => void
+  collapsed: boolean
+}
+function Nav(props: Props) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [anchorEl1, setAnchorEl1] = React.useState<null | HTMLElement>(null)
   const avatarOpen = Boolean(anchorEl)
   const languageOpen = Boolean(anchorEl1)
+  const { changeCollapsed, collapsed } = props
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
@@ -62,6 +67,12 @@ function Nav() {
       })
   }
 
+  const handleLogout = () => {
+    // 清楚cookie 跳到官网
+    removeCookie(OAUTH2_ACCESS_TOKEN)
+    router.push(process.env.NEXT_PUBLIC_WEB_PATH as string)
+  }
+
   return (
     <AppBar position="static" className="bg-[#fff] shadow-none max-h-16">
       <Toolbar className="flex justify-between">
@@ -72,7 +83,9 @@ function Nav() {
             edge="start"
             aria-label="open drawer"
             sx={{ mr: 2 }}
-            onClick={handleClickOauth2}>
+            onClick={() => {
+              changeCollapsed(!collapsed)
+            }}>
             <MenuIcon />
           </IconButton>
           <InputBase
@@ -145,9 +158,13 @@ function Nav() {
             MenuListProps={{
               "aria-labelledby": "basic-button",
             }}>
-            <MenuItem onClick={handleClose}>Profile</MenuItem>
-            <MenuItem onClick={handleClose}>My account</MenuItem>
-            <MenuItem onClick={handleClose}>Logout</MenuItem>
+            <MenuItem
+              onClick={() => {
+                handleLogout()
+                handleClose()
+              }}>
+              退出
+            </MenuItem>
           </Menu>
         </div>
       </Toolbar>

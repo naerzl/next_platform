@@ -4,7 +4,7 @@ import { DataGrid, GridActionsCellItem, GridColDef, GridRowId } from "@mui/x-dat
 import DeleteIcon from "@mui/icons-material/DeleteOutlined"
 import EditIcon from "@mui/icons-material/Edit"
 import useSWRMutation from "swr/mutation"
-import message from "antd-message-react"
+import { message } from "antd"
 import { checkObjectEquality } from "@/libs/methods"
 import { ReqGetAddCollectionResponse } from "../types"
 import { reqDelCollection, reqPutEditCollection } from "../api"

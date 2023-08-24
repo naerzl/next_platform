@@ -3,7 +3,7 @@ import { formDataInstance, lrsOAuth2Instance } from "./init_oauth"
 import { OAUTH2_ACCESS_TOKEN, OAUTH2_PATH_FROM, STATUS_SUCCESS } from "./const"
 import { StatusCodes } from "http-status-codes"
 import { generateRandomString } from "./methods"
-import message from "antd-message-react"
+import { message } from "antd"
 
 // 拼接接口地址
 export const getV1BaseURL = (url: string): string => {
@@ -24,14 +24,16 @@ const handleGetUrl = (url: string) => {
   return flag ? url.split("?")[0] : url
 }
 //
-export function fetcher<T>(params: FetcherOptions<T>) {
+export async function fetcher<T>(params: FetcherOptions<T>) {
   let { url, arg, method, isJSON } = params
   if (!method || method == "get") {
     url = handleGetUrl(url)
   }
+
   // 拿到传进来的路由拼接完整的api地址
   url = getV1BaseURL(url)
   let body: any = null
+
   switch (method) {
     case "post":
     case "put":
@@ -67,52 +69,47 @@ export function fetcher<T>(params: FetcherOptions<T>) {
     })
   }
 
-  // 调用请求
-  const result = ufetch().then(async (res) => {
-    // 判断请求http状态码是否为401
-    try {
-      if (res.status == StatusCodes.UNAUTHORIZED) {
-        isStatusOk = false
-        const res = await lrsOAuth2Instance.lrsOAuth2rRefreshToken(
-          getV1BaseURL("/refresh"),
-          `Bearer ${authCodeOfCookie.access_token}`,
-        )
-        if (res.status == StatusCodes.UNAUTHORIZED) {
-          throw new Error("401")
-        }
-        const result = await res.json()
-        if (result.code == STATUS_SUCCESS) {
-          // 设置新的cookie
-          setCookie(OAUTH2_ACCESS_TOKEN, result.data)
-        } else {
-          throw new Error("500")
-        }
+  const fetch_res = await ufetch()
+
+  try {
+    // 如果HTTP状态码为401
+    if (fetch_res.status == StatusCodes.UNAUTHORIZED) {
+      isStatusOk = false
+      // 刷新token
+      const resRefresh = await lrsOAuth2Instance.lrsOAuth2rRefreshToken(
+        getV1BaseURL("/refresh"),
+        `Bearer ${authCodeOfCookie.access_token}`,
+      )
+      if (resRefresh.status == StatusCodes.UNAUTHORIZED) {
+        throw new Error("401")
       }
-    } catch (error) {
-      const state = generateRandomString()
-      // 补货到抛出的错误 重新初始化token 重新登录
-      const res = await lrsOAuth2Instance.lrsOAuth2Initiate(getV1BaseURL("/initiate"), {
-        state,
-        redirect_url: location.origin + "/auth2",
-      })
-      if (res.code === STATUS_SUCCESS) {
-        // 存储当前的url地址
-        setCookie(OAUTH2_PATH_FROM as string, location.href)
-        // 跳转到登录页面的地址
-        location.href = res.data.location
+      const result = await resRefresh.json()
+      if (result.code == STATUS_SUCCESS) {
+        // 设置新的cookie
+        setCookie(OAUTH2_ACCESS_TOKEN, result.data)
+      } else {
+        throw new Error("500")
       }
     }
-    // 当通用请求fetcher http状态码不为401直接返回结果
-    return res
-  })
-
-  return (isStatusOk ? result : ufetch())
-    .then((res) => res.json())
-    .then((res) => {
-      if (res.code !== STATUS_SUCCESS) {
-        message.error(res.msg)
-        return Promise.reject(res.msg)
-      }
-      return res.data
+  } catch (error) {
+    const state = generateRandomString()
+    // 补货到抛出的错误 重新初始化token 重新登录
+    const res = await lrsOAuth2Instance.lrsOAuth2Initiate(getV1BaseURL("/initiate"), {
+      state,
+      redirect_url: location.origin + "/auth2",
     })
+    if (res.code === STATUS_SUCCESS) {
+      // 存储当前的url地址
+      setCookie(OAUTH2_PATH_FROM as string, location.href)
+      // 跳转到登录页面的地址
+      location.href = res.data.location
+    }
+  }
+
+  const res = await (isStatusOk ? fetch_res : ufetch())
+  const r = await res!.json()
+  if (r.code !== STATUS_SUCCESS) {
+    return Promise.reject(r.msg)
+  }
+  return r.data
 }

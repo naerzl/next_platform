@@ -13,50 +13,25 @@ import "./globals.scss"
 
 const inter = Inter({ subsets: ["latin"] })
 
-const routeData = [
-  {
-    path: "/design-data",
-    name: "设计数据",
-  },
-  {
-    path: "/dictionary",
-    name: "数据字典",
-  },
-]
-
-const handleFindTitle = (path: string) => {
-  const route = routeData.find((item) => item.path == path)
-  return route ? route.name : "首页"
-}
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const pathName = usePathname()
+  const [collapsed, setCollapsed] = React.useState(false)
+
+  const changeCollapsed = (bool: boolean) => {
+    setCollapsed(bool)
+  }
 
   return (
     <html lang="en" id="_next">
       <body className={`${inter.className} flex`}>
         <StyledComponentsRegistry>
           <SWRConfig value={{ provider: () => new Map() }}>
-            <aside className="h-full w-60  min-w-[15rem]">
-              <Side />
+            <aside className={`h-full   ${collapsed ? "" : "min-w-[15rem] w-60"}`}>
+              <Side collapsed={collapsed} />
             </aside>
             <div className="flex-1 flex  flex-col bg-[#f8fafb] min-w-[50.625rem] overflow-overlay">
-              <Nav />
-              <main className="p-7 flex-1 max-main flex flex-col">
-                <h3 className="font-bold text-[1.875rem]">{handleFindTitle(pathName)}</h3>
-                <Breadcrumbs aria-label="breadcrumb" className="my-2">
-                  <Link underline="hover" color="inherit" href="/">
-                    MUI
-                  </Link>
-                  <Link
-                    underline="hover"
-                    color="inherit"
-                    href="/material-ui/getting-started/installation/">
-                    Core
-                  </Link>
-                  <Typography color="text.primary">Breadcrumbs</Typography>
-                </Breadcrumbs>
-                {children}
-              </main>
+              <Nav collapsed={collapsed} changeCollapsed={changeCollapsed} />
+              <main className="p-7 flex-1 max-main flex flex-col">{children}</main>
             </div>
           </SWRConfig>
         </StyledComponentsRegistry>
