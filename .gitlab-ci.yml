@@ -33,7 +33,7 @@ build-job:       # This job runs in the build stage, which runs first.
     - npm run build
     - tar cf out.tar out
     - scp out.tar root@121.37.83.16:/www/edms-platform
-    - ssh root@121.37.83.16 "cp -rf /www/edms-platform/out /www/edms-platform/out.old && tar -xvf /www/out.tar -C /www/edms-platform"
+    - ssh root@121.37.83.16 "cp -rf /www/edms-platform/out /www/edms-platform/out.old && tar -xvf /www/edms-platform/out.tar -C /www/edms-platform"
     - echo "Compiling the code..."
     - echo "Compile complete."
 
