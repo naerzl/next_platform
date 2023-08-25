@@ -1,6 +1,8 @@
 import { fetcher } from "@/libs/fetch"
 import { FetchParams } from "@/types/api"
 import {
+  TypeApiGEtCodeCountParams,
+  TypeApiGetCodeCountResponse,
   TypeApiGetEBSParams,
   TypeApiPostEBSParams,
   TypeApiPostEBSResponse,
@@ -29,3 +31,9 @@ export const reqDeleteEBS = (
   url: string,
   { arg }: FetchParams<{ id: number; project_id: number }>,
 ) => fetcher({ url, arg, method: "delete" })
+
+/*获取EBS指定code（父级）下级数量统计*/
+export const reqGetCodeCount = (
+  url: string,
+  { arg }: FetchParams<TypeApiGEtCodeCountParams>,
+): Promise<TypeApiGetCodeCountResponse[]> => fetcher({ url, arg })

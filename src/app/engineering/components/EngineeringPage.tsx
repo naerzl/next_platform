@@ -32,13 +32,13 @@ export default function EngineeringPage() {
       title: "编号",
       dataIndex: "code",
       key: "code",
-      align: "center",
+      align: "left",
     },
     {
       title: "行业名称",
       dataIndex: "created_at",
       key: "created_at",
-      align: "center",
+      align: "left",
 
       render() {
         return <div>铁路</div>
@@ -48,13 +48,13 @@ export default function EngineeringPage() {
       title: "铁路类型",
       dataIndex: "class_name",
       key: "class_name",
-      align: "center",
+      align: "left",
       render(_, record) {
         return <div>{record.is_highspeed == 1 ? "高速" : "普速"}</div>
       },
     },
     {
-      align: "center",
+      align: "left",
       title: "专业名称",
       dataIndex: "name",
       key: "name",
@@ -104,7 +104,7 @@ export default function EngineeringPage() {
           <div>
             <Input.Search
               size="large"
-              placeholder="搜索项目名称"
+              placeholder="搜索专业名称"
               onSearch={(value: string) => {
                 handleClickSearch(value)
               }}></Input.Search>

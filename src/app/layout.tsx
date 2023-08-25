@@ -14,7 +14,6 @@ import "./globals.scss"
 const inter = Inter({ subsets: ["latin"] })
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const pathName = usePathname()
   const [collapsed, setCollapsed] = React.useState(false)
 
   const changeCollapsed = (bool: boolean) => {
@@ -27,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <StyledComponentsRegistry>
           <SWRConfig value={{ provider: () => new Map() }}>
             <aside className={`h-full   ${collapsed ? "" : "min-w-[15rem] w-60"}`}>
-              <Side collapsed={collapsed} />
+              <Side />
             </aside>
             <div className="flex-1 flex  flex-col bg-[#f8fafb] min-w-[50.625rem] overflow-overlay">
               <Nav collapsed={collapsed} changeCollapsed={changeCollapsed} />

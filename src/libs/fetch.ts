@@ -109,6 +109,7 @@ export async function fetcher<T>(params: FetcherOptions<T>) {
   const res = await (isStatusOk ? fetch_res : ufetch())
   const r = await res!.json()
   if (r.code !== STATUS_SUCCESS) {
+    message.error(r.msg)
     return Promise.reject(r.msg)
   }
   return r.data

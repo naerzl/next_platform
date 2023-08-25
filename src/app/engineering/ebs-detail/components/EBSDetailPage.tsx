@@ -38,20 +38,6 @@ const columns = [
     dataIndex: "is_prefix",
     key: "is_prefix",
   },
-  {
-    title: "操作",
-    dataIndex: "操作",
-    key: "操作",
-    render() {
-      return (
-        <div>
-          <Button type="primary" className="bg-railway_blue">
-            保存
-          </Button>
-        </div>
-      )
-    },
-  },
 ]
 
 // 转换数据 添加自定义字段 key
@@ -89,16 +75,6 @@ export default function EBSDetailPage() {
   const [tableLoading, setTableLoading] = React.useState(false)
 
   // 渲染表格行
-  const renderTableTr = (arr: TypeSubsectionData[]) => {
-    return arr.map((item) => (
-      <TableTr key={item.id} item={item} handleExpandOrClose={handleExpandOrClose}>
-        {!item.isCloseChildren &&
-          item.children &&
-          item.children.length > 0 &&
-          renderTableTr(item.children)}
-      </TableTr>
-    ))
-  }
 
   const handleRenderTreeChildren = (data: TypeSubsectionData[], indexStr: string) => {
     const newData = structuredClone(tableData)
@@ -120,6 +96,28 @@ export default function EBSDetailPage() {
     setTableData(newData)
   }
 
+  const handleGetParentChildren = async (parentIndexArr: string[]) => {
+    if (parentIndexArr[0] == "" || parentIndexArr[0] == undefined) {
+      getSubSectionApi({ parent_id: JSON.stringify([+searchParams.get("id")!]) as string }).then(
+        (res) => {
+          if (res) {
+            const newArr = changeTreeArr(res)
+            setTableData(newArr)
+          }
+        },
+      )
+    } else {
+      // 获取到父级节点
+      const parentItem = eval(`tableData[${parentIndexArr.join("].children[")}]`)
+      // 获取父级的数据
+      const res = await getSubSectionApi({
+        parent_id: JSON.stringify([parentItem.id]),
+      })
+
+      handleRenderTreeChildren(res, parentItem.key as string)
+    }
+  }
+
   const handleExpandOrClose = async (expand: boolean, record: TypeSubsectionData) => {
     setTableLoading(true)
     // 判断是展开还是关闭
@@ -134,15 +132,30 @@ export default function EBSDetailPage() {
     }, 800)
   }
 
+  const renderTableTr = (arr: TypeSubsectionData[]) => {
+    return arr.map((item) => (
+      <TableTr
+        key={item.id}
+        item={item}
+        handleExpandOrClose={handleExpandOrClose}
+        handleGetParentChildren={handleGetParentChildren}>
+        {!item.isCloseChildren &&
+          item.children &&
+          item.children.length > 0 &&
+          renderTableTr(item.children)}
+      </TableTr>
+    ))
+  }
+
   return (
     <>
       <h3 className="font-bold text-[1.875rem]">分部分项模板</h3>
       <Breadcrumbs aria-label="breadcrumb" className="my-2">
         <Link underline="hover" color="inherit" href="/">
-          工程专业列表
+          首页
         </Link>
         <Link underline="hover" color="inherit" href="/engineering">
-          首页
+          工程专业列表
         </Link>
         <Typography color="text.primary">分部分项模板</Typography>
       </Breadcrumbs>
@@ -150,14 +163,14 @@ export default function EBSDetailPage() {
         <Spin spinning={tableLoading}>
           <table className="w-full h-full border-spacing-0 border-separate">
             <thead className="bg-[#fafafa] h-12 text-sm">
-              <tr className="grid grid-cols-8 h-full">
+              <tr className="grid grid-cols-7 h-full">
                 {columns.map((col, index) => (
                   <th
                     className={`border flex items-center justify-center ${
                       index == 0 ? "col-span-3" : ""
                     }`}
                     key={col.dataIndex}>
-                    {col.render ? col.render() : col.title}
+                    {col.title}
                   </th>
                 ))}
               </tr>

@@ -112,6 +112,9 @@ function DialogEBS(props: Props) {
     if (apiParams.subpart_class) {
       getHighOrNormalSpeed(apiParams.subpart_class)
     }
+
+
+
     form.resetFields(["h_subpart_code", "n_subpart_code"])
   }, [apiParams.subpart_class])
 
@@ -141,25 +144,34 @@ function DialogEBS(props: Props) {
       </div>
       <Form.Item name="subpart_class" label="节点类型">
         <Select
+            allowClear
           placeholder="请选择分部分项类型"
           size="large"
           options={ENUM_SUBPARY_CLASS}
           onChange={(value) => {
             setApiParams((pre) => ({ ...pre, subpart_class: value }))
-          }}></Select>
+          }}
+
+        ></Select>
       </Form.Item>
       {form.getFieldValue("subpart_class") != "examination" &&
         Boolean(form.getFieldValue("subpart_class")) && (
           <>
             <Form.Item name="h_subpart_code" label="高速编码">
               <Select
-                placeholder="请输入高速分部分项code"
+                  allowClear
+                showSearch
+                placeholder="输入文字可检索"
                 size="large"
+                filterOption={(input, option) => (option?.label ?? "").includes(input)}
                 options={highSpeed}></Select>
             </Form.Item>
             <Form.Item label="普速编码" name="n_subpart_code">
               <Select
-                placeholder="请输入普速分部分项code"
+                  allowClear
+                showSearch
+                filterOption={(input, option) => (option?.label ?? "").includes(input)}
+                placeholder="输入文字可检索"
                 size="large"
                 options={normalSpeed}></Select>
             </Form.Item>

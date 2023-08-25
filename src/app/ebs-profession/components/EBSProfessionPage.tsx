@@ -106,7 +106,7 @@ export default function EBSProfessionPage() {
         <header className="flex justify-between mb-4">
           <div>
             <Input.Search
-              placeholder="搜索项目名称"
+              placeholder="搜索EBS专业名称"
               size="large"
               onSearch={(value: string) => {
                 handleClickSearch(value)

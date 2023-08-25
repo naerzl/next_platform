@@ -15,7 +15,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined"
 import DialogSideBar from "./DialogSideBar"
 import useMutation from "swr/mutation"
 import { DictionaryClassData } from "../types"
-import { message } from "antd"
+import {Dropdown, MenuProps, message, Popconfirm} from "antd"
 import SideContext from "../context/sideContext"
 import { reqDeleteDictionaryClass } from "../api"
 import { iconList } from "./IconEnum"
@@ -34,7 +34,7 @@ export default function SideBar() {
   const handleClickCaidanIcon = (event: any, id: number, str: string) => {
     event.stopPropagation()
     // 设置菜单打开的位置
-    setAnchorEl(event.currentTarget)
+    // setAnchorEl(event.currentTarget)
     // 设置当前点击的侧边栏
     setHandleId(id)
     // 设置被点击的菜单要处理的层级
@@ -133,6 +133,32 @@ export default function SideBar() {
     ctx.getSubClassList(id, newStr)
   }
 
+  const items:MenuProps['items'] = [
+    {
+      key:'1',
+      label:'编辑'
+    },
+    {
+      key:'1',
+      label:(
+          <Popconfirm
+              className='z-40'
+              title='您确定删除吗？'
+              description="删除后将无法恢复，是否确定删除?"
+              onConfirm={() => {
+                handleClickMenuDel()
+              }}
+              okText="确定"
+              cancelText="取消"
+              okButtonProps={{className:'bg-railway_error'}}
+          >
+
+            <span>删除</span>
+          </Popconfirm>)
+    }
+  ]
+
+
   const RenderListItem = (arr: any[], indexStr = "") => {
     return arr.map((item, index) => {
       let str = indexStr ? `${indexStr}-${index}` : `${index}`
@@ -155,12 +181,14 @@ export default function SideBar() {
                   onClick={(e) => handleClickAddSub(e, item, str)}
                 />
               )}
+              <Dropdown menu={{ items }} trigger={['click']}>
               <DragIndicatorIcon
                 fontSize="small"
                 onClick={(e) => {
                   handleClickCaidanIcon(e, item.id, str)
                 }}
               />
+              </Dropdown>
             </ListItemIcon>
           </ListItemButton>
           <Collapse in={collapseOpen.startsWith(str)} timeout="auto" unmountOnExit>
@@ -200,7 +228,20 @@ export default function SideBar() {
           "aria-labelledby": "basic-button",
         }}>
         <MenuItem onClick={handleClickMenuEdit}>修改</MenuItem>
-        <MenuItem onClick={handleClickMenuDel}>删除</MenuItem>
+        <Popconfirm
+            className='z-40'
+            title='您确定删除吗？'
+            description="删除后将无法恢复，是否确定删除?"
+            onConfirm={() => {
+              handleClickMenuDel()
+            }}
+            okText="确定"
+            cancelText="取消"
+            okButtonProps={{className:'bg-railway_error'}}
+        >
+
+        <MenuItem>删除</MenuItem>
+        </Popconfirm>
       </Menu>
       <Button
         fullWidth

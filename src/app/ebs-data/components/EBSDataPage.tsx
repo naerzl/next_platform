@@ -1,7 +1,7 @@
 "use client"
 import React from "react"
 import useSWRMutation from "swr/mutation"
-import { reqGetEBS } from "@/app/ebs-data/api"
+import { reqGetEBS, reqGetCodeCount } from "@/app/ebs-data/api"
 import { TypeEBSDataList } from "@/app/ebs-data/types"
 import TableTr from "@/app/ebs-data/components/TableTr"
 import { Spin } from "antd"
@@ -95,7 +95,7 @@ function EBSDataPage() {
   React.useEffect(() => {
     getEBSApi(
       searchParams.get("code")
-        ? { level: 2, code: searchParams.get("code") as string }
+        ? { level: 1, code: searchParams.get("code") as string }
         : { level: 1 },
     ).then((res) => {
       if (res) {
@@ -128,6 +128,8 @@ function EBSDataPage() {
   // 控制表格加载状态
   const [tableLoading, setTableLoading] = React.useState(false)
 
+  const { trigger: getCodeCountApi } = useSWRMutation("/ebs/code-count", reqGetCodeCount)
+
   // 列表展开合并触发的方法
   const handleExpandChange = async (expanded: boolean, record: TypeEBSDataList) => {
     setTableLoading(true)
@@ -137,7 +139,33 @@ function EBSDataPage() {
         code: record.code,
         level: record.level + 1,
       })
-      renderTreeArr(res, record.key as string)
+
+      if (res.length > 0) {
+        const codeArr = res.map((item) => item.code)
+        // 获取子节点
+        const resCount = await getCodeCountApi({
+          code: JSON.stringify(codeArr),
+          level: record.level + 2,
+        })
+        if (Object.keys(resCount).length > 0) {
+          const childrenArr = res.map((item) => ({
+            ...item,
+            childrenCount: resCount[String(item.code) as any] || {
+              platform: 0,
+              system: 0,
+              userdefined: 0,
+              none: 0,
+            },
+          }))
+          renderTreeArr(childrenArr, record.key as string)
+        } else {
+          const childrenArr = res.map((item) => ({
+            ...item,
+            childrenCount: { platform: 0, system: 0, userdefined: 0, none: 0 },
+          }))
+          renderTreeArr(childrenArr, record.key as string)
+        }
+      }
     } else {
       renderTreeArrOfCloseChildren(record.key as string)
     }
@@ -147,14 +175,13 @@ function EBSDataPage() {
   // 获取父级的子集节点
   const handleGetParentChildren = async (parentIndexArr: string[]) => {
     if (parentIndexArr[0] == "" || parentIndexArr[0] == undefined) {
-      getEBSApi({ level: 2, code: searchParams.get("code") as string }).then((res) => {
+      getEBSApi({ level: 1, code: searchParams.get("code") as string }).then((res) => {
         if (res) {
           const newArr = changeTreeArr(res)
           setTableData(newArr)
         }
       })
     } else {
-      console.log(parentIndexArr)
       // 获取到父级节点
       const parentItem = eval(`tableData[${parentIndexArr.join("].children[")}]`)
       // 获取父级的数据

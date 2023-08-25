@@ -30,6 +30,12 @@ export interface TypeEBSDataList {
   has_children: string
   children?: TypeEBSDataList[]
   isCloseChildren?: boolean
+  childrenCount?: {
+    platform: number
+    system: number
+    userdefined: number
+    none: number
+  }
 }
 
 /*创建EBS结构 请求参数*/
@@ -58,4 +64,18 @@ export interface TypeApiPutEBSParams {
   n_subpart_code: string
   subpart_class: string
   is_loop: "yes" | "no"
+}
+
+/*获取EBS指定code 接口的相应数据*/
+export interface TypeApiGetCodeCountResponse {
+  platform: number
+  system: number
+  userdefined: number
+  none: number
+}
+
+// 获取EBS指定code请求参数
+export interface TypeApiGEtCodeCountParams {
+  code: string
+  level: number
 }

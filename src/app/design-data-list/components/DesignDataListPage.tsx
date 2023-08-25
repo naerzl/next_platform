@@ -107,7 +107,7 @@ export default function DesignDataListPage() {
           <div>
             <Input.Search
               size="large"
-              placeholder="搜索项目名称"
+              placeholder="搜索模板名称"
               onSearch={(value: string) => {
                 handleClickSearch(value)
               }}></Input.Search>

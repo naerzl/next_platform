@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react"
 import { TypeEBSDataList } from "@/app/ebs-data/types"
-import { MenuProps, Spin, Switch } from "antd"
+import { MenuProps, Popconfirm, Spin, Switch } from "antd"
 import useSWRMutation from "swr/mutation"
 import { reqDeleteEBS, reqGetEBS } from "@/app/ebs-data/api"
 import EBSDataContext from "@/app/ebs-data/context/ebsDataContext"
@@ -83,7 +83,7 @@ function TableTr(props: Props) {
     handleEditCustomEBS(item)
   }
 
-  const hanldeIconDel = async () => {
+  const handleIconDel = async () => {
     // 调佣删除接口
     await deleteEBSApi({ id: item.id, project_id: 1 })
     //   删除成功需要刷新父级节点下面的children
@@ -109,6 +109,29 @@ function TableTr(props: Props) {
     open && filterItemsOfMenu(item.is_loop, item.is_system)
   }
 
+  const [haveChildren, setHaveChildren] = React.useState(true)
+
+  const initHave2and5 = async () => {
+    // 计算当前项的子集还有没有数据
+    let count = 0
+    if (item.childrenCount) {
+      for (const key in item.childrenCount) {
+        // @ts-ignore
+        count += item.childrenCount[key]
+      }
+      if (count <= 0) {
+        setHaveChildren(false)
+      }
+      if (item.children!.length > 0) {
+        setHaveChildren(true)
+      }
+    }
+  }
+
+  React.useEffect(() => {
+    initHave2and5()
+  }, [item.children?.length])
+
   // 点击 字体图片展开功能
   const handleClick = () => {
     ctx.handleExpandChange(true, item)
@@ -128,24 +151,28 @@ function TableTr(props: Props) {
           <div
             className="flex-1 flex-shrink-0  overflow-hidden text-ellipsis whitespace-nowrap"
             style={{ textIndent: `${(item.level - 1) * 10}px` }}>
-            {props.children ? (
-              <i
-                className="iconfont  icon-xiangxiajiantou  text-[14px] font-bold mr-1.5"
-                onClick={() => {
-                  handleClickClose()
-                }}></i>
-            ) : (
-              <i
-                className="iconfont icon-xiangyoujiantou text-[14px] font-bold mr-1.5"
-                onClick={() => {
-                  handleClick()
-                }}></i>
-            )}
+            {props.children
+              ? haveChildren && (
+                  <i
+                    className="iconfont  icon-xiangxiajiantou  text-[14px] font-bold mr-1.5"
+                    onClick={() => {
+                      handleClickClose()
+                    }}></i>
+                )
+              : haveChildren && (
+                  <i
+                    className="iconfont icon-xiangyoujiantou text-[14px] font-bold mr-1.5"
+                    onClick={() => {
+                      handleClick()
+                    }}></i>
+                )}
 
             <span>{item.name}</span>
           </div>
         </td>
-        <td className="border p-4 text-center">{item.code}</td>
+        <td className="border p-4 text-center" title={item.code}>
+          {item.code}
+        </td>
         <td className="border p-4 text-center">{item.unit}</td>
         <td className="border p-4 text-center">
           {item.is_system ? ENUM_ATTRIBUTION.find((el) => el.value == item.is_system)?.label : ""}
@@ -162,7 +189,7 @@ function TableTr(props: Props) {
         </td>
         <td className="border p-4">
           <Spin spinning={false} size="small">
-            <div className="text-[#757575] flex gap-x-1 w-[6.25rem] justify-center">
+            <div className="text-[#757575] flex gap-x-2.5 w-[6.25rem] justify-center">
               <i
                 className="iconfont icon-jia w-4 aspect-square cursor-pointer"
                 title="添加"
@@ -177,12 +204,17 @@ function TableTr(props: Props) {
                   handleIconEdit()
                 }}></i>
               {item.is_system !== "system" && (
-                <i
-                  className="iconfont icon-shanchu w-4 aspect-square cursor-pointer"
-                  title="删除"
-                  onClick={() => {
-                    hanldeIconDel()
-                  }}></i>
+                <Popconfirm
+                  title="您确定删除吗？"
+                  description="删除后将无法恢复，是否确定删除?"
+                  onConfirm={() => {
+                    handleIconDel()
+                  }}
+                  okText="确定"
+                  cancelText="取消"
+                  okButtonProps={{ className: "bg-railway_error" }}>
+                  <i className="iconfont icon-shanchu w-4 aspect-square" title="删除"></i>
+                </Popconfirm>
               )}
             </div>
           </Spin>

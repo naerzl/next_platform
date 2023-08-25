@@ -14,3 +14,14 @@ export const reqGetSubsection = (
     is_highspeed?: 0 | 1
   }>,
 ): Promise<TypeSubsectionData[]> => fetcher({ url, arg })
+
+export const reqPutSubsection = (
+  url: string,
+  {
+    arg,
+  }: FetchParams<{
+    id: number
+    subpart_type?: "basic" | "sync"
+    is_prefix?: 0 | 1
+  }>,
+) => fetcher({ url, arg, method: "put" })
