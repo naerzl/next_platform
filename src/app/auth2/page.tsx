@@ -19,7 +19,7 @@ function Auth2() {
         if (res.code !== 2000) return
         setCookie(OAUTH2_ACCESS_TOKEN as string, JSON.stringify(res.data))
         if (searchParams.get("is_first_login") == "true") {
-          router.push("http://192.168.2.17:3000/firstchangepassword")
+          router.push(`${process.env.NEXT_PUBLIC_AUTH_PATH}/firstchangepassword`)
         } else {
           router.push(getCookie(OAUTH2_PATH_FROM as string) || "/")
         }
