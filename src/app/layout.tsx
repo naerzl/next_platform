@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${inter.className} flex`}>
         <StyledComponentsRegistry>
           <SWRConfig value={{ provider: () => new Map() }}>
-            <aside className={`h-full   ${collapsed ? "" : "min-w-[15rem] w-60"}`}>
+            <aside className={`h-full   ${collapsed ? "" : "min-w-[15rem] w-60"} border-r`}>
               <Side />
             </aside>
             <div className="flex-1 flex  flex-col bg-[#f8fafb] min-w-[50.625rem] overflow-overlay">

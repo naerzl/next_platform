@@ -22,7 +22,7 @@ function Nav(props: Props) {
   }
 
   return (
-    <AppBar position="static" className="bg-[#fff] shadow-none max-h-16">
+    <AppBar position="static" className="bg-[#fff] shadow-none max-h-16 border-b">
       <Toolbar className="flex justify-between">
         {/* 导航左侧 */}
         <div></div>

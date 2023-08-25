@@ -99,10 +99,11 @@ export default function EngineeringPage() {
         </Link>
         <Typography color="text.primary">工程专业列表</Typography>
       </Breadcrumbs>
-      <div className="flex-1 flex-shrink-0 overflow-auto bg-white">
+      <div className="flex-1 flex-shrink-0 overflow-auto bg-white border">
         <header className="flex justify-between mb-4">
           <div>
             <Input.Search
+              className="rounded-none"
               size="large"
               placeholder="搜索专业名称"
               onSearch={(value: string) => {

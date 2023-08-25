@@ -151,7 +151,7 @@ export default function DictionaryMain() {
         <Typography color="text.primary">数据字典</Typography>
       </Breadcrumbs>
 
-      <div className="flex-1 flex-shrink-0 overflow-auto bg-white">
+      <div className="flex-1 flex-shrink-0 overflow-auto bg-white border">
         <div className="h-full flex">
           {/* 左侧导航 */}
           <aside className="w-60 h-full  mr-3 bg-white">

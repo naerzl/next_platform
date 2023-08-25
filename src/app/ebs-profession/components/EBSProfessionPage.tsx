@@ -102,7 +102,7 @@ export default function EBSProfessionPage() {
         </Link>
         <Typography color="text.primary">EBS专业列表</Typography>
       </Breadcrumbs>
-      <div className="flex-1 flex-shrink-0 overflow-auto bg-white">
+      <div className="flex-1 flex-shrink-0 overflow-auto bg-white border">
         <header className="flex justify-between mb-4">
           <div>
             <Input.Search

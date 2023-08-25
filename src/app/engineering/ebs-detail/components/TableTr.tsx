@@ -32,7 +32,7 @@ const select_option = [
 ]
 
 function TableTr(props: Props) {
-  const { item, handleExpandOrClose, handleGetParentChildren } = props
+  const { item, handleExpandOrClose } = props
 
   const handleClickClose = () => {
     handleExpandOrClose(false, item)
@@ -42,19 +42,17 @@ function TableTr(props: Props) {
     handleExpandOrClose(true, item)
   }
 
-  const handleIconEdit = () => {}
-
   const { trigger: putSubsectionApi } = useSWRMutation("/subsection", reqPutSubsection)
   const handleClickSwitch = async (checked: boolean) => {
     await putSubsectionApi({ is_prefix: checked ? 1 : 0, id: item.id })
-    const parentIndexArr = item.key?.split("-").slice(0, item.key?.split("-").length - 1)
-    handleGetParentChildren(parentIndexArr as string[])
+    // const parentIndexArr = item.key?.split("-").slice(0, item.key?.split("-").length - 1)
+    // handleGetParentChildren(parentIndexArr as string[])
   }
 
   const handleSelect = async (value: "basic" | "sync") => {
     await putSubsectionApi({ subpart_type: value, id: item.id })
-    const parentIndexArr = item.key?.split("-").slice(0, item.key?.split("-").length - 1)
-    handleGetParentChildren(parentIndexArr as string[])
+    // const parentIndexArr = item.key?.split("-").slice(0, item.key?.split("-").length - 1)
+    // handleGetParentChildren(parentIndexArr as string[])
   }
   return (
     <>

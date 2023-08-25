@@ -59,6 +59,14 @@ function Side() {
     }
   }
 
+  const changeIcon = (path: string) => {
+    return pathName == path ? (
+      <i className="w-2 h-2 rounded-full bg-[#44566c]"></i>
+    ) : (
+      <i className="w-2 h-2 rounded-full border-2 border-[#44566c]"></i>
+    )
+  }
+
   return (
     <List
       sx={{ width: "100%", maxWidth: "15rem", bgcolor: "background.paper" }}
@@ -78,7 +86,7 @@ function Side() {
         onClick={() => {
           handleClickOpen("公共库")
         }}>
-        <ListItemIcon>
+        <ListItemIcon className="min-w-0 mr-2.5">
           <ArchiveOutlinedIcon />
         </ListItemIcon>
         <ListItemText>公共库</ListItemText>
@@ -88,22 +96,18 @@ function Side() {
       <Collapse in={openList.includes("公共库")} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
           <Link href="/dictionary">
-            <ListItemButton
-              className="pl-8"
-              sx={pathName == "/dictionary/" ? { bgcolor: "#eef0f1" } : {}}>
-              <ListItemIcon>
-                <HdrStrongOutlinedIcon fontSize="small" />
+            <ListItemButton sx={pathName == "/dictionary/" ? { bgcolor: "#eef0f1" } : {}}>
+              <ListItemIcon className="min-w-0 mr-2.5 flex justify-center items-center">
+                {changeIcon("/dictionary/")}
               </ListItemIcon>
               <ListItemText>字典库</ListItemText>
             </ListItemButton>
           </Link>
 
           <Link href="/collection">
-            <ListItemButton
-              className="pl-8"
-              sx={pathName == "/collection/" ? { bgcolor: "#eef0f1" } : {}}>
-              <ListItemIcon>
-                <HdrStrongOutlinedIcon fontSize="small" />
+            <ListItemButton sx={pathName == "/collection/" ? { bgcolor: "#eef0f1" } : {}}>
+              <ListItemIcon className="min-w-0 mr-2.5 flex justify-center items-center">
+                {changeIcon("/collection/")}
               </ListItemIcon>
               <ListItemText>表结构库</ListItemText>
             </ListItemButton>
@@ -115,7 +119,7 @@ function Side() {
         onClick={() => {
           handleClickOpen("数据模板")
         }}>
-        <ListItemIcon>
+        <ListItemIcon className="min-w-0 mr-2.5">
           <TuneOutlinedIcon />
         </ListItemIcon>
         <ListItemText>数据模板</ListItemText>
@@ -125,33 +129,27 @@ function Side() {
       <Collapse in={openList.includes("数据模板")} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
           <Link href="/ebs-profession">
-            <ListItemButton
-              className="pl-8"
-              sx={pathName == "/ebs-profession/" ? { bgcolor: "#eef0f1" } : {}}>
-              <ListItemIcon>
-                <HdrStrongOutlinedIcon fontSize="small" />
+            <ListItemButton sx={pathName == "/ebs-profession/" ? { bgcolor: "#eef0f1" } : {}}>
+              <ListItemIcon className="min-w-0 mr-2.5 flex justify-center items-center">
+                {changeIcon("/ebs-profession/")}
               </ListItemIcon>
               <ListItemText>EBS专业列表</ListItemText>
             </ListItemButton>
           </Link>
 
           <Link href="/engineering">
-            <ListItemButton
-              className="pl-8"
-              sx={pathName == "/engineering/" ? { bgcolor: "#eef0f1" } : {}}>
-              <ListItemIcon>
-                <HdrStrongOutlinedIcon fontSize="small" />
+            <ListItemButton sx={pathName == "/engineering/" ? { bgcolor: "#eef0f1" } : {}}>
+              <ListItemIcon className="min-w-0 mr-2.5 flex justify-center items-center">
+                {changeIcon("/engineering/")}
               </ListItemIcon>
               <ListItemText primary="工程专业列表" />
             </ListItemButton>
           </Link>
 
           <Link href="/design-data-list">
-            <ListItemButton
-              className="pl-8"
-              sx={pathName == "/design-data-list/" ? { bgcolor: "#eef0f1" } : {}}>
-              <ListItemIcon>
-                <HdrStrongOutlinedIcon fontSize="small" />
+            <ListItemButton sx={pathName == "/design-data-list/" ? { bgcolor: "#eef0f1" } : {}}>
+              <ListItemIcon className="min-w-0 mr-2.5 flex justify-center items-center">
+                {changeIcon("/design-data-list/")}
               </ListItemIcon>
               <ListItemText primary="设计数据列表" />
             </ListItemButton>

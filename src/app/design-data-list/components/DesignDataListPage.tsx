@@ -102,7 +102,7 @@ export default function DesignDataListPage() {
         </Link>
         <Typography color="text.primary">设计数据列表</Typography>
       </Breadcrumbs>
-      <div className="flex-1 flex-shrink-0 overflow-auto bg-white">
+      <div className="flex-1 flex-shrink-0 overflow-auto bg-white border">
         <header className="flex justify-between mb-4">
           <div>
             <Input.Search

@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "//at.alicdn.com/t/c/font_4191244_qqll2j9wyy.css";
+@import "//at.alicdn.com/t/c/font_4191244_4pcof324byt.css";
 
 body,
 html {
@@ -53,3 +53,10 @@ html {
     background-color: #0162b1 !important;
   }
 }
+
+.ant-input-search{
+  .ant-input{
+    border-radius: 0;
+  }
+}
+
