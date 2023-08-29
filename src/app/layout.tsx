@@ -22,18 +22,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     setCollapsed(bool)
   }
 
-  function localStorageProvider(): any {
-    // 初始化时，我们将数据从 `localStorage` 恢复到一个 map 中。
-    const map = new Map(JSON.parse(localStorage.getItem("app-cache") || "[]"))
-    // 在卸载 app 之前，我们将所有数据写回 `localStorage` 中。
-    window.addEventListener("beforeunload", () => {
-      const appCache = JSON.stringify(Array.from(map.entries()))
-      localStorage.setItem("app-cache", appCache)
-    })
-
-    // 我们仍然使用 map 进行读写以提高性能。
-    return map
-  }
+  // function localStorageProvider(): any {
+  //   // 初始化时，我们将数据从 `localStorage` 恢复到一个 map 中。
+  //   const map = new Map(JSON.parse(localStorage.getItem("app-cache") || "[]"))
+  //   // 在卸载 app 之前，我们将所有数据写回 `localStorage` 中。
+  //   window.addEventListener("beforeunload", () => {
+  //     const appCache = JSON.stringify(Array.from(map.entries()))
+  //     localStorage.setItem("app-cache", appCache)
+  //   })
+  //
+  //   // 我们仍然使用 map 进行读写以提高性能。
+  //   return map
+  // }
 
   const scroll_dom = React.useRef<HTMLDivElement>(null)
 
@@ -43,7 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" id="_next">
       <body className={`${inter.className} flex`}>
         <StyledComponentsRegistry>
-          <SWRConfig value={{ provider: localStorageProvider }}>
+          <SWRConfig value={{ provider: () => new Map() }}>
             <aside className={`h-full   ${collapsed ? "" : "min-w-[15rem] w-60"} border-r`}>
               <Side />
             </aside>
