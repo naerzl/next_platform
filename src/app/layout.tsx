@@ -37,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   const scroll_dom = React.useRef<HTMLDivElement>(null)
 
-  const scroll = useScroll(scroll_dom)
+  // const scroll = useScroll(scroll_dom)
 
   return (
     <html lang="en" id="_next">
@@ -51,9 +51,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               ref={scroll_dom}
               className="flex-1 flex  flex-col bg-[#f8fafb] min-w-[50.625rem] overflow-auto">
               <Nav collapsed={collapsed} changeCollapsed={changeCollapsed} />
-              <LayoutContext.Provider value={{ scroll }}>
-                <main className="px-7.5 py-12  flex flex-col">{children}</main>
-              </LayoutContext.Provider>
+              {/*<LayoutContext.Provider value={{ scroll }}>*/}
+              <main className="px-7.5 py-12  flex flex-col">{children}</main>
+              {/*</LayoutContext.Provider>*/}
             </div>
           </SWRConfig>
         </StyledComponentsRegistry>
