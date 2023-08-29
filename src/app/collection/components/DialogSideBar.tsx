@@ -87,19 +87,19 @@ function DialogSideBar(props: Props) {
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>添加目录项</DialogTitle>
+      <DialogTitle>添加表结构名称</DialogTitle>
       <DialogContent sx={{ width: 500 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
             <div className="flex items-center">
-              <InputLabel htmlFor="name" className="mr-3 w-20 text-right inline-block">
-                字典名称:
+              <InputLabel htmlFor="name" className="mr-3 w-24 text-right inline-block">
+                表结构名称:
               </InputLabel>
               <TextField
                 id="name"
                 error={Boolean(errors.name)}
                 variant="outlined"
-                placeholder="请输入字典名称"
+                placeholder="请输入表结构名称"
                 className="flex-1"
                 {...register("name", { required: "请输入字典名称" })}
               />

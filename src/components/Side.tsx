@@ -83,10 +83,11 @@ function Side() {
         </ListSubheader>
       }>
       <ListItemButton
+        sx={{ color: "#44566c" }}
         onClick={() => {
           handleClickOpen("公共库")
         }}>
-        <ListItemIcon className="min-w-0 mr-2.5">
+        <ListItemIcon className="min-w-0 mr-2.5" sx={{ width: "1.5rem", height: "1.5rem" }}>
           <ArchiveOutlinedIcon />
         </ListItemIcon>
         <ListItemText>公共库</ListItemText>
@@ -97,29 +98,38 @@ function Side() {
         <List component="div" disablePadding>
           <Link href="/dictionary">
             <ListItemButton sx={pathName == "/dictionary/" ? { bgcolor: "#eef0f1" } : {}}>
-              <ListItemIcon className="min-w-0 mr-2.5 flex justify-center items-center">
+              <ListItemIcon
+                className="min-w-0 mr-2.5 flex justify-center items-center"
+                sx={{ width: "1.5rem", height: "1.5rem" }}>
                 {changeIcon("/dictionary/")}
               </ListItemIcon>
-              <ListItemText>字典库</ListItemText>
+              <ListItemText sx={{ color: pathName == "/dictionary/" ? "#44566c" : "#8697a8" }}>
+                字典库
+              </ListItemText>
             </ListItemButton>
           </Link>
 
           <Link href="/collection">
             <ListItemButton sx={pathName == "/collection/" ? { bgcolor: "#eef0f1" } : {}}>
-              <ListItemIcon className="min-w-0 mr-2.5 flex justify-center items-center">
+              <ListItemIcon
+                className="min-w-0 mr-2.5 flex justify-center items-center"
+                sx={{ width: "1.5rem", height: "1.5rem" }}>
                 {changeIcon("/collection/")}
               </ListItemIcon>
-              <ListItemText>表结构库</ListItemText>
+              <ListItemText sx={{ color: pathName == "/collection/" ? "#44566c" : "#8697a8" }}>
+                表结构库
+              </ListItemText>
             </ListItemButton>
           </Link>
         </List>
       </Collapse>
 
       <ListItemButton
+        sx={{ color: "#44566c" }}
         onClick={() => {
           handleClickOpen("数据模板")
         }}>
-        <ListItemIcon className="min-w-0 mr-2.5">
+        <ListItemIcon className="min-w-0 mr-2.5" sx={{ width: "1.5rem", height: "1.5rem" }}>
           <TuneOutlinedIcon />
         </ListItemIcon>
         <ListItemText>数据模板</ListItemText>
@@ -130,28 +140,42 @@ function Side() {
         <List component="div" disablePadding>
           <Link href="/ebs-profession">
             <ListItemButton sx={pathName == "/ebs-profession/" ? { bgcolor: "#eef0f1" } : {}}>
-              <ListItemIcon className="min-w-0 mr-2.5 flex justify-center items-center">
+              <ListItemIcon
+                className="min-w-0 mr-2.5 flex justify-center items-center"
+                sx={{ width: "1.5rem", height: "1.5rem" }}>
                 {changeIcon("/ebs-profession/")}
               </ListItemIcon>
-              <ListItemText>EBS专业列表</ListItemText>
+              <ListItemText sx={{ color: pathName == "/ebs-profession/" ? "#44566c" : "#8697a8" }}>
+                EBS专业列表
+              </ListItemText>
             </ListItemButton>
           </Link>
 
           <Link href="/engineering">
             <ListItemButton sx={pathName == "/engineering/" ? { bgcolor: "#eef0f1" } : {}}>
-              <ListItemIcon className="min-w-0 mr-2.5 flex justify-center items-center">
+              <ListItemIcon
+                className="min-w-0 mr-2.5 flex justify-center items-center"
+                sx={{ width: "1.5rem", height: "1.5rem" }}>
                 {changeIcon("/engineering/")}
               </ListItemIcon>
-              <ListItemText primary="工程专业列表" />
+              <ListItemText
+                primary="工程专业列表"
+                sx={{ color: pathName == "/engineering/" ? "#44566c" : "#8697a8" }}
+              />
             </ListItemButton>
           </Link>
 
           <Link href="/design-data-list">
             <ListItemButton sx={pathName == "/design-data-list/" ? { bgcolor: "#eef0f1" } : {}}>
-              <ListItemIcon className="min-w-0 mr-2.5 flex justify-center items-center">
+              <ListItemIcon
+                className="min-w-0 mr-2.5 flex justify-center items-center"
+                sx={{ width: "1.5rem", height: "1.5rem" }}>
                 {changeIcon("/design-data-list/")}
               </ListItemIcon>
-              <ListItemText primary="设计数据列表" />
+              <ListItemText
+                primary="设计数据列表"
+                sx={{ color: pathName == "/design-data-list/" ? "#44566c" : "#8697a8" }}
+              />
             </ListItemButton>
           </Link>
         </List>

@@ -15,10 +15,21 @@ interface Props {
 const ArrToTree = (arr: EBSTreeData[], ctx: any, indexStr = "") => {
   return arr?.map((item, index) => {
     let str = indexStr ? `${indexStr}-${index}` : `${index}`
+
+    let count = 0
+    if (item.childrenCount) {
+      for (const key in item.childrenCount) {
+        // @ts-ignore
+        count += item.childrenCount[key]
+      }
+    }
+
     return (
       <TreeItem
         className={`text-railway_303 ${item.has_structure == "yes" ? "_ff8a48" : "_fff"}`}
         nodeId={String(`${item.code}-${item.id}-${str}`)}
+        expandIcon={count <= 0 && item.level > 2 ? <></> : <ChevronRightIcon />}
+        collapseIcon={count <= 0 && item.level > 2 ? <></> : <ExpandMoreIcon />}
         label={item.name}
         key={item.id}
         style={{
@@ -46,8 +57,6 @@ export default function SideBar(props: Props) {
     <TreeView
       aria-label="file system navigator"
       onNodeSelect={handleSelectTree}
-      defaultCollapseIcon={<ExpandMoreIcon />}
-      defaultExpandIcon={<ChevronRightIcon />}
       sx={{ height: "100%", flexGrow: 1, maxWidth: 400, overflowY: "auto" }}>
       {ArrToTree(ctx.firstTreeList, ctx, "")}
     </TreeView>

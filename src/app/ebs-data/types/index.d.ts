@@ -3,6 +3,7 @@ export interface TypeApiGetEBSParams {
   code?: string
   level?: number
   name?: string
+  locate_code_or_name?: string
 }
 
 /*获取EBS结构列表 响应数据*/
@@ -36,6 +37,7 @@ export interface TypeEBSDataList {
     userdefined: number
     none: number
   }
+  related_ebs: TypeEBSDataList
 }
 
 /*创建EBS结构 请求参数*/
@@ -45,6 +47,7 @@ export interface TypeApiPostEBSParams {
   unit: string
   is_loop: "yes" | "no"
   subpart_class: string
+  related_to?: number | string
 }
 
 /*创建EBS结构 响应结果*/
@@ -64,6 +67,7 @@ export interface TypeApiPutEBSParams {
   n_subpart_code: string
   subpart_class: string
   is_loop: "yes" | "no"
+  related_to?: number | string
 }
 
 /*获取EBS指定code 接口的相应数据*/
@@ -78,4 +82,17 @@ export interface TypeApiGetCodeCountResponse {
 export interface TypeApiGEtCodeCountParams {
   code: string
   level: number
+}
+
+// 获取EBS指定code或者名称下的相关数据
+export interface TypeApiGetCodeRelationship {
+  id: number
+  code: string
+  name: string
+  relationShips: {
+    id: number
+    code: string
+    name: string
+    level: number
+  }[]
 }

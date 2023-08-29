@@ -66,12 +66,16 @@ export default function CollectionLayout({ children }: { children: React.ReactNo
         getSubClassList,
       }}>
       <h3 className="font-bold text-[1.875rem]">表结构库</h3>
-      <Breadcrumbs aria-label="breadcrumb" className="my-2">
-        <Link underline="hover" color="inherit" href="/">
-          首页
-        </Link>
-        <Typography color="text.primary">表结构库</Typography>
-      </Breadcrumbs>
+      <div className="mb-9 mt-7">
+        <Breadcrumbs aria-label="breadcrumb" className="my-2" separator=">">
+          <Link underline="hover" color="inherit" href="/">
+            <i className="iconfont icon-homefill" style={{ fontSize: "14px" }}></i>
+          </Link>
+          <Typography color="text.primary" sx={{ fontSize: "14px" }}>
+            表结构库
+          </Typography>
+        </Breadcrumbs>
+      </div>
       <div className="flex-1 flex-shrink-0 overflow-auto bg-white flex">
         <div className="h-full flex">
           {/* 左侧导航 */}

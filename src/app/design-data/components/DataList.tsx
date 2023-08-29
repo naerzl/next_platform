@@ -187,6 +187,13 @@ export default function DataList(props: Props) {
 
   return (
     <div className="flex-1 flex-shrink-0 overflow-auto">
+      <div className="flex justify-end">
+        <div
+          className="bg-railway_blue w-10 h-10 rounded-full flex justify-center items-center"
+          onClick={handleAddRow}>
+          <AddIcon className="text-[2.15rem] text-white" />
+        </div>
+      </div>
       <div className="overflow-hidden w-full">
         <Button
           variant="outlined"
@@ -280,11 +287,6 @@ export default function DataList(props: Props) {
         </div>
       ))}
 
-      <div>
-        <IconButton className="text-railway_blue" onClick={handleAddRow}>
-          <AddIcon className="text-[2.15rem]" />
-        </IconButton>
-      </div>
       <Menu
         id="demo-positioned-menu"
         aria-labelledby="demo-positioned-button"

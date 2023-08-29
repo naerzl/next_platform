@@ -4,7 +4,7 @@ import useSWRMutation from "swr/mutation"
 import { reqGetSubsection } from "../../api"
 import { useSearchParams } from "next/navigation"
 import { TypeSubsectionData } from "../../types"
-import { Button, Spin } from "antd"
+import { Spin } from "antd"
 import TableTr from "./TableTr"
 import { Breadcrumbs } from "@mui/material"
 import Link from "@mui/material/Link"
@@ -28,11 +28,7 @@ const columns = [
     dataIndex: "subpart_type",
     key: "subpart_type",
   },
-  {
-    title: "节点归属",
-    dataIndex: "subpart_class",
-    key: "subpart_class",
-  },
+
   {
     title: "是否前缀",
     dataIndex: "is_prefix",
@@ -59,20 +55,28 @@ export default function EBSDetailPage() {
 
   const searchParams = useSearchParams()
 
+  const [tableLoading, setTableLoading] = React.useState(false)
+
   const [tableData, setTableData] = React.useState<TypeSubsectionData[]>([])
+
   const getSubSection = async () => {
-    const res = await getSubSectionApi({
-      parent_id: JSON.stringify([+searchParams.get("id")!]) as string,
-    })
-    const newArr = changeTreeArr(res)
-    setTableData(newArr)
+    try {
+      setTableLoading(true)
+      const res = await getSubSectionApi({
+        parent_id: JSON.stringify([+searchParams.get("id")!]) as string,
+      })
+      const newArr = changeTreeArr(res)
+      setTableData(newArr)
+    } finally {
+      setTimeout(() => {
+        setTableLoading(false)
+      }, 500)
+    }
   }
 
   React.useEffect(() => {
     getSubSection()
   }, [])
-
-  const [tableLoading, setTableLoading] = React.useState(false)
 
   // 渲染表格行
 
@@ -129,7 +133,7 @@ export default function EBSDetailPage() {
     }
     setTimeout(() => {
       setTableLoading(false)
-    }, 800)
+    }, 500)
   }
 
   const renderTableTr = (arr: TypeSubsectionData[]) => {
@@ -150,23 +154,27 @@ export default function EBSDetailPage() {
   return (
     <>
       <h3 className="font-bold text-[1.875rem]">分部分项模板</h3>
-      <Breadcrumbs aria-label="breadcrumb" className="my-2">
-        <Link underline="hover" color="inherit" href="/">
-          首页
-        </Link>
-        <Link underline="hover" color="inherit" href="/engineering">
-          工程专业列表
-        </Link>
-        <Typography color="text.primary">分部分项模板</Typography>
-      </Breadcrumbs>
-      <div className="flex-1 flex-shrink-0 overflow-auto bg-white">
+      <div className="mb-9 mt-7">
+        <Breadcrumbs aria-label="breadcrumb" separator=">">
+          <Link underline="hover" color="inherit" href="/">
+            <i className="iconfont icon-homefill" style={{ fontSize: "14px" }}></i>
+          </Link>
+          <Link underline="hover" color="inherit" href="/engineering" sx={{ fontSize: "14px" }}>
+            工程专业列表
+          </Link>
+          <Typography color="text.primary" sx={{ fontSize: "14px" }}>
+            分部分项模板
+          </Typography>
+        </Breadcrumbs>
+      </div>
+      <div className="flex-1 flex-shrink-0 overflow-auto bg-white custom-scroll-bar shadow">
         <Spin spinning={tableLoading}>
-          <table className="w-full h-full border-spacing-0 border-separate">
-            <thead className="bg-[#fafafa] h-12 text-sm">
-              <tr className="grid grid-cols-7 h-full">
+          <table className="w-full h-full border-spacing-0 border-separate custom-table table-fixed">
+            <thead className="bg-[#fafafa] h-12 text-sm sticky top-0 z-40">
+              <tr className="grid grid-cols-6 h-full border-b bg-white">
                 {columns.map((col, index) => (
                   <th
-                    className={`border flex items-center justify-center ${
+                    className={` flex items-center justify-center ${
                       index == 0 ? "col-span-3" : ""
                     }`}
                     key={col.dataIndex}>

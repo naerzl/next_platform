@@ -144,52 +144,56 @@ function TableTr(props: Props) {
 
   return (
     <>
-      <tr className="h-14 grid grid-cols-11">
+      <tr className="h-14 grid grid-cols-12 border-b">
         <td
-          className="border p-4 overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer col-span-3 flex justify-between"
+          className=" p-4 overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer col-span-3 flex justify-between"
           title={item.name}>
           <div
             className="flex-1 flex-shrink-0  overflow-hidden text-ellipsis whitespace-nowrap"
-            style={{ textIndent: `${(item.level - 1) * 10}px` }}>
-            {props.children
-              ? haveChildren && (
-                  <i
-                    className="iconfont  icon-xiangxiajiantou  text-[14px] font-bold mr-1.5"
-                    onClick={() => {
-                      handleClickClose()
-                    }}></i>
-                )
-              : haveChildren && (
-                  <i
-                    className="iconfont icon-xiangyoujiantou text-[14px] font-bold mr-1.5"
-                    onClick={() => {
-                      handleClick()
-                    }}></i>
-                )}
+            style={{ textIndent: `${(item.level - 1) * 16}px` }}>
+            {props.children ? (
+              <i
+                className="iconfont  icon-xiangxiajiantou  text-[14px] font-bold mr-1.5"
+                style={haveChildren ? {} : { visibility: "hidden" }}
+                onClick={() => {
+                  handleClickClose()
+                }}></i>
+            ) : (
+              <i
+                style={haveChildren ? {} : { visibility: "hidden" }}
+                className="iconfont icon-xiangyoujiantou text-[14px] font-bold mr-1.5"
+                onClick={() => {
+                  handleClick()
+                }}></i>
+            )}
 
             <span>{item.name}</span>
           </div>
         </td>
-        <td className="border p-4 text-center" title={item.code}>
+        <td className=" p-4" title={item.code}>
           {item.code}
         </td>
-        <td className="border p-4 text-center">{item.unit}</td>
-        <td className="border p-4 text-center">
+        <td className=" p-4">{item.unit}</td>
+        <td className=" p-4">
           {item.is_system ? ENUM_ATTRIBUTION.find((el) => el.value == item.is_system)?.label : ""}
         </td>
-        <td className="border p-4 text-center">
+        <td className=" p-4">
           {item.subpart_class
             ? ENUM_SUBPARY_CLASS.find((ele) => ele.value == item.subpart_class)?.label
             : ""}
         </td>
-        <td className="border p-4 text-center">{item.h_subpart_code}</td>
-        <td className="border p-4 text-center">{item.n_subpart_code}</td>
-        <td className="border p-4 text-center">
+        <td className=" p-4">{item.h_subpart_code}</td>
+        <td className=" p-4">{item.n_subpart_code}</td>
+        <td className=" p-4">
           <Switch className="bg-[#bfbfbf]" checked={item.is_loop == "yes" ? true : false}></Switch>
         </td>
-        <td className="border p-4">
+        <td className="  flex flex-col justify-center  text-ellipsis overflow-hidden">
+          <p>{item.related_ebs ? item.related_ebs.code : ""}</p>
+          <p>{item.related_ebs ? item.related_ebs.name : ""}</p>
+        </td>
+        <td className=" p-4">
           <Spin spinning={false} size="small">
-            <div className="text-[#757575] flex gap-x-2.5 w-[6.25rem] justify-center">
+            <div className="text-[#757575] flex gap-x-2.5 w-[6.25rem] justify-start">
               <i
                 className="iconfont icon-jia w-4 aspect-square cursor-pointer"
                 title="添加"

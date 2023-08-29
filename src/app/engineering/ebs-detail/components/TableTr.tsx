@@ -49,14 +49,9 @@ function TableTr(props: Props) {
     // handleGetParentChildren(parentIndexArr as string[])
   }
 
-  const handleSelect = async (value: "basic" | "sync") => {
-    await putSubsectionApi({ subpart_type: value, id: item.id })
-    // const parentIndexArr = item.key?.split("-").slice(0, item.key?.split("-").length - 1)
-    // handleGetParentChildren(parentIndexArr as string[])
-  }
   return (
     <>
-      <tr className="grid grid-cols-7 h-full border-t border-b">
+      <tr className="grid grid-cols-6 h-full  border-b">
         <td
           className=" p-4 overflow-hidden cursor-pointer col-span-3 flex justify-between"
           title={item.name}>
@@ -83,15 +78,6 @@ function TableTr(props: Props) {
         </td>
         <td className=" flex justify-center items-center">{item.code}</td>
         <td className=" flex justify-center items-center">{EnumNodeClass[item.subpart_class]}</td>
-        <td className=" flex justify-center items-center">
-          <Select
-            className="w-full"
-            options={select_option}
-            defaultValue={item.subpart_type}
-            onSelect={(value) => {
-              handleSelect(value)
-            }}></Select>
-        </td>
         <td className=" flex justify-center items-center ebs_data">
           <Switch
             defaultChecked={item.is_prefix == 1 ? true : false}

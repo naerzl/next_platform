@@ -3,6 +3,7 @@ import { FetchParams } from "@/types/api"
 import {
   TypeApiGEtCodeCountParams,
   TypeApiGetCodeCountResponse,
+  TypeApiGetCodeRelationship,
   TypeApiGetEBSParams,
   TypeApiPostEBSParams,
   TypeApiPostEBSResponse,
@@ -37,3 +38,9 @@ export const reqGetCodeCount = (
   url: string,
   { arg }: FetchParams<TypeApiGEtCodeCountParams>,
 ): Promise<TypeApiGetCodeCountResponse[]> => fetcher({ url, arg })
+
+// 获取EBS指定code或者名称下的相关数据
+export const reqGetEBSCodeRelationship = (
+  url: string,
+  { arg }: FetchParams<{ code: string; locate_code_or_name: string }>,
+): Promise<TypeApiGetCodeRelationship[]> => fetcher({ url, arg })

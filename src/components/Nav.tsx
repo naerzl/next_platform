@@ -22,7 +22,10 @@ function Nav(props: Props) {
   }
 
   return (
-    <AppBar position="static" className="bg-[#fff] shadow-none max-h-16 border-b">
+    <AppBar
+      position="sticky"
+      className="bg-[#fff] shadow-none max-h-16 border-b"
+      sx={{ zIndex: "10" }}>
       <Toolbar className="flex justify-between">
         {/* 导航左侧 */}
         <div></div>

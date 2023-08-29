@@ -15,7 +15,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined"
 import DialogSideBar from "./DialogSideBar"
 import useMutation from "swr/mutation"
 import { DictionaryClassData } from "../types"
-import {Dropdown, MenuProps, message, Popconfirm} from "antd"
+import { Dropdown, MenuProps, message, Popconfirm } from "antd"
 import SideContext from "../context/sideContext"
 import { reqDeleteDictionaryClass } from "../api"
 import { iconList } from "./IconEnum"
@@ -133,31 +133,29 @@ export default function SideBar() {
     ctx.getSubClassList(id, newStr)
   }
 
-  const items:MenuProps['items'] = [
+  const items: MenuProps["items"] = [
     {
-      key:'1',
-      label:'编辑'
+      key: "1",
+      label: "编辑",
     },
     {
-      key:'1',
-      label:(
-          <Popconfirm
-              className='z-40'
-              title='您确定删除吗？'
-              description="删除后将无法恢复，是否确定删除?"
-              onConfirm={() => {
-                handleClickMenuDel()
-              }}
-              okText="确定"
-              cancelText="取消"
-              okButtonProps={{className:'bg-railway_error'}}
-          >
-
-            <span>删除</span>
-          </Popconfirm>)
-    }
+      key: "1",
+      label: (
+        <Popconfirm
+          className="z-40"
+          title="您确定删除吗？"
+          description="删除后将无法恢复，是否确定删除?"
+          onConfirm={() => {
+            handleClickMenuDel()
+          }}
+          okText="确定"
+          cancelText="取消"
+          okButtonProps={{ className: "bg-railway_error" }}>
+          <span>删除</span>
+        </Popconfirm>
+      ),
+    },
   ]
-
 
   const RenderListItem = (arr: any[], indexStr = "") => {
     return arr.map((item, index) => {
@@ -165,9 +163,10 @@ export default function SideBar() {
       return (
         <div key={item.id}>
           <ListItemButton
+            className="py-5"
             sx={{
               bgcolor: ctx.currentClassId == item.id ? "#f5f5f5" : "#fff",
-              pl: indexStr ? indexStr?.split("-").length * 2 : 0,
+              pl: indexStr ? indexStr?.split("-").length * 2 + 2 : 2,
             }}
             onClick={() => handleClickListItemButton(item.id, str)}>
             <ListItemIcon>
@@ -181,13 +180,13 @@ export default function SideBar() {
                   onClick={(e) => handleClickAddSub(e, item, str)}
                 />
               )}
-              <Dropdown menu={{ items }} trigger={['click']}>
-              <DragIndicatorIcon
-                fontSize="small"
-                onClick={(e) => {
-                  handleClickCaidanIcon(e, item.id, str)
-                }}
-              />
+              <Dropdown menu={{ items }} trigger={["click"]}>
+                <DragIndicatorIcon
+                  fontSize="small"
+                  onClick={(e) => {
+                    handleClickCaidanIcon(e, item.id, str)
+                  }}
+                />
               </Dropdown>
             </ListItemIcon>
           </ListItemButton>
@@ -212,7 +211,6 @@ export default function SideBar() {
           width: "100%",
           maxWidth: "15rem",
           minWidth: "15rem",
-          bgcolor: "background.paper",
           color: "#303133",
         }}
         component="nav"
@@ -229,18 +227,16 @@ export default function SideBar() {
         }}>
         <MenuItem onClick={handleClickMenuEdit}>修改</MenuItem>
         <Popconfirm
-            className='z-40'
-            title='您确定删除吗？'
-            description="删除后将无法恢复，是否确定删除?"
-            onConfirm={() => {
-              handleClickMenuDel()
-            }}
-            okText="确定"
-            cancelText="取消"
-            okButtonProps={{className:'bg-railway_error'}}
-        >
-
-        <MenuItem>删除</MenuItem>
+          className="z-40"
+          title="您确定删除吗？"
+          description="删除后将无法恢复，是否确定删除?"
+          onConfirm={() => {
+            handleClickMenuDel()
+          }}
+          okText="确定"
+          cancelText="取消"
+          okButtonProps={{ className: "bg-railway_error" }}>
+          <MenuItem>删除</MenuItem>
         </Popconfirm>
       </Menu>
       <Button

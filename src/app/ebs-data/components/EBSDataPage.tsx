@@ -1,7 +1,7 @@
 "use client"
 import React from "react"
 import useSWRMutation from "swr/mutation"
-import { reqGetEBS, reqGetCodeCount } from "@/app/ebs-data/api"
+import { reqGetEBS, reqGetCodeCount, reqGetEBSCodeRelationship } from "@/app/ebs-data/api"
 import { TypeEBSDataList } from "@/app/ebs-data/types"
 import TableTr from "@/app/ebs-data/components/TableTr"
 import { Spin } from "antd"
@@ -12,6 +12,8 @@ import { useSearchParams } from "next/navigation"
 import { Breadcrumbs } from "@mui/material"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
+import { useScroll } from "ahooks"
+import LayoutContext from "@/app/context/LayoutContext"
 
 // 表格每一列的字段
 const columns = [
@@ -54,6 +56,11 @@ const columns = [
     title: "是否可循环",
     dataIndex: "是否可循环",
     key: "是否可循环",
+  },
+  {
+    title: "关联",
+    dataIndex: "关联",
+    key: "关联",
   },
   {
     title: "操作",
@@ -194,6 +201,42 @@ function EBSDataPage() {
     }
   }
 
+  const [ebsOption, setEbsOption] = React.useState<any[]>([])
+
+  // 获取EBS指定code或者名称下的相关数据
+  const { trigger: getEBSCodeRelationshipApi } = useSWRMutation(
+    "/ebs/code-relationship",
+    reqGetEBSCodeRelationship,
+  )
+
+  const getEBSOption = async (value: string) => {
+    if (value) {
+      const res = await getEBSCodeRelationshipApi({
+        code: searchParams.get("code") as string,
+        locate_code_or_name: value,
+      })
+      if (!res) return
+      const newArr = res.map((item) => {
+        let str = ""
+        if (item.code !== "01") {
+          str = item.relationShips
+            .map((el) => {
+              return el.name
+            })
+            .join("-")
+        }
+        return {
+          ...item,
+          value: item.id,
+          label: item.code == "01" ? item.name : str,
+        }
+      })
+      setEbsOption(structuredClone(newArr))
+    } else {
+      setEbsOption([])
+    }
+  }
+
   // 渲染表格每一行
   const renderTableTr = (arr: TypeEBSDataList[]) => {
     return arr.map((item) => (
@@ -212,27 +255,71 @@ function EBSDataPage() {
     ))
   }
 
+  const DOM_THEAD = React.useRef<HTMLTableSectionElement>(null)
+
+  const THEAD_POSITION = React.useRef<DOMRect>({} as DOMRect)
+  React.useEffect(() => {
+    THEAD_POSITION.current = DOM_THEAD.current?.getBoundingClientRect() as DOMRect
+  }, [])
+
+  const ctx = React.useContext(LayoutContext)
+
   return (
     <EBSDataContext.Provider value={{ handleExpandChange, tableData }}>
       <h3 className="font-bold text-[1.875rem]">EBS模板</h3>
-      <Breadcrumbs aria-label="breadcrumb" className="my-2">
-        <Link underline="hover" color="inherit" href="/">
-          首页
-        </Link>
-        <Link underline="hover" color="inherit" href="/ebs-profession">
-          EBS专业列表
-        </Link>
-        <Typography color="text.primary">EBS模板</Typography>
-      </Breadcrumbs>
-      <div className="flex-1 flex-shrink-0 overflow-auto bg-white">
-        <div className="h-full overflow-auto ebs_data">
+      <div className="mb-9 mt-7">
+        <Breadcrumbs aria-label="breadcrumb" separator=">">
+          <Link underline="hover" color="inherit" href="/">
+            <i className="iconfont icon-homefill" style={{ fontSize: "14px" }}></i>
+          </Link>
+          <Link underline="hover" color="inherit" href="/ebs-profession" sx={{ fontSize: "14px" }}>
+            EBS专业列表
+          </Link>
+          <Typography color="text.primary" sx={{ fontSize: "14px" }}>
+            EBS模板
+          </Typography>
+        </Breadcrumbs>
+      </div>
+      <div className="flex-1 flex-shrink-0 overflow-auto bg-white border ">
+        <div className="h-full overflow-auto ebs_data custom-scroll-bar">
           <Spin spinning={tableLoading}>
-            <table className="w-full h-full border-spacing-0 border-separate">
-              <thead className="bg-[#fafafa] h-12 text-sm">
-                <tr className="grid grid-cols-11 h-full">
+            <table className="w-full h-full border-spacing-0 border-separate custom-table table-fixed">
+              <thead className="h-12 text-sm sticky top-0" ref={DOM_THEAD}>
+                <tr className="grid grid-cols-12 h-full border-b bg-white">
                   {columns.map((col, index) => (
                     <th
-                      className={`border p-4 ${index == 0 ? "col-span-3" : ""}`}
+                      className={`text-left p-4 ${index == 0 ? "col-span-3" : ""}`}
+                      key={col.dataIndex}>
+                      {col.title}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <thead
+                className="h-12 text-sm sticky top-0 transition-all"
+                style={
+                  ctx.scroll && ctx.scroll.top >= 242
+                    ? {
+                        position: "fixed",
+                        top: "64px",
+                        left: THEAD_POSITION.current.x,
+                        width: THEAD_POSITION.current.width + "px",
+                        zIndex: "100",
+                        opacity: "1",
+                      }
+                    : {
+                        position: "fixed",
+                        top: "64px",
+                        left: THEAD_POSITION.current.x,
+                        width: THEAD_POSITION.current.width + "px",
+                        zIndex: "100",
+                        opacity: "0",
+                      }
+                }>
+                <tr className="grid grid-cols-12 h-full border-b bg-white">
+                  {columns.map((col, index) => (
+                    <th
+                      className={`text-left p-4 ${index == 0 ? "col-span-3" : ""}`}
                       key={col.dataIndex}>
                       {col.title}
                     </th>
@@ -250,7 +337,9 @@ function EBSDataPage() {
             addType={addType}
             isEdit={isEdit}
             handleGetParentChildren={handleGetParentChildren}
-            changeIsEdit={changeIsEdit}></DialogEBS>
+            changeIsEdit={changeIsEdit}
+            ebsOption={ebsOption}
+            getEBSOption={getEBSOption}></DialogEBS>
         </div>
       </div>
     </EBSDataContext.Provider>

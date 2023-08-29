@@ -16,6 +16,13 @@ export interface EBSTreeData {
   has_children: "yes" | "no"
   structure_status: string
   children?: EBSTreeData[]
+  noChildren?: boolean
+  childrenCount?: {
+    platform: number
+    system: number
+    userdefined: number
+    none: number
+  }
 }
 
 // 新增EBS物资结构数据

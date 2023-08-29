@@ -1,6 +1,6 @@
 "use client"
 import React from "react"
-import { MenuItem, Select } from "@mui/material"
+import { MenuItem } from "@mui/material"
 import useSWRMutation from "swr/mutation"
 import { reqDeleteEBSTags, reqGetCollection, reqGetEBSTags, reqPostAddEBSTags } from "../api"
 import DesignDataContext from "../context/useDesignData"
@@ -8,6 +8,8 @@ import { ReqPostEBSAddTagsResponce } from "../types"
 import CloseIcon from "@mui/icons-material/Close"
 import MainHeader from "./MainHeader"
 import DataList from "./DataList"
+import { useClickAway } from "ahooks"
+import { Select } from "antd"
 
 interface Props {
   // eslint-disable-next-line no-unused-vars
@@ -128,23 +130,17 @@ function Main(props: Props) {
           {showInput ? (
             <div className="w-40 p-2 bg-gray-200 rounded-lg cursor-pointer shrink-0">
               <Select
+                autoFocus
                 defaultValue={""}
                 size="small"
                 className="w-full h-full"
                 onChange={(e) => {
                   handleChangeSelectTag(e)
-                }}>
-                <MenuItem value="">
-                  <em>NULL</em>
-                </MenuItem>
-                {allTagsList.map((tag) => {
-                  return (
-                    <MenuItem key={tag.id} value={tag.id}>
-                      {tag.name}
-                    </MenuItem>
-                  )
-                })}
-              </Select>
+                }}
+                onBlur={() => {
+                  setShowInput(false)
+                }}
+                options={allTagsList.map((tag) => ({ label: tag.name, value: tag.id }))}></Select>
             </div>
           ) : (
             <div

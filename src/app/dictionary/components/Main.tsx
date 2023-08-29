@@ -13,6 +13,7 @@ import SideContext from "../context/sideContext"
 import { DICTIONARY_CLASS_LIMIT, DICTIONARY_LIMIT } from "../const"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
+import AddIcon from "@mui/icons-material/Add"
 
 // 获取字典列表数据函数的参数类型
 export interface GetDictionaryDataOption {
@@ -144,27 +145,28 @@ export default function DictionaryMain() {
         getSubClassList,
       }}>
       <h3 className="font-bold text-[1.875rem]">数据字典</h3>
-      <Breadcrumbs aria-label="breadcrumb" className="my-2">
-        <Link underline="hover" color="inherit" href="/">
-          首页
-        </Link>
-        <Typography color="text.primary">数据字典</Typography>
-      </Breadcrumbs>
+      <div className="mb-9 mt-7">
+        <Breadcrumbs aria-label="breadcrumb" separator=">">
+          <Link underline="hover" color="inherit" href="/">
+            <i className="iconfont icon-homefill" style={{ fontSize: "14px" }}></i>
+          </Link>
+          <Typography color="text.primary" sx={{ fontSize: "14px" }}>
+            数据字典
+          </Typography>
+        </Breadcrumbs>
+      </div>
 
       <div className="flex-1 flex-shrink-0 overflow-auto bg-white border">
         <div className="h-full flex">
           {/* 左侧导航 */}
-          <aside className="w-60 h-full  mr-3 bg-white">
+          <aside className="w-60 h-full  mr-3 bg-white border-r">
             <SideBar />
           </aside>
           <div className="flex-1 flex flex-col  gap-y-2">
             {/* 头部搜索 */}
-            <header className="h-12 flex items-center ">
-              <Button variant="outlined" onClick={handleClickOpen}>
-                新增字典
-              </Button>
+            <header className="h-12 flex items-center justify-end">
               <InputBase
-                className="w-72 bg-[#f8fafb] border rounded-md px-2 mx-3"
+                className="w-72 border rounded-md px-2 mx-3 shadow"
                 placeholder="Search..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -182,9 +184,14 @@ export default function DictionaryMain() {
                   </InputAdornment>
                 }
               />
+              <div
+                className="bg-railway_blue w-10 h-10 rounded-full flex justify-center items-center shadow"
+                onClick={handleClickOpen}>
+                <AddIcon className="text-[2.15rem] text-white" />
+              </div>
             </header>
             {/* 表格主体 */}
-            <div className="flex-1 border">
+            <div className="flex-1 border-t border-l">
               <DataTable
                 tableData={tableData}
                 getDictionaryData={getDictionaryData}

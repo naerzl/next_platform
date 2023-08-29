@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "//at.alicdn.com/t/c/font_4191244_4pcof324byt.css";
+@import "//at.alicdn.com/t/c/font_4191244_fitdoctbz6a.css";
 
 body,
 html {
@@ -14,9 +14,6 @@ html {
   max-height: calc(100vh - 64px);
 }
 
-.overflow-overlay {
-  overflow: overlay;
-}
 
 .ant-message-custom-content {
   display: flex;
@@ -54,9 +51,63 @@ html {
   }
 }
 
-.ant-input-search{
-  .ant-input{
-    border-radius: 0;
+.ant-input-search {
+  .ant-input,
+  .ant-input-group-addon {
+    border-radius: 0 !important;
+    .ant-btn {
+      border-radius: 0 !important;
+    }
+  }
+}
+.custom-scroll-bar {
+  /*定义滚动条宽高及背景，宽高分别对应横竖滚动条的尺寸*/
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  /*定义滚动条的轨道颜色、内阴影及圆角*/
+  &::-webkit-scrollbar-track {
+    // box-shadow: inset 0 0 .0313rem rgba(0, 0, 0, .3);
+    background-color: #fff;
+    border-radius: 8px;
+  }
+
+  /*定义滑块颜色、内阴影及圆角*/
+  &::-webkit-scrollbar-thumb {
+    width: 4px;
+    border-radius: 8px;
+    box-shadow: inset 0 0 0.0313rem rgba(0, 0, 0, 0.3);
+    background-color: #eaedf0;
+
+    &:active {
+      background-color: #eaedf0;
+    }
   }
 }
 
+//.custom-table{
+//  tr:nth-child(2n-1){
+//    background-color: #f8fafb;
+//  }
+//}
+
+.ant-table-thead {
+  .ant-table-cell {
+    background-color: #fff !important;
+  }
+}
+
+.custom-select {
+  .ant-select-selector {
+    border-radius: 0 !important;
+  }
+}
+
+.ant-input-group-addon{
+  .ant-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
