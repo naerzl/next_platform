@@ -1,6 +1,6 @@
 "use client"
 import React from "react"
-import { Select, Input, Table, Pagination, Dropdown, MenuProps, Tag } from "antd"
+import { Input, Table, Dropdown, MenuProps, Tag } from "antd"
 import useSWRMutation from "swr/mutation"
 import { ColumnsType } from "antd/es/table"
 import { useRouter } from "next/navigation"
@@ -10,6 +10,7 @@ import { Breadcrumbs } from "@mui/material"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
+import LayoutContext from "@/app/context/LayoutContext"
 
 export default function EngineeringPage() {
   const router = useRouter()
@@ -57,7 +58,7 @@ export default function EngineeringPage() {
   ]
 
   // 表格配置列
-  const columns: ColumnsType<TypeSubsectionData> = [
+  const columns: any = [
     {
       title: "编号",
       dataIndex: "code",
@@ -79,7 +80,7 @@ export default function EngineeringPage() {
       dataIndex: "class_name",
       key: "class_name",
       align: "left",
-      render(_, record) {
+      render(_: any, record: any) {
         return <div>{record.is_highspeed == 1 ? "高速" : "普速"}</div>
       },
     },
@@ -94,7 +95,7 @@ export default function EngineeringPage() {
       width: "150px",
       title: "操作",
       key: "action",
-      render(_, record) {
+      render(_: any, record: any) {
         return (
           <div className="flex justify-between">
             {items.length > 1 ? (
@@ -108,10 +109,11 @@ export default function EngineeringPage() {
                 <i className="iconfont icon-gengduo text-[1.25rem]"></i>
               </Dropdown>
             ) : (
-              <Tag className="py-1.5 px-1">
+              <Tag className="py-1.5 pl-1 pr-2" color="#0162B1">
                 <div
                   onClick={() => {
-                    router.push(`/engineering/ebs-detail?id=${record.id}`)
+                    // router.push(`/engineering/ebs-detail?id=${record.id}`)
+                    window.open(`/engineering/ebs-detail?id=${record.id}`)
                   }}
                   className="flex items-center cursor-pointer">
                   <ArrowForwardIcon fontSize="small" />

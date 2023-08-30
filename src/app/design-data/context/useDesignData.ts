@@ -11,6 +11,9 @@ const DesignDataContext = createContext<{
   treeStr: string
   // eslint-disable-next-line no-unused-vars
   changeTreeStr: (str: string) => void
+  isHavaNoSaveData: boolean
+  // eslint-disable-next-line no-unused-vars
+  changeIsHaveNoSaveData: (flag: boolean) => void
 }>({
   firstTreeList: [],
   changeFirstTreeList: () => {},
@@ -19,6 +22,8 @@ const DesignDataContext = createContext<{
   treeItem: {} as EBSTreeData,
   treeStr: "",
   changeTreeStr: () => {},
+  isHavaNoSaveData: false,
+  changeIsHaveNoSaveData: () => {},
 })
 
 export default DesignDataContext

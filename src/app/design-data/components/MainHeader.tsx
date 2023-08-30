@@ -1,5 +1,4 @@
 import React from "react"
-import LockTwoToneIcon from "@mui/icons-material/LockTwoTone"
 import DesignDataContext from "../context/useDesignData"
 
 function MainHeader() {

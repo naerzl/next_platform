@@ -1,13 +1,11 @@
 import React from "react"
 const LayoutContext = React.createContext<{
-  scroll?: {
+  scroll: {
     top: number
-    left: number
   }
 }>({
   scroll: {
     top: 0,
-    left: 0,
   },
 })
 

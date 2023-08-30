@@ -23,12 +23,12 @@ import { removeCookie } from "@/libs/cookies"
 import { useRouter } from "next/navigation"
 import { OAUTH2_ACCESS_TOKEN } from "@/libs/const"
 
-interface Props {
-  // eslint-disable-next-line no-unused-vars
-  changeCollapsed: (bool: boolean) => void
-  collapsed: boolean
-}
-function Nav(props: Props) {
+// interface Props {
+//   // eslint-disable-next-line no-unused-vars
+//   changeCollapsed: (bool: boolean) => void
+//   collapsed: boolean
+// }
+function Nav() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [anchorEl1, setAnchorEl1] = React.useState<null | HTMLElement>(null)
   const avatarOpen = Boolean(anchorEl)

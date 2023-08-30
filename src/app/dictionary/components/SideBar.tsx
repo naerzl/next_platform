@@ -15,10 +15,11 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined"
 import DialogSideBar from "./DialogSideBar"
 import useMutation from "swr/mutation"
 import { DictionaryClassData } from "../types"
-import { Dropdown, MenuProps, message, Popconfirm } from "antd"
+import { MenuProps, message, Popconfirm } from "antd"
 import SideContext from "../context/sideContext"
 import { reqDeleteDictionaryClass } from "../api"
 import { iconList } from "./IconEnum"
+import Empty from "@/components/Empty"
 
 export default function SideBar() {
   // 获取上下文来共享全局变量
@@ -34,7 +35,7 @@ export default function SideBar() {
   const handleClickCaidanIcon = (event: any, id: number, str: string) => {
     event.stopPropagation()
     // 设置菜单打开的位置
-    // setAnchorEl(event.currentTarget)
+    setAnchorEl(event.currentTarget)
     // 设置当前点击的侧边栏
     setHandleId(id)
     // 设置被点击的菜单要处理的层级
@@ -139,20 +140,14 @@ export default function SideBar() {
       label: "编辑",
     },
     {
-      key: "1",
+      key: "2",
       label: (
-        <Popconfirm
-          className="z-40"
-          title="您确定删除吗？"
-          description="删除后将无法恢复，是否确定删除?"
-          onConfirm={() => {
+        <span
+          onClick={() => {
             handleClickMenuDel()
-          }}
-          okText="确定"
-          cancelText="取消"
-          okButtonProps={{ className: "bg-railway_error" }}>
-          <span>删除</span>
-        </Popconfirm>
+          }}>
+          删除
+        </span>
       ),
     },
   ]
@@ -180,14 +175,12 @@ export default function SideBar() {
                   onClick={(e) => handleClickAddSub(e, item, str)}
                 />
               )}
-              <Dropdown menu={{ items }} trigger={["click"]}>
-                <DragIndicatorIcon
-                  fontSize="small"
-                  onClick={(e) => {
-                    handleClickCaidanIcon(e, item.id, str)
-                  }}
-                />
-              </Dropdown>
+              <DragIndicatorIcon
+                fontSize="small"
+                onClick={(e) => {
+                  handleClickCaidanIcon(e, item.id, str)
+                }}
+              />
             </ListItemIcon>
           </ListItemButton>
           <Collapse in={collapseOpen.startsWith(str)} timeout="auto" unmountOnExit>
@@ -206,18 +199,23 @@ export default function SideBar() {
 
   return (
     <>
-      <List
-        sx={{
-          width: "100%",
-          maxWidth: "15rem",
-          minWidth: "15rem",
-          color: "#303133",
-        }}
-        component="nav"
-        aria-labelledby="nested-list-subheader">
-        {RenderListItem(ctx.sideBarList)}
-      </List>
+      {ctx.sideBarList.length > 0 ? (
+        <List
+          sx={{
+            width: "100%",
+            maxWidth: "15rem",
+            minWidth: "15rem",
+            color: "#303133",
+          }}
+          component="nav"
+          aria-labelledby="nested-list-subheader">
+          {RenderListItem(ctx.sideBarList)}
+        </List>
+      ) : (
+        <Empty></Empty>
+      )}
       <Menu
+        sx={{ zIndex: "10" }}
         id="language"
         anchorEl={anchorEl}
         open={open}

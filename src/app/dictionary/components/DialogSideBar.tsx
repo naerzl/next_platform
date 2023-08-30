@@ -101,13 +101,13 @@ function DialogSideBar(props: Props) {
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>添加字典</DialogTitle>
-      <DialogContent sx={{ width: 500 }}>
+      <DialogTitle sx={{ px: "40px", pt: "30px" }}>新增字典</DialogTitle>
+      <DialogContent sx={{ width: 500, px: "40px", pb: "30px" }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
             <div className="flex items-center">
               <InputLabel htmlFor="name" className="mr-3 w-20 text-right inline-block">
-                字典名称:
+                字典名称*:
               </InputLabel>
               <TextField
                 id="name"
@@ -129,7 +129,7 @@ function DialogSideBar(props: Props) {
           <div className="mb-4">
             <div className="flex items-center">
               <InputLabel htmlFor="icon" className="mr-3 w-20 text-right">
-                选择图标:
+                选择图标*:
               </InputLabel>
               <Select
                 error={Boolean(errors.icon)}

@@ -1,6 +1,8 @@
 "use client"
 
 import React from "react"
+import Empty from "@/components/Empty"
+import Link from "next/link"
 
 function Page() {
   return (
@@ -10,14 +12,8 @@ function Page() {
 
       <div className="">我是粘性定位!</div>
 
-      <div className="h-[2000px]">
-        <p className="sticky top-[100px] ">滚动我</p>
-        <p>来回滚动我</p>
-        <p>滚动我</p>
-        <p>来回滚动我</p>
-        <p>滚动我</p>
-        <p>来回滚动我</p>
-      </div>
+      <Empty fontSize="4rem"></Empty>
+      <Link href="/ceshi">去测试页面 </Link>
     </>
   )
 }

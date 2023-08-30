@@ -9,6 +9,7 @@ import { checkObjectEquality } from "@/libs/methods"
 import { ReqGetAddCollectionResponse } from "../types"
 import { reqDelCollection, reqPutEditCollection } from "../api"
 import { useRouter } from "next/navigation"
+import Empty from "@/components/Empty"
 
 interface Props {
   tableData: ReqGetAddCollectionResponse[]
@@ -106,7 +107,10 @@ export default function Table(props: Props) {
           processRowUpdate={hanldeRowDataUpdate}
         />
       ) : (
-        <div className="text-center">您还没有添加数据~</div>
+        <Empty
+          className="w-full h-full flex flex-col justify-center items-center"
+          fontSize="5rem"
+        />
       )}
     </div>
   )

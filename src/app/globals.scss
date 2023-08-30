@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "//at.alicdn.com/t/c/font_4191244_fitdoctbz6a.css";
+@import "//at.alicdn.com/t/c/font_4191244_22b4puf1e81.css";
 
 body,
 html {
@@ -14,6 +14,9 @@ html {
   max-height: calc(100vh - 64px);
 }
 
+.min-main {
+  min-height: calc(100vh - 64px);
+}
 
 .ant-message-custom-content {
   display: flex;
@@ -30,8 +33,17 @@ html {
     background-color: #fff;
   }
 
-  ._ff8a48 > .MuiTreeItem-content {
-    background-color: #ff8a48;
+  ._ff8a48 {
+   & > .MuiTreeItem-content {
+      background-color: #ff8a48;
+     color: #fff;
+    }
+  }
+  &,.MUI-tree-item{
+    & > .MuiTreeItem-content {
+      background-color: #ff8a48;
+      color: #0162b1;
+    }
   }
 }
 
@@ -104,10 +116,20 @@ html {
   }
 }
 
-.ant-input-group-addon{
-  .ant-btn{
+.ant-input-group-addon {
+  .ant-btn {
     display: flex;
     justify-content: center;
     align-items: center;
   }
+}
+
+.custom-modal {
+  .ant-modal-content {
+    padding: 30px 40px !important;
+  }
+}
+
+.ant-table-header,.ant-table-sticky-holder{
+  top:64px !important;
 }

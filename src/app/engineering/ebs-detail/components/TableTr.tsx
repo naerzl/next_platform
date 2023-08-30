@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react"
 import { TypeSubsectionData } from "../../types"
-import { Select, Switch } from "antd"
+import { Switch } from "antd"
 import { reqPutSubsection } from "@/app/engineering/api"
 import useSWRMutation from "swr/mutation"
 
@@ -9,6 +9,7 @@ interface Props {
   children?: ReactNode
   // eslint-disable-next-line no-unused-vars
   handleExpandOrClose: (expand: boolean, record: TypeSubsectionData) => Promise<void>
+  // eslint-disable-next-line no-unused-vars
   handleGetParentChildren: (parentIndexArr: string[]) => void
 }
 
@@ -20,16 +21,16 @@ const EnumNodeClass: { [key: string]: string } = {
   examination: "检验批",
 }
 
-const select_option = [
-  {
-    value: "sync",
-    label: "同步",
-  },
-  {
-    label: "基础",
-    value: "basic",
-  },
-]
+// const select_option = [
+//   {
+//     value: "sync",
+//     label: "同步",
+//   },
+//   {
+//     label: "基础",
+//     value: "basic",
+//   },
+// ]
 
 function TableTr(props: Props) {
   const { item, handleExpandOrClose } = props

@@ -3,7 +3,7 @@ import { Button, Form, Input, Modal, Select, Switch } from "antd"
 import { TypeApiPostEBSParams, TypeEBSDataList } from "@/app/ebs-data/types"
 import useDebounce from "@/hooks/useDebounce"
 import useSWRMutation from "swr/mutation"
-import { reqGetEBS, reqPostEBS, reqPutEBS } from "@/app/ebs-data/api"
+import { reqPostEBS, reqPutEBS } from "@/app/ebs-data/api"
 import EBSDataContext from "@/app/ebs-data/context/ebsDataContext"
 import { Type_Is_system } from "@/app/ebs-data/components/TableTr"
 import { ENUM_SUBPARY_CLASS } from "@/libs/const"
@@ -22,6 +22,7 @@ interface Props {
   // eslint-disable-next-line no-unused-vars
   handleGetParentChildren: (parentIndexArr: string[]) => void
   ebsOption: any[]
+  // eslint-disable-next-line no-unused-vars
   getEBSOption: (value: string) => void
 }
 
@@ -140,8 +141,6 @@ function DialogEBS(props: Props) {
     form.resetFields(["h_subpart_code", "n_subpart_code"])
   }, [apiParams.subpart_class])
 
-  const { trigger: getEBSApi } = useSWRMutation("/ebs", reqGetEBS)
-
   // 页面加载获取当前目录下的所有EBS结构
   React.useEffect(() => {
     if (isEdit && item.related_ebs) {
@@ -171,7 +170,9 @@ function DialogEBS(props: Props) {
         </>
       )}
       <div className="mb-6 flex items-center">
-        <div className="my-2">是否可循环：</div>
+        <div className="my-2">
+          <span>(选填)</span>是否可循环：
+        </div>
         <Switch
           className="bg-[#bfbfbf]"
           checked={apiParams.is_loop == "yes" ? true : false}
@@ -225,7 +226,7 @@ function DialogEBS(props: Props) {
             onSearch={handleEBSSearch}></Select>
         </Form.Item>
       )}
-      <Form.Item>
+      <Form.Item style={{ marginBottom: "0" }}>
         <div className="flex justify-end gap-2.5">
           <Button onClick={handleCancel}>取消</Button>
           <Button type="primary" className="bg-railway_blue" htmlType="submit">
@@ -239,6 +240,7 @@ function DialogEBS(props: Props) {
   return (
     <>
       <Modal
+        className="custom-modal"
         maskClosable={false}
         title={isEdit ? "修改" : "添加"}
         open={open}

@@ -1,6 +1,6 @@
 "use client"
 import React from "react"
-import { Button, Dropdown, Input, MenuProps, Table, Tag } from "antd"
+import { Dropdown, Input, MenuProps, Table, Tag } from "antd"
 import useSWRMutation from "swr/mutation"
 import { ColumnsType } from "antd/es/table"
 import { useRouter } from "next/navigation"
@@ -10,8 +10,8 @@ import dayjs from "dayjs"
 import { Breadcrumbs } from "@mui/material"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
-import { TypeSubsectionData } from "@/app/engineering/types"
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
+import LayoutContext from "@/app/context/LayoutContext"
 
 export default function DesignDataListPage() {
   const router = useRouter()
@@ -108,10 +108,11 @@ export default function DesignDataListPage() {
                 <i className="iconfont icon-gengduo text-[1.25rem]"></i>
               </Dropdown>
             ) : (
-              <Tag className="py-1.5 px-1">
+              <Tag className="py-1.5 pl-1 pr-2" color="#0162B1">
                 <div
                   onClick={() => {
-                    router.push(`/design-data?code=${record.id}`)
+                    // router.push(`/design-data?code=${record.id}`)
+                    window.open(`/design-data?code=${record.id}`)
                   }}
                   className="flex items-center cursor-pointer">
                   <ArrowForwardIcon fontSize="small" />
@@ -140,6 +141,8 @@ export default function DesignDataListPage() {
       })
   }
 
+  const DOM_THEAD = React.useRef<HTMLTableSectionElement>(null)
+
   return (
     <>
       <h3 className="font-bold text-[1.875rem]">设计数据列表</h3>
@@ -167,6 +170,8 @@ export default function DesignDataListPage() {
       <div className=" bg-white border custom-scroll-bar shadow-sm">
         <div>
           <Table
+            sticky
+            ref={DOM_THEAD}
             loading={tableLoading}
             columns={columns}
             dataSource={tableList}

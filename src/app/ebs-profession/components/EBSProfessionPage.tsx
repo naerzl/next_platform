@@ -1,6 +1,6 @@
 "use client"
 import React from "react"
-import { Button, Dropdown, Input, MenuProps, Pagination, Table, Tag } from "antd"
+import { Dropdown, Input, MenuProps, Table, Tag } from "antd"
 import useSWRMutation from "swr/mutation"
 import { ColumnsType } from "antd/es/table"
 import { useRouter } from "next/navigation"
@@ -10,8 +10,8 @@ import dayjs from "dayjs"
 import { Breadcrumbs } from "@mui/material"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
-import { TypeSubsectionData } from "@/app/engineering/types"
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
+import LayoutContext from "@/app/context/LayoutContext"
 
 export default function EBSProfessionPage() {
   const router = useRouter()
@@ -109,10 +109,11 @@ export default function EBSProfessionPage() {
                 <i className="iconfont icon-gengduo text-[1.25rem]"></i>
               </Dropdown>
             ) : (
-              <Tag className="py-1.5 px-1">
+              <Tag className="py-1.5 pl-1 pr-2" color="#0162B1">
                 <div
                   onClick={() => {
-                    router.push(`/ebs-data?code=${record.code}`)
+                    // router.push(`/ebs-data?code=${record.code}`)
+                    window.open(`/ebs-data?code=${record.code}`)
                   }}
                   className="flex items-center cursor-pointer">
                   <ArrowForwardIcon fontSize="small" />
@@ -141,6 +142,15 @@ export default function EBSProfessionPage() {
       })
   }
 
+  const DOM_THEAD = React.useRef<HTMLTableSectionElement>(null)
+
+  const THEAD_POSITION = React.useRef<DOMRect>({} as DOMRect)
+  React.useEffect(() => {
+    THEAD_POSITION.current = DOM_THEAD.current?.getBoundingClientRect() as DOMRect
+  }, [])
+
+  const ctx = React.useContext(LayoutContext)
+
   return (
     <>
       <h3 className="font-bold text-[1.875rem]">EBS专业列表</h3>
@@ -158,21 +168,22 @@ export default function EBSProfessionPage() {
         <div>
           <Input.Search
             className="shadow"
-            placeholder="搜索EBS专业名称"
             size="large"
+            placeholder="搜索模板名称"
             onSearch={(value: string) => {
               handleClickSearch(value)
             }}></Input.Search>
         </div>
       </header>
-      <div className="flex-1 flex-shrink-0 overflow-auto bg-white border custom-scroll-bar shadow-sm">
+      <div className=" bg-white border custom-scroll-bar shadow-sm">
         <div>
           <Table
             sticky
+            ref={DOM_THEAD}
             loading={tableLoading}
             columns={columns}
             dataSource={tableList}
-            rowKey="code"
+            rowKey=""
             pagination={false}
             className="custom-table"
           />

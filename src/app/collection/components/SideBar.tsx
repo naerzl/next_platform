@@ -19,6 +19,7 @@ import CollectionContext from "../context/collectionContext"
 import { ReqGetAddCollectionClassResponse, ReqGetAddCollectionResponse } from "../types"
 import { message } from "antd"
 import { usePathname, useRouter } from "next/navigation"
+import Empty from "@/components/Empty"
 
 export default function SideBar() {
   // 获取上下文来共享全局变量
@@ -183,18 +184,22 @@ export default function SideBar() {
 
   return (
     <>
-      <List
-        sx={{
-          width: "100%",
-          maxWidth: "15rem",
-          minWidth: "15rem",
-          bgcolor: "background.paper",
-          color: "#303133",
-        }}
-        component="nav"
-        aria-labelledby="nested-list-subheader">
-        {RenderListItem(ctx.sideBarList)}
-      </List>
+      {ctx.sideBarList.length > 0 ? (
+        <List
+          sx={{
+            width: "100%",
+            maxWidth: "15rem",
+            minWidth: "15rem",
+            bgcolor: "background.paper",
+            color: "#303133",
+          }}
+          component="nav"
+          aria-labelledby="nested-list-subheader">
+          {RenderListItem(ctx.sideBarList)}
+        </List>
+      ) : (
+        <Empty className="w-full  flex flex-col justify-center items-center" fontSize="5rem" />
+      )}
       <Menu
         id="language"
         anchorEl={anchorEl}

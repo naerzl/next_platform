@@ -17,7 +17,7 @@ import { CollectionData } from "@/app/collection/types"
 import useSWRMutation from "swr/mutation"
 import useSWR from "swr"
 import { reqDelEBSStructure, reqPostEBSStructure } from "@/app/collection/api"
-import { message } from "antd"
+import { Empty, message } from "antd"
 import DeleteIcon from "@mui/icons-material/DeleteOutlined"
 import { Cascader } from "antd"
 import { reqGetDictionary, reqGetDictionaryClass } from "@/app/dictionary/api"
@@ -165,7 +165,6 @@ export default function DataList(props: Props) {
     selectedOptions: DictionaryClassData[],
     index: number,
   ) => {
-    console.log(value, selectedOptions, index)
     if (value) {
       changeArr1(index, {
         dictionary_id: value[value.length - 1],
@@ -185,6 +184,11 @@ export default function DataList(props: Props) {
     setAnchorEl(null)
   }
 
+  React.useEffect(() => {
+    const isNoId = dataList.some((item) => !item.id)
+    ctx.changeIsHaveNoSaveData(isNoId)
+  }, [dataList])
+
   return (
     <div className="flex-1 flex-shrink-0 overflow-auto">
       <div className="flex justify-end">
@@ -194,7 +198,95 @@ export default function DataList(props: Props) {
           <AddIcon className="text-[2.15rem] text-white" />
         </div>
       </div>
-      <div className="overflow-hidden w-full">
+      <div className="overflow-hidden w-full"></div>
+      {/* 数据 */}
+      {dataList.length > 0 ? (
+        dataList.map((item, index) => (
+          <div
+            className="flex py-3 items-center justify-around border-b border-dotted text-railway_303"
+            key={index}>
+            <div>{`第${index + 1}列`}</div>
+            <div className="flex items-center gap-x-2">
+              <InputLabel
+                className="text-railway_303"
+                style={idArr.includes(item.title) ? { color: "#d32f2f" } : {}}>
+                标题
+              </InputLabel>
+              <InputBase
+                sx={{
+                  border: `1px solid ${idArr.includes(item.title) ? "#d32f2f" : "#ccc"}`,
+                  height: 40,
+                }}
+                value={item.title}
+                onChange={(e) => {
+                  changeArr(index, "title", e.target.value.trim())
+                }}
+              />
+            </div>
+            <div className="flex py-1 items-center gap-x-2">
+              <InputLabel className="text-railway_303">类型</InputLabel>
+              <Select
+                size="small"
+                className="w-32"
+                defaultValue={1}
+                value={item.type}
+                onChange={(e) => {
+                  changeArr(index, "type", e.target.value)
+                }}>
+                {DESIGN_DATA_OPTIONS.map((item) => (
+                  <MenuItem key={item.value} value={item.value}>
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
+            <div className="w-60">
+              {item.type == 4 && (
+                <div className="flex py-1 items-center gap-x-2">
+                  <InputLabel className="text-railway_303">选项</InputLabel>
+                  <Cascader
+                    displayRender={(label) => {
+                      return <div>{label[label.length - 1]}</div>
+                    }}
+                    fieldNames={{ label: "name", value: "id" }}
+                    options={options}
+                    loadData={loadData}
+                    onChange={(value, selectOption) => {
+                      hanldeChangeCascader(value, selectOption, index)
+                    }}
+                    size="large"
+                    className="bg-transparent"
+                  />
+                </div>
+              )}
+            </div>
+            <div>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={Boolean(item.is_required)}
+                    onChange={(e) => {
+                      changeArr(index, "is_required", e.target.checked)
+                    }}
+                  />
+                }
+                label="必填"
+              />
+            </div>
+            <div className="w-10 h-10">
+              {item.id && (
+                <IconButton onClick={() => handleClickDel(item.id as number)}>
+                  <DeleteIcon />
+                </IconButton>
+              )}
+            </div>
+          </div>
+        ))
+      ) : (
+        <Empty />
+      )}
+
+      {dataList.length > 0 && (
         <Button
           variant="outlined"
           className="float-right"
@@ -203,90 +295,7 @@ export default function DataList(props: Props) {
           }}>
           保存
         </Button>
-      </div>
-      {/* 数据 */}
-      {dataList.map((item, index) => (
-        <div
-          className="flex py-3 items-center justify-around border-b border-dotted text-railway_303"
-          key={index}>
-          <div>{`第${index + 1}列`}</div>
-          <div className="flex items-center gap-x-2">
-            <InputLabel
-              className="text-railway_303"
-              style={idArr.includes(item.title) ? { color: "#d32f2f" } : {}}>
-              标题
-            </InputLabel>
-            <InputBase
-              sx={{
-                border: `1px solid ${idArr.includes(item.title) ? "#d32f2f" : "#ccc"}`,
-                height: 40,
-              }}
-              value={item.title}
-              onChange={(e) => {
-                changeArr(index, "title", e.target.value.trim())
-              }}
-            />
-          </div>
-          <div className="flex py-1 items-center gap-x-2">
-            <InputLabel className="text-railway_303">类型</InputLabel>
-            <Select
-              size="small"
-              className="w-32"
-              defaultValue={1}
-              value={item.type}
-              onChange={(e) => {
-                changeArr(index, "type", e.target.value)
-              }}>
-              {DESIGN_DATA_OPTIONS.map((item) => (
-                <MenuItem key={item.value} value={item.value}>
-                  {item.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </div>
-          <div className="w-60">
-            {item.type == 4 && (
-              <div className="flex py-1 items-center gap-x-2">
-                <InputLabel className="text-railway_303">选项</InputLabel>
-                <Cascader
-                  displayRender={(label) => {
-                    return <div>{label[label.length - 1]}</div>
-                  }}
-                  fieldNames={{ label: "name", value: "id" }}
-                  options={options}
-                  loadData={loadData}
-                  onChange={(value, selectOption) => {
-                    hanldeChangeCascader(value, selectOption, index)
-                  }}
-                  size="large"
-                  className="bg-transparent"
-                />
-              </div>
-            )}
-          </div>
-          <div>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={Boolean(item.is_required)}
-                  onChange={(e) => {
-                    changeArr(index, "is_required", e.target.checked)
-                  }}
-                />
-              }
-              label="必填"
-            />
-          </div>
-          <div className="w-10 h-10">
-            {item.id && (
-              <IconButton onClick={() => handleClickDel(item.id as number)}>
-                <DeleteIcon />
-              </IconButton>
-            )}
-          </div>
-        </div>
-      ))}
-
+      )}
       <Menu
         id="demo-positioned-menu"
         aria-labelledby="demo-positioned-button"

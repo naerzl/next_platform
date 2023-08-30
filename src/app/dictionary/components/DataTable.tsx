@@ -15,6 +15,7 @@ import { reqDeleteDictionary, reqPutDictionary } from "../api"
 import SideContext from "../context/sideContext"
 import { message } from "antd"
 import { checkObjectEquality } from "@/libs/methods"
+import Empty from "@/components/Empty"
 
 // 排序方式（正序倒序）
 type Order = "asc" | "desc"
@@ -36,7 +37,9 @@ export default function DataTable(props: Props) {
   const ctx = React.useContext(SideContext)
 
   if (tableData.length <= 0) {
-    return <div>空空如也。。。</div>
+    return (
+      <Empty className="w-full h-full flex flex-col justify-center items-center" fontSize="5rem" />
+    )
   }
 
   // 处理行修改

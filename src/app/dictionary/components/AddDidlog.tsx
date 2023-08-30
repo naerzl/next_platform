@@ -61,13 +61,13 @@ function AddDidlog(props: Props) {
   }
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>新增字典</DialogTitle>
-      <DialogContent sx={{ width: 500 }}>
+      <DialogTitle sx={{ px: "40px", pt: "30px" }}>新增字典</DialogTitle>
+      <DialogContent sx={{ width: 500, px: "40px", pb: "30px" }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
             <div className="flex items-center">
               <InputLabel htmlFor="name" className="mr-3 w-20 text-right">
-                字典名称:
+                字典名称*:
               </InputLabel>
               <TextField
                 variant="outlined"
@@ -90,7 +90,7 @@ function AddDidlog(props: Props) {
           <div className="mb-4">
             <div className="flex items-center">
               <InputLabel htmlFor="serial" className="mr-3 w-20 text-right">
-                排序:
+                排序*:
               </InputLabel>
               <TextField
                 variant="outlined"

@@ -14,7 +14,10 @@ import Typography from "@mui/material/Typography"
 import { reqGetCodeCount } from "@/app/ebs-data/api"
 
 export default function DesignDataPage() {
+  // 获取路由的查询参数
   const searchParams = useSearchParams()
+
+  // useSWR
   const { data, isLoading, mutate } = useSWR(
     `/ebs?code=${searchParams.get("code") as string}&level=2`,
     (url) =>
@@ -33,12 +36,19 @@ export default function DesignDataPage() {
       revalidateOnReconnect: false,
     },
   )
+
+  // 更新swr的请求
   const { trigger: getEBSListApi } = useSWRMutation("/ebs", reqGetEBSList)
 
+  // ebs结构ID
   const [ebsId, setEbsId] = React.useState(0)
+
+  // 当前树的那个对象
   const [treeItem, setTreeItem] = React.useState<EBSTreeData>({} as EBSTreeData)
 
+  // 获取节点的子节点个数
   const { trigger: getCodeCountApi } = useSWRMutation("/ebs/code-count", reqGetCodeCount)
+
   // 获取子集节点
   const getSubEBSList = async (value: string, allIndex?: number[], isFlag?: boolean) => {
     const newData = structuredClone(data)
@@ -46,13 +56,15 @@ export default function DesignDataPage() {
     if (isFlag) {
       const treeItem = eval("newData[" + allIndex?.join("].children[") + "]")
       treeItem.has_structure = "yes"
-
       mutate(newData as any, false)
       return
     }
 
+    // 获取到选中的树形节点
     const treeItem = eval("newData[" + allIndex?.join("].children[") + "]")
     setTreeItem(treeItem)
+
+    // 获取子节点
     // eslint-disable-next-line no-unused-vars
     const res = await getEBSListApi({ code: value, level: treeItem.level + 1 })
 
@@ -63,6 +75,7 @@ export default function DesignDataPage() {
         level: treeItem.level + 2,
       })
       if (Object.keys(resCount).length > 0) {
+        // eslint-disable-next-line no-unused-vars
         const childrenArr = res.map((item) => ({
           ...item,
           childrenCount: resCount[String(item.code) as any] || {
@@ -76,6 +89,7 @@ export default function DesignDataPage() {
         eval(str + "=childrenArr")
         mutate(newData as any, false)
       } else {
+        // eslint-disable-next-line no-unused-vars
         const childrenArr = res.map((item) => ({
           ...item,
           childrenCount: { platform: 0, system: 0, userdefined: 0, none: 0 },
@@ -87,18 +101,23 @@ export default function DesignDataPage() {
     }
   }
 
-  // 格式为 'newData[0].children[0].children'
-
-  // 切换选中的EBS id
-
+  // 修改EBS节点的方法
   const handleChangeEBSId = (id: number | string) => {
     setEbsId(+id)
   }
 
+  // 树形节点的层级
   const [treeStr, setTreeStr] = React.useState("")
 
+  // 切换树形节点的层级
   const changeTreeStr = (str: string) => {
     setTreeStr(str)
+  }
+
+  const [isHavaNoSaveData, setIsHaveNoSaveData] = React.useState(false)
+
+  const changeIsHaveNoSaveData = (flag: boolean) => {
+    setIsHaveNoSaveData(flag)
   }
 
   if (isLoading) {
@@ -115,6 +134,8 @@ export default function DesignDataPage() {
         treeItem,
         treeStr,
         changeTreeStr,
+        isHavaNoSaveData,
+        changeIsHaveNoSaveData,
       }}>
       <h3 className="font-bold text-[1.875rem]">设计数据模板</h3>
       <div className="mt-9 mb-7">

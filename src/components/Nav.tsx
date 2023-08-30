@@ -6,12 +6,12 @@ import { removeCookie } from "@/libs/cookies"
 import { useRouter } from "next/navigation"
 import { OAUTH2_ACCESS_TOKEN } from "@/libs/const"
 
-interface Props {
-  // eslint-disable-next-line no-unused-vars
-  changeCollapsed: (bool: boolean) => void
-  collapsed: boolean
-}
-function Nav(props: Props) {
+// interface Props {
+//   // eslint-disable-next-line no-unused-vars
+//   changeCollapsed: (bool: boolean) => void
+//   collapsed: boolean
+// }
+function Nav() {
   //  跳转到登录的（后期删掉）
   const router = useRouter()
 

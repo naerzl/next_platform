@@ -87,8 +87,8 @@ function DialogSideBar(props: Props) {
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>添加表结构名称</DialogTitle>
-      <DialogContent sx={{ width: 500 }}>
+      <DialogTitle sx={{ px: "40px", pt: "30px" }}>添加表结构名称</DialogTitle>
+      <DialogContent sx={{ px: "40px", pb: "30px", width: 500 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
             <div className="flex items-center">

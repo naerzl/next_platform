@@ -1,6 +1,5 @@
 "use client"
 import React from "react"
-import { MenuItem } from "@mui/material"
 import useSWRMutation from "swr/mutation"
 import { reqDeleteEBSTags, reqGetCollection, reqGetEBSTags, reqPostAddEBSTags } from "../api"
 import DesignDataContext from "../context/useDesignData"
@@ -8,8 +7,8 @@ import { ReqPostEBSAddTagsResponce } from "../types"
 import CloseIcon from "@mui/icons-material/Close"
 import MainHeader from "./MainHeader"
 import DataList from "./DataList"
-import { useClickAway } from "ahooks"
 import { Select } from "antd"
+import Empty from "@/components/Empty"
 
 interface Props {
   // eslint-disable-next-line no-unused-vars
@@ -37,7 +36,10 @@ function Main(props: Props) {
 
   // 页面加载获取所拥有的标签
   React.useEffect(() => {
-    ctx.ebs_id && getEBSTagsList()
+    if (ctx.ebs_id) {
+      getEBSTagsList()
+      setSelectTags(0)
+    }
   }, [ctx.ebs_id])
 
   // 删除接口
@@ -53,15 +55,18 @@ function Main(props: Props) {
     getEBSTagsList()
   }
 
+  // 获取结构集合
   const { trigger: getCollectionApi } = useSWRMutation("/structure-collection", reqGetCollection)
   // 获取全部的
   const [allTagsList, setAllTagsList] = React.useState<{ id: number; name: string }[]>([])
+
   // 处理切换input显示隐藏事件
   const handleChangeShowInput = async () => {
     const res = await getCollectionApi({})
     setAllTagsList(res || [])
     setShowInput(true)
   }
+
   let timer = -1
   // 双击标签事件
 
@@ -91,6 +96,26 @@ function Main(props: Props) {
       const strArr = ctx.treeStr.split("-")
       getSubEBSList(strArr[0], strArr.slice(2) as any, true)
     }
+  }
+
+  const dropdownRender = () => {
+    return (
+      <div>
+        {allTagsList.length > 0 ? (
+          <ul>
+            {allTagsList.map((tag) => (
+              <li key={tag.id}>{tag.name}</li>
+            ))}
+          </ul>
+        ) : (
+          <Empty
+            className={"h-20 flex flex-col justify-center items-center"}
+            text="没有可选项"
+            fontSize="2rem"
+          />
+        )}
+      </div>
+    )
   }
 
   return (
@@ -130,10 +155,12 @@ function Main(props: Props) {
           {showInput ? (
             <div className="w-40 p-2 bg-gray-200 rounded-lg cursor-pointer shrink-0">
               <Select
+                open={true}
+                dropdownRender={dropdownRender}
                 autoFocus
-                defaultValue={""}
                 size="small"
                 className="w-full h-full"
+                placeholder="请选择表结构数据"
                 onChange={(e) => {
                   handleChangeSelectTag(e)
                 }}

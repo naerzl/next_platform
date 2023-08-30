@@ -2,14 +2,9 @@
 import React from "react"
 import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined"
 import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined"
-import BallotIcon from "@mui/icons-material/Ballot"
-import DatasetLinkedIcon from "@mui/icons-material/DatasetLinked"
 import ExpandLess from "@mui/icons-material/ExpandLess"
 import ExpandMore from "@mui/icons-material/ExpandMore"
-import StarBorder from "@mui/icons-material/StarBorder"
-import InboxIcon from "@mui/icons-material/MoveToInbox"
-import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined"
-import HdrStrongOutlinedIcon from "@mui/icons-material/HdrStrongOutlined"
+
 import {
   Collapse,
   List,
@@ -20,6 +15,8 @@ import {
 } from "@mui/material"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+
+export const dynamic = "force-dynamic"
 
 const pathList = [
   {
@@ -67,37 +64,46 @@ function Side() {
     )
   }
 
-  return (
-    <List
-      sx={{ width: "100%", maxWidth: "15rem", bgcolor: "background.paper" }}
-      component="nav"
-      aria-labelledby="nested-list-subheader"
-      subheader={
-        <ListSubheader
-          component="div"
-          id="nested-list-subheader"
-          className="h-16 flex items-center gap-1 max-h-16"
-          sx={{ fontSize: "24px" }}>
-          <img src={logo} alt="" className="w-10 h-10" />
-          <div className="text-base font-bold text-railway_303">工程数字化管理系统</div>
-        </ListSubheader>
-      }>
-      <ListItemButton
-        sx={{ color: "#44566c" }}
-        onClick={() => {
-          handleClickOpen("公共库")
-        }}>
-        <ListItemIcon className="min-w-0 mr-2.5" sx={{ width: "1.5rem", height: "1.5rem" }}>
-          <ArchiveOutlinedIcon />
-        </ListItemIcon>
-        <ListItemText>公共库</ListItemText>
-        {openList.includes("公共库") ? <ExpandLess /> : <ExpandMore />}
-      </ListItemButton>
+  React.useEffect(() => {
+    const obj = pathList.find((item) => item.path == pathName)
+    if (obj) {
+      setOpen([obj!.open])
+    }
+  }, [])
 
-      <Collapse in={openList.includes("公共库")} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <Link href="/dictionary">
-            <ListItemButton sx={pathName == "/dictionary/" ? { bgcolor: "#eef0f1" } : {}}>
+  return (
+    <>
+      <List
+        sx={{ width: "100%", maxWidth: "15rem", bgcolor: "background.paper" }}
+        component="nav"
+        aria-labelledby="nested-list-subheader"
+        subheader={
+          <ListSubheader
+            component="div"
+            id="nested-list-subheader"
+            className="h-16 flex items-center gap-1 max-h-16"
+            sx={{ fontSize: "24px" }}>
+            <img src={logo} alt="" className="w-10 h-10" />
+            <div className="text-base font-bold text-railway_303">工程数字化管理系统</div>
+          </ListSubheader>
+        }>
+        <ListItemButton
+          sx={{ color: "#44566c" }}
+          onClick={() => {
+            handleClickOpen("公共库")
+          }}>
+          <ListItemIcon className="min-w-0 mr-2.5" sx={{ width: "1.5rem", height: "1.5rem" }}>
+            <ArchiveOutlinedIcon />
+          </ListItemIcon>
+          <ListItemText>公共库</ListItemText>
+          {openList.includes("公共库") ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+
+        <Collapse in={openList.includes("公共库")} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItemButton
+              sx={pathName == "/dictionary/" ? { bgcolor: "#eef0f1" } : {}}
+              href="/dictionary">
               <ListItemIcon
                 className="min-w-0 mr-2.5 flex justify-center items-center"
                 sx={{ width: "1.5rem", height: "1.5rem" }}>
@@ -107,10 +113,10 @@ function Side() {
                 字典库
               </ListItemText>
             </ListItemButton>
-          </Link>
 
-          <Link href="/collection">
-            <ListItemButton sx={pathName == "/collection/" ? { bgcolor: "#eef0f1" } : {}}>
+            <ListItemButton
+              sx={pathName == "/collection/" ? { bgcolor: "#eef0f1" } : {}}
+              href="/collection">
               <ListItemIcon
                 className="min-w-0 mr-2.5 flex justify-center items-center"
                 sx={{ width: "1.5rem", height: "1.5rem" }}>
@@ -120,26 +126,26 @@ function Side() {
                 表结构库
               </ListItemText>
             </ListItemButton>
-          </Link>
-        </List>
-      </Collapse>
+          </List>
+        </Collapse>
 
-      <ListItemButton
-        sx={{ color: "#44566c" }}
-        onClick={() => {
-          handleClickOpen("数据模板")
-        }}>
-        <ListItemIcon className="min-w-0 mr-2.5" sx={{ width: "1.5rem", height: "1.5rem" }}>
-          <TuneOutlinedIcon />
-        </ListItemIcon>
-        <ListItemText>数据模板</ListItemText>
-        {openList.includes("数据模板") ? <ExpandLess /> : <ExpandMore />}
-      </ListItemButton>
+        <ListItemButton
+          sx={{ color: "#44566c" }}
+          onClick={() => {
+            handleClickOpen("数据模板")
+          }}>
+          <ListItemIcon className="min-w-0 mr-2.5" sx={{ width: "1.5rem", height: "1.5rem" }}>
+            <TuneOutlinedIcon />
+          </ListItemIcon>
+          <ListItemText>数据模板</ListItemText>
+          {openList.includes("数据模板") ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
 
-      <Collapse in={openList.includes("数据模板")} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <Link href="/ebs-profession">
-            <ListItemButton sx={pathName == "/ebs-profession/" ? { bgcolor: "#eef0f1" } : {}}>
+        <Collapse in={openList.includes("数据模板")} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItemButton
+              sx={pathName == "/ebs-profession/" ? { bgcolor: "#eef0f1" } : {}}
+              href="/ebs-profession">
               <ListItemIcon
                 className="min-w-0 mr-2.5 flex justify-center items-center"
                 sx={{ width: "1.5rem", height: "1.5rem" }}>
@@ -149,10 +155,10 @@ function Side() {
                 EBS专业列表
               </ListItemText>
             </ListItemButton>
-          </Link>
 
-          <Link href="/engineering">
-            <ListItemButton sx={pathName == "/engineering/" ? { bgcolor: "#eef0f1" } : {}}>
+            <ListItemButton
+              sx={pathName == "/engineering/" ? { bgcolor: "#eef0f1" } : {}}
+              href="/engineering">
               <ListItemIcon
                 className="min-w-0 mr-2.5 flex justify-center items-center"
                 sx={{ width: "1.5rem", height: "1.5rem" }}>
@@ -163,10 +169,10 @@ function Side() {
                 sx={{ color: pathName == "/engineering/" ? "#44566c" : "#8697a8" }}
               />
             </ListItemButton>
-          </Link>
 
-          <Link href="/design-data-list">
-            <ListItemButton sx={pathName == "/design-data-list/" ? { bgcolor: "#eef0f1" } : {}}>
+            <ListItemButton
+              sx={pathName == "/design-data-list/" ? { bgcolor: "#eef0f1" } : {}}
+              href="/design-data-list">
               <ListItemIcon
                 className="min-w-0 mr-2.5 flex justify-center items-center"
                 sx={{ width: "1.5rem", height: "1.5rem" }}>
@@ -177,10 +183,10 @@ function Side() {
                 sx={{ color: pathName == "/design-data-list/" ? "#44566c" : "#8697a8" }}
               />
             </ListItemButton>
-          </Link>
-        </List>
-      </Collapse>
-    </List>
+          </List>
+        </Collapse>
+      </List>
+    </>
   )
 }
 

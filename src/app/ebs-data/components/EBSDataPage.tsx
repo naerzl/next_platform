@@ -12,7 +12,6 @@ import { useSearchParams } from "next/navigation"
 import { Breadcrumbs } from "@mui/material"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
-import { useScroll } from "ahooks"
 import LayoutContext from "@/app/context/LayoutContext"
 
 // 表格每一列的字段
@@ -262,8 +261,6 @@ function EBSDataPage() {
     THEAD_POSITION.current = DOM_THEAD.current?.getBoundingClientRect() as DOMRect
   }, [])
 
-  // const ctx = React.useContext(LayoutContext)
-
   return (
     <EBSDataContext.Provider value={{ handleExpandChange, tableData }}>
       <h3 className="font-bold text-[1.875rem]">EBS模板</h3>
@@ -280,11 +277,11 @@ function EBSDataPage() {
           </Typography>
         </Breadcrumbs>
       </div>
-      <div className="flex-1 flex-shrink-0 overflow-auto bg-white border ">
-        <div className="h-full overflow-auto ebs_data custom-scroll-bar">
+      <div className="bg-white border ">
+        <div className="h-full  ebs_data custom-scroll-bar">
           <Spin spinning={tableLoading}>
             <table className="w-full h-full border-spacing-0 border-separate custom-table table-fixed">
-              <thead className="h-12 text-sm sticky top-0" ref={DOM_THEAD}>
+              <thead className="h-12 text-sm sticky top-[64px] z-10" ref={DOM_THEAD}>
                 <tr className="grid grid-cols-12 h-full border-b bg-white">
                   {columns.map((col, index) => (
                     <th
@@ -295,37 +292,6 @@ function EBSDataPage() {
                   ))}
                 </tr>
               </thead>
-              {/*<thead*/}
-              {/*  className="h-12 text-sm sticky top-0 transition-all"*/}
-              {/*  style={*/}
-              {/*    ctx.scroll && ctx.scroll.top >= 242*/}
-              {/*      ? {*/}
-              {/*          position: "fixed",*/}
-              {/*          top: "64px",*/}
-              {/*          left: THEAD_POSITION.current.x,*/}
-              {/*          width: THEAD_POSITION.current.width + "px",*/}
-              {/*          zIndex: "100",*/}
-              {/*          opacity: "1",*/}
-              {/*        }*/}
-              {/*      : {*/}
-              {/*          position: "fixed",*/}
-              {/*          top: "64px",*/}
-              {/*          left: THEAD_POSITION.current.x,*/}
-              {/*          width: THEAD_POSITION.current.width + "px",*/}
-              {/*          zIndex: "100",*/}
-              {/*          opacity: "0",*/}
-              {/*        }*/}
-              {/*  }>*/}
-              {/*  <tr className="grid grid-cols-12 h-full border-b bg-white">*/}
-              {/*    {columns.map((col, index) => (*/}
-              {/*      <th*/}
-              {/*        className={`text-left p-4 ${index == 0 ? "col-span-3" : ""}`}*/}
-              {/*        key={col.dataIndex}>*/}
-              {/*        {col.title}*/}
-              {/*      </th>*/}
-              {/*    ))}*/}
-              {/*  </tr>*/}
-              {/*</thead>*/}
               <tbody>{renderTableTr(tableData)}</tbody>
             </table>
           </Spin>
