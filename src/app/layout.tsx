@@ -12,18 +12,18 @@ import LayoutContext from "@/app/context/LayoutContext"
 const inter = Inter({ subsets: ["latin"] })
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const scroll_dom = React.useRef<HTMLDivElement>(null)
-
-  const [scroll, setScroll] = useState(0)
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScroll(scroll_dom.current!.scrollTop)
-    }
-    scroll_dom.current?.addEventListener("scroll", handleScroll, { passive: true })
-
-    return () => scroll_dom.current?.removeEventListener("scroll", handleScroll)
-  }, [scroll])
+  // const scroll_dom = React.useRef<HTMLDivElement>(null)
+  //
+  // const [scroll, setScroll] = useState(0)
+  //
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     setScroll(scroll_dom.current!.scrollTop)
+  //   }
+  //   scroll_dom.current?.addEventListener("scroll", handleScroll, { passive: true })
+  //
+  //   return () => scroll_dom.current?.removeEventListener("scroll", handleScroll)
+  // }, [scroll])
 
   return (
     <html lang="en" id="_next">
@@ -35,7 +35,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </aside>
             <div
               className="flex-1 flex  flex-col bg-[#f8fafb] min-w-[50.625rem] overflow-auto "
-              ref={scroll_dom}>
+              // ref={scroll_dom}
+            >
               <Nav />
               <main className="px-7.5 py-12  flex flex-col ">{children}</main>
             </div>
