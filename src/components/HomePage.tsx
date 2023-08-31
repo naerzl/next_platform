@@ -6,7 +6,7 @@ import { reqGetTry } from "@/app/api"
 function HomePage() {
   const { trigger: getTryApi } = useSWRMutation("/try", reqGetTry)
   React.useEffect(() => {
-    // getTryApi()
+    getTryApi()
   }, [])
   return <div className="flex-1 flex-shrink-0 overflow-auto bg-white"></div>
 }
