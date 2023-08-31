@@ -7,8 +7,9 @@ import { ReqPostEBSAddTagsResponce } from "../types"
 import CloseIcon from "@mui/icons-material/Close"
 import MainHeader from "./MainHeader"
 import DataList from "./DataList"
-import { Select } from "antd"
+import { MenuItem, Select } from "@mui/material"
 import Empty from "@/components/Empty"
+import Link from "next/link"
 
 interface Props {
   // eslint-disable-next-line no-unused-vars
@@ -155,8 +156,7 @@ function Main(props: Props) {
           {showInput ? (
             <div className="w-40 p-2 bg-gray-200 rounded-lg cursor-pointer shrink-0">
               <Select
-                open={true}
-                dropdownRender={dropdownRender}
+                displayEmpty
                 autoFocus
                 size="small"
                 className="w-full h-full"
@@ -164,10 +164,31 @@ function Main(props: Props) {
                 onChange={(e) => {
                   handleChangeSelectTag(e)
                 }}
-                onBlur={() => {
+                onClose={() => {
                   setShowInput(false)
-                }}
-                options={allTagsList.map((tag) => ({ label: tag.name, value: tag.id }))}></Select>
+                }}>
+                {allTagsList.length > 0 ? (
+                  allTagsList.map((item) => (
+                    <MenuItem value={item.id} key={item.id}>
+                      {item.name}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <Empty
+                    className="w-full h-full flex flex-col justify-center items-center"
+                    fontSize="2rem"
+                    color="#dce0e6"
+                    text={
+                      <div className="text-[12px]">
+                        <span>没有可选项，</span>
+                        <Link href="/collection" className="text-railway_blue">
+                          去添加
+                        </Link>
+                      </div>
+                    }
+                  />
+                )}
+              </Select>
             </div>
           ) : (
             <div

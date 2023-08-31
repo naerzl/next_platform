@@ -4,7 +4,6 @@ import useSWRMutation from "swr/mutation"
 import { reqGetSubsection } from "../../api"
 import { useSearchParams } from "next/navigation"
 import { TypeSubsectionData } from "../../types"
-import { Spin } from "antd"
 import TableTr from "./TableTr"
 import { Breadcrumbs } from "@mui/material"
 import Link from "@mui/material/Link"
@@ -168,24 +167,20 @@ export default function EBSDetailPage() {
         </Breadcrumbs>
       </div>
       <div className="flex-1 flex-shrink-0 overflow-auto bg-white custom-scroll-bar shadow">
-        <Spin spinning={tableLoading}>
-          <table className="w-full h-full border-spacing-0 border-separate custom-table table-fixed">
-            <thead className="bg-[#fafafa] h-12 text-sm sticky top-0 z-40">
-              <tr className="grid grid-cols-6 h-full border-b bg-white">
-                {columns.map((col, index) => (
-                  <th
-                    className={` flex items-center justify-center ${
-                      index == 0 ? "col-span-3" : ""
-                    }`}
-                    key={col.dataIndex}>
-                    {col.title}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>{renderTableTr(tableData)}</tbody>
-          </table>
-        </Spin>
+        <table className="w-full h-full border-spacing-0 border-separate custom-table table-fixed">
+          <thead className="bg-[#fafafa] h-12 text-sm sticky top-0 z-40">
+            <tr className="grid grid-cols-6 h-full border-b bg-white">
+              {columns.map((col, index) => (
+                <th
+                  className={` flex items-center justify-center ${index == 0 ? "col-span-3" : ""}`}
+                  key={col.dataIndex}>
+                  {col.title}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>{renderTableTr(tableData)}</tbody>
+        </table>
       </div>
     </>
   )

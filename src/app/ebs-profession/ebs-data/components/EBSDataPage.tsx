@@ -1,12 +1,15 @@
 "use client"
 import React from "react"
 import useSWRMutation from "swr/mutation"
-import { reqGetEBS, reqGetCodeCount, reqGetEBSCodeRelationship } from "@/app/ebs-data/api"
-import { TypeEBSDataList } from "@/app/ebs-data/types"
-import TableTr from "@/app/ebs-data/components/TableTr"
-import { Spin } from "antd"
-import EBSDataContext from "@/app/ebs-data/context/ebsDataContext"
-import DialogEBS from "@/app/ebs-data/components/DialogEBS"
+import {
+  reqGetEBS,
+  reqGetCodeCount,
+  reqGetEBSCodeRelationship,
+} from "@/app/ebs-profession/ebs-data/api"
+import { TypeEBSDataList } from "@/app/ebs-profession/ebs-data/types"
+import TableTr from "@/app/ebs-profession/ebs-data/components/TableTr"
+import EBSDataContext from "@/app/ebs-profession/ebs-data/context/ebsDataContext"
+import DialogEBS from "@/app/ebs-profession/ebs-data/components/DialogEBS"
 import useEBSDataDialog from "@/hooks/useEBSDataDialog"
 import { useSearchParams } from "next/navigation"
 import { Breadcrumbs } from "@mui/material"
@@ -19,17 +22,17 @@ const columns = [
   {
     title: "EBS名称",
     dataIndex: "name",
-    key: "id",
+    key: "name",
   },
   {
     title: "EBS编码",
     dataIndex: "code",
-    key: "id",
+    key: "code",
   },
   {
     title: "单位",
     dataIndex: "unit",
-    key: "id",
+    key: "unit",
   },
   {
     title: "节点归属",
@@ -219,7 +222,7 @@ function EBSDataPage() {
         let str = ""
         if (item.code !== "01") {
           str = item.relationShips
-            .map((el) => {
+            .map((el: any) => {
               return el.name
             })
             .join("-")
@@ -279,22 +282,20 @@ function EBSDataPage() {
       </div>
       <div className="bg-white border ">
         <div className="h-full  ebs_data custom-scroll-bar">
-          <Spin spinning={tableLoading}>
-            <table className="w-full h-full border-spacing-0 border-separate custom-table table-fixed">
-              <thead className="h-12 text-sm sticky top-[64px] z-10" ref={DOM_THEAD}>
-                <tr className="grid grid-cols-12 h-full border-b bg-white">
-                  {columns.map((col, index) => (
-                    <th
-                      className={`text-left p-4 ${index == 0 ? "col-span-3" : ""}`}
-                      key={col.dataIndex}>
-                      {col.title}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>{renderTableTr(tableData)}</tbody>
-            </table>
-          </Spin>
+          <table className="w-full h-full border-spacing-0 border-separate custom-table table-fixed">
+            <thead className="h-12 text-sm sticky top-[64px] z-10" ref={DOM_THEAD}>
+              <tr className="grid grid-cols-12 h-full border-b bg-white">
+                {columns.map((col, index) => (
+                  <th
+                    className={`text-left p-4 ${index == 0 ? "col-span-3" : ""}`}
+                    key={col.dataIndex}>
+                    {col.title}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>{renderTableTr(tableData)}</tbody>
+          </table>
           <DialogEBS
             open={dialogOpen}
             item={item}

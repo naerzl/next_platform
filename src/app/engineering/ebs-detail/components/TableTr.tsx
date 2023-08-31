@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react"
 import { TypeSubsectionData } from "../../types"
-import { Switch } from "antd"
+import { Switch } from "@mui/material"
 import { reqPutSubsection } from "@/app/engineering/api"
 import useSWRMutation from "swr/mutation"
 
@@ -20,17 +20,6 @@ const EnumNodeClass: { [key: string]: string } = {
   subitem: "分项",
   examination: "检验批",
 }
-
-// const select_option = [
-//   {
-//     value: "sync",
-//     label: "同步",
-//   },
-//   {
-//     label: "基础",
-//     value: "basic",
-//   },
-// ]
 
 function TableTr(props: Props) {
   const { item, handleExpandOrClose } = props
@@ -81,9 +70,8 @@ function TableTr(props: Props) {
         <td className=" flex justify-center items-center">{EnumNodeClass[item.subpart_class]}</td>
         <td className=" flex justify-center items-center ebs_data">
           <Switch
-            defaultChecked={item.is_prefix == 1 ? true : false}
-            className="bg-[#bfbfbf]"
-            onClick={(checked) => {
+            defaultChecked={item.is_prefix == 1}
+            onChange={(event, checked) => {
               handleClickSwitch(checked)
             }}></Switch>
         </td>

@@ -1,5 +1,5 @@
 import React from "react"
-import { TypeEBSDataList } from "@/app/ebs-data/types"
+import { TypeEBSDataList } from "@/app/ebs-profession/ebs-data/types"
 
 const EBSDataContext = React.createContext<{
   // eslint-disable-next-line no-unused-vars

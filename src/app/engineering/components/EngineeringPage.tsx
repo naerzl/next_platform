@@ -1,64 +1,41 @@
 "use client"
 import React from "react"
-import { Input, Table, Dropdown, MenuProps, Tag } from "antd"
-import useSWRMutation from "swr/mutation"
-import { ColumnsType } from "antd/es/table"
-import { useRouter } from "next/navigation"
-import { reqGetSubsection } from "../api"
-import { TypeSubsectionData } from "../types"
-import { Breadcrumbs } from "@mui/material"
+import { Breadcrumbs, InputAdornment, InputBase, Button, CircularProgress } from "@mui/material"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
-import LayoutContext from "@/app/context/LayoutContext"
+import Table from "@mui/material/Table"
+import TableBody from "@mui/material/TableBody"
+import TableCell from "@mui/material/TableCell"
+import TableHead from "@mui/material/TableHead"
+import TableRow from "@mui/material/TableRow"
+import IconButton from "@mui/material/IconButton"
+import SearchIcon from "@mui/icons-material/Search"
+import { reqGetSubsection } from "@/app/engineering/api"
+import useSWR from "swr"
+import { Skeleton } from "@mui/lab"
 
-export default function EngineeringPage() {
-  const router = useRouter()
+export default function EBSProfessionPage() {
+  const [swrState, setSwrState] = React.useState({
+    parent_id: "",
+    name: "",
+  })
 
-  const { trigger: getSubsectionApi } = useSWRMutation("/subsection", reqGetSubsection)
-
-  const [tableList, setTableList] = React.useState<TypeSubsectionData[]>([])
-
-  const [tableLoading, setTableLoading] = React.useState(false)
+  const { data: tableList, isLoading } = useSWR(
+    swrState["parent_id"]
+      ? `/subsection?parent_id=${swrState["parent_id"]}&name=${swrState["name"]}`
+      : null,
+    (url) =>
+      reqGetSubsection(url, { arg: { parent_id: swrState["parent_id"], name: swrState["name"] } }),
+  )
 
   // 页面加载获取数据
   React.useEffect(() => {
-    setTableLoading(true)
-    getSubsectionApi({ parent_id: JSON.stringify([]) })
-      .then((res) => {
-        if (res) {
-          setTableList(res || [])
-        }
-      })
-      .finally(() => {
-        setTimeout(() => {
-          setTableLoading(false)
-        }, 500)
-      })
+    setSwrState((prevState) => ({ ...prevState, parent_id: JSON.stringify([]) }))
   }, [])
 
-  const [handleItem, setHandleItem] = React.useState<TypeSubsectionData>({} as TypeSubsectionData)
-  const handleClickMenu1 = () => {
-    router.push(`/engineering/ebs-detail?id=${handleItem.id}`)
-  }
-
-  const handleDropOpen = (open: boolean, record: TypeSubsectionData) => {
-    open ? setHandleItem(record) : setHandleItem({} as TypeSubsectionData)
-  }
-
-  const items: MenuProps["items"] = [
-    {
-      key: "1",
-      label: (
-        <div onClick={handleClickMenu1} className="flex items-center">
-          <ArrowForwardIcon fontSize="small" /> <span>进入详情</span>
-        </div>
-      ),
-    },
-  ]
-
   // 表格配置列
-  const columns: any = [
+  const columns = [
     {
       title: "编号",
       dataIndex: "code",
@@ -70,19 +47,12 @@ export default function EngineeringPage() {
       dataIndex: "created_at",
       key: "created_at",
       align: "left",
-
-      render() {
-        return <div>铁路</div>
-      },
     },
     {
       title: "铁路类型",
       dataIndex: "class_name",
       key: "class_name",
       align: "left",
-      render(_: any, record: any) {
-        return <div>{record.is_highspeed == 1 ? "高速" : "普速"}</div>
-      },
     },
     {
       align: "left",
@@ -95,52 +65,11 @@ export default function EngineeringPage() {
       width: "150px",
       title: "操作",
       key: "action",
-      render(_: any, record: any) {
-        return (
-          <div className="flex justify-between">
-            {items.length > 1 ? (
-              <Dropdown
-                overlayStyle={{ borderRadius: "0", boxShadow: "none" }}
-                placement="bottom"
-                menu={{ items }}
-                onOpenChange={(open) => {
-                  handleDropOpen(open, record)
-                }}>
-                <i className="iconfont icon-gengduo text-[1.25rem]"></i>
-              </Dropdown>
-            ) : (
-              <Tag className="py-1.5 pl-1 pr-2" color="#0162B1">
-                <div
-                  onClick={() => {
-                    // router.push(`/engineering/ebs-detail?id=${record.id}`)
-                    window.open(`/engineering/ebs-detail?id=${record.id}`)
-                  }}
-                  className="flex items-center cursor-pointer">
-                  <ArrowForwardIcon fontSize="small" />
-                  <span className="whitespace-nowrap">进入详情</span>
-                </div>
-              </Tag>
-            )}
-          </div>
-        )
-      },
     },
   ]
 
-  // 处理搜索事件
   const handleClickSearch = (value: string) => {
-    setTableLoading(true)
-    getSubsectionApi({ parent_id: JSON.stringify([]), name: value })
-      .then((res) => {
-        if (res) {
-          setTableList(res || [])
-        }
-      })
-      .finally(() => {
-        setTimeout(() => {
-          setTableLoading(false)
-        }, 500)
-      })
+    setSwrState((prevState) => ({ ...prevState, name: value }))
   }
 
   return (
@@ -156,30 +85,75 @@ export default function EngineeringPage() {
           </Typography>
         </Breadcrumbs>
       </div>
-      <header className="flex  mb-6 justify-between">
-        <div></div>
+      <header className="flex justify-end mb-6">
         <div>
-          <Input.Search
-            className="rounded-none shadow "
-            size="large"
-            placeholder="搜索专业名称"
-            onSearch={(value: string) => {
-              handleClickSearch(value)
-            }}></Input.Search>
-        </div>
-      </header>
-      <div className="custom-scroll-bar  shadow">
-        <div className="bg-white">
-          <Table
-            sticky
-            loading={tableLoading}
-            columns={columns}
-            dataSource={tableList}
-            rowKey="id"
-            pagination={false}
-            className="custom-table"
+          <InputBase
+            className="w-[18.125rem] h-10 border  px-2 shadow bg-white"
+            placeholder="搜索模板名称"
+            onBlur={(event) => {
+              handleClickSearch(event.target.value)
+            }}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  type="button"
+                  edge="end"
+                  sx={{ p: "10px" }}
+                  aria-label="search"
+                  disableRipple>
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>
+            }
           />
         </div>
+      </header>
+      <div className="bg-white border custom-scroll-bar shadow-sm min-h-[570px]">
+        <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader>
+          <TableHead sx={{ position: "sticky", top: "64px", zIndex: 5 }}>
+            <TableRow>
+              {columns.map((col) => (
+                <TableCell key={col.key} sx={{ width: col.key == "action" ? "150px" : "auto" }}>
+                  {col.title}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {tableList &&
+              tableList?.map((row) => (
+                <TableRow key={row.code} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                  <TableCell component="th" scope="row">
+                    {row.code}
+                  </TableCell>
+                  <TableCell align="left">铁路</TableCell>
+                  <TableCell align="left">
+                    <div>{row.is_highspeed == 1 ? "高速" : "普速"}</div>
+                  </TableCell>
+                  <TableCell align="left">{row.name}</TableCell>
+                  <TableCell align="left">
+                    <div className="flex justify-between">
+                      <Button className="py-1.5 pl-1 pr-2 bg-railway_blue text-white">
+                        <div
+                          onClick={() => {
+                            window.open(`/engineering/ebs-detail?id=${row.id}`)
+                          }}
+                          className="flex items-center cursor-pointer">
+                          <ArrowForwardIcon fontSize="small" />
+                          <span className="whitespace-nowrap">进入详情</span>
+                        </div>
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+        {!tableList && (
+          <div className="w-full h-full flex  justify-center items-center px-5">
+            <CircularProgress />
+          </div>
+        )}
       </div>
     </>
   )

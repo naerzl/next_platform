@@ -1,5 +1,5 @@
 import React from "react"
-import EBSDataPage from "@/app/ebs-data/components/EBSDataPage"
+import EBSDataPage from "@/app/ebs-profession/ebs-data/components/EBSDataPage"
 import { Metadata } from "next"
 
 export default function Page() {

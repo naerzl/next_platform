@@ -43,7 +43,7 @@ export default function CollectionPage() {
   }, [ctx.currentClassId])
 
   return (
-    <div className="flex-1 flex flex-col  gap-y-2">
+    <div className="flex-1 flex flex-col  gap-y-2 min-h-[620px]">
       {/* 头部搜索 */}
       <header className="h-12 flex items-center justify-between px-4">
         <div className="flex items-center h-full w-100">

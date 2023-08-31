@@ -10,6 +10,7 @@ import { ReqGetAddCollectionResponse } from "../types"
 import { reqDelCollection, reqPutEditCollection } from "../api"
 import { useRouter } from "next/navigation"
 import Empty from "@/components/Empty"
+import { Button } from "@mui/material"
 
 interface Props {
   tableData: ReqGetAddCollectionResponse[]
@@ -110,6 +111,7 @@ export default function Table(props: Props) {
         <Empty
           className="w-full h-full flex flex-col justify-center items-center"
           fontSize="5rem"
+          color="#dce0e6"
         />
       )}
     </div>

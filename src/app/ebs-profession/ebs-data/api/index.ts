@@ -9,7 +9,7 @@ import {
   TypeApiPostEBSResponse,
   TypeApiPutEBSParams,
   TypeEBSDataList,
-} from "@/app/ebs-data/types"
+} from "@/app/ebs-profession/ebs-data/types"
 
 /* 获取EBS结构列表*/
 export const reqGetEBS = (

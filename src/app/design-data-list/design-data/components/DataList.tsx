@@ -11,19 +11,20 @@ import {
   Select,
 } from "@mui/material"
 import React from "react"
-import { DESIGN_DATA_OPTIONS } from "@/app/design-data/const"
+import { DESIGN_DATA_OPTIONS } from "@/app/design-data-list/design-data/const"
 import AddIcon from "@mui/icons-material/Add"
 import { CollectionData } from "@/app/collection/types"
 import useSWRMutation from "swr/mutation"
 import useSWR from "swr"
 import { reqDelEBSStructure, reqPostEBSStructure } from "@/app/collection/api"
-import { Empty, message } from "antd"
+import { message } from "antd"
 import DeleteIcon from "@mui/icons-material/DeleteOutlined"
 import { Cascader } from "antd"
 import { reqGetDictionary, reqGetDictionaryClass } from "@/app/dictionary/api"
 import { DictionaryClassData } from "@/app/dictionary/types"
 import DesignDataContext from "../context/useDesignData"
 import { reqDesignDataBaseData } from "../api"
+import Empty from "@/components/Empty"
 
 interface Props {
   selectTag: number
@@ -283,7 +284,12 @@ export default function DataList(props: Props) {
           </div>
         ))
       ) : (
-        <Empty />
+        <Empty
+          className="w-full h-full flex flex-col justify-center items-center"
+          fontSize="5rem"
+          color="#dce0e6"
+          text={<div>暂时没有数据</div>}
+        />
       )}
 
       {dataList.length > 0 && (

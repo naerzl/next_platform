@@ -1,6 +1,6 @@
 import React from "react"
-import { TypeEBSDataList } from "@/app/ebs-data/types"
-import { Type_Is_system } from "@/app/ebs-data/components/TableTr"
+import { TypeEBSDataList } from "@/app/ebs-profession/ebs-data/types"
+import { Type_Is_system } from "@/app/ebs-profession/ebs-data/components/TableTr"
 
 export default function useEBSDataDialog() {
   const [dialogOpen, setDialogOpen] = React.useState(false)

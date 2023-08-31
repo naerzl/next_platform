@@ -191,7 +191,7 @@ export default function DictionaryMain() {
               </div>
             </header>
             {/* 表格主体 */}
-            <div className="flex-1 border-t border-l">
+            <div className="flex-1 border-t border-l min-h-[580px]">
               <DataTable
                 tableData={tableData}
                 getDictionaryData={getDictionaryData}

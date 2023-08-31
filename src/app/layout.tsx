@@ -1,13 +1,9 @@
 "use client"
 import { Inter } from "next/font/google"
 import Side from "@/components/Side"
-import React from "react"
+import React, { useEffect, useRef, useState } from "react"
 import Nav from "@/components/Nav"
-// import { Breadcrumbs } from "@mui/material"
-// import Link from "@mui/material/Link"
-// import Typography from "@mui/material/Typography"
 import { SWRConfig } from "swr"
-// import { usePathname } from "next/navigation"
 import StyledComponentsRegistry from "@/libs/AntdRegistry"
 import "./globals.scss"
 import LayoutContext from "@/app/context/LayoutContext"
@@ -16,6 +12,19 @@ import LayoutContext from "@/app/context/LayoutContext"
 const inter = Inter({ subsets: ["latin"] })
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const scroll_dom = React.useRef<HTMLDivElement>(null)
+
+  const [scroll, setScroll] = useState(0)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScroll(scroll_dom.current!.scrollTop)
+    }
+    scroll_dom.current?.addEventListener("scroll", handleScroll, { passive: true })
+
+    return () => scroll_dom.current?.removeEventListener("scroll", handleScroll)
+  }, [scroll])
+
   return (
     <html lang="en" id="_next">
       <body className={`${inter.className} flex`}>
@@ -24,7 +33,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <aside className={`h-full min-w-[15rem] w-60 border-r`}>
               <Side />
             </aside>
-            <div className="flex-1 flex  flex-col bg-[#f8fafb] min-w-[50.625rem] overflow-auto">
+            <div
+              className="flex-1 flex  flex-col bg-[#f8fafb] min-w-[50.625rem] overflow-auto "
+              ref={scroll_dom}>
               <Nav />
               <main className="px-7.5 py-12  flex flex-col ">{children}</main>
             </div>

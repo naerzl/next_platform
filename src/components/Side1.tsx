@@ -13,7 +13,7 @@ import {
   ListItemText,
   ListSubheader,
 } from "@mui/material"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 
 export const dynamic = "force-dynamic"
 
@@ -44,8 +44,6 @@ function Side() {
   const logo = "/static/images/logo.png"
   const pathName = usePathname()
 
-  const router = useRouter()
-
   const [openList, setOpen] = React.useState<string[]>([])
 
   // 处理展开合并方法
@@ -71,10 +69,6 @@ function Side() {
       setOpen([obj!.open])
     }
   }, [])
-
-  const goto = (path: string) => {
-    router.push(path)
-  }
 
   return (
     <>
@@ -108,9 +102,7 @@ function Side() {
           <List component="div" disablePadding>
             <ListItemButton
               sx={pathName == "/dictionary/" ? { bgcolor: "#eef0f1" } : {}}
-              onClick={() => {
-                goto("/dictionary")
-              }}>
+              href="/dictionary">
               <ListItemIcon
                 className="min-w-0 mr-2.5 flex justify-center items-center"
                 sx={{ width: "1.5rem", height: "1.5rem" }}>
@@ -124,9 +116,7 @@ function Side() {
 
             <ListItemButton
               sx={pathName.startsWith("/collection/") ? { bgcolor: "#eef0f1" } : {}}
-              onClick={() => {
-                goto("/collection")
-              }}>
+              href="/collection">
               <ListItemIcon
                 className="min-w-0 mr-2.5 flex justify-center items-center"
                 sx={{ width: "1.5rem", height: "1.5rem" }}>
@@ -156,9 +146,7 @@ function Side() {
           <List component="div" disablePadding>
             <ListItemButton
               sx={pathName.startsWith("/ebs-profession/") ? { bgcolor: "#eef0f1" } : {}}
-              onClick={() => {
-                goto("/ebs-profession")
-              }}>
+              href="/ebs-profession">
               <ListItemIcon
                 className="min-w-0 mr-2.5 flex justify-center items-center"
                 sx={{ width: "1.5rem", height: "1.5rem" }}>
@@ -172,9 +160,7 @@ function Side() {
 
             <ListItemButton
               sx={pathName.startsWith("/engineering/") ? { bgcolor: "#eef0f1" } : {}}
-              onClick={() => {
-                goto("/engineering")
-              }}>
+              href="/engineering">
               <ListItemIcon
                 className="min-w-0 mr-2.5 flex justify-center items-center"
                 sx={{ width: "1.5rem", height: "1.5rem" }}>
@@ -188,9 +174,7 @@ function Side() {
 
             <ListItemButton
               sx={pathName.startsWith("/design-data-list/") ? { bgcolor: "#eef0f1" } : {}}
-              onClick={() => {
-                goto("/design-data-list")
-              }}>
+              href="/design-data-list">
               <ListItemIcon
                 className="min-w-0 mr-2.5 flex justify-center items-center"
                 sx={{ width: "1.5rem", height: "1.5rem" }}>

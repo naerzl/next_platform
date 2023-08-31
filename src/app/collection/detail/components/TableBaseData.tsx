@@ -11,7 +11,7 @@ import {
   Select,
 } from "@mui/material"
 import React from "react"
-import { DESIGN_DATA_OPTIONS } from "@/app/design-data/const"
+import { DESIGN_DATA_OPTIONS } from "@/app/design-data-list/design-data/const"
 import AddIcon from "@mui/icons-material/Add"
 import { CollectionData } from "../../types"
 import { useSearchParams } from "next/navigation"

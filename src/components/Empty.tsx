@@ -3,7 +3,7 @@ import React from "react"
 type Props = {
   fontSize?: string
   color?: string
-  text?: string
+  text?: React.ReactNode
   className?: string
 }
 function Empty(props: Props) {

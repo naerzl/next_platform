@@ -11,7 +11,7 @@ import { useSearchParams } from "next/navigation"
 import { Breadcrumbs } from "@mui/material"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
-import { reqGetCodeCount } from "@/app/ebs-data/api"
+import { reqGetCodeCount } from "@/app/ebs-profession/ebs-data/api"
 
 export default function DesignDataPage() {
   // 获取路由的查询参数
@@ -37,8 +37,62 @@ export default function DesignDataPage() {
     },
   )
 
+  const [swrState, setSWRState] = React.useState({ code: "", level: "", allIndex: [] as any[] })
+
+  const {
+    data: subData,
+    isLoading: subIsLoading,
+    isValidating,
+  } = useSWR(
+    swrState["code"] ? `/ebs?code=${swrState["code"]}&level=${swrState["level"]}` : null,
+    (url) =>
+      reqGetEBSList(url, {
+        arg: { level: swrState["level"], code: swrState["code"] as string },
+      }),
+  )
+
+  React.useEffect(() => {
+    console.log(subIsLoading, isValidating)
+    if (subData) {
+      handleGetSubTreeDataList(subData)
+    }
+  }, [subData])
   // 更新swr的请求
-  const { trigger: getEBSListApi } = useSWRMutation("/ebs", reqGetEBSList)
+
+  const handleGetSubTreeDataList = async (res: EBSTreeData[]) => {
+    const newData = structuredClone(data)
+    if (res.length > 0) {
+      const codeArr = res.map((item) => item.code)
+      const resCount = await getCodeCountApi({
+        code: JSON.stringify(codeArr),
+        level: treeItem.level + 2,
+      })
+      if (Object.keys(resCount).length > 0) {
+        // eslint-disable-next-line no-unused-vars
+        const childrenArr = res.map((item) => ({
+          ...item,
+          childrenCount: resCount[String(item.code) as any] || {
+            platform: 0,
+            system: 0,
+            userdefined: 0,
+            none: 0,
+          },
+        }))
+        const str = "newData[" + swrState.allIndex?.join("].children[") + "].children"
+        eval(str + "=childrenArr")
+        mutate(newData as any, false)
+      } else {
+        // eslint-disable-next-line no-unused-vars
+        const childrenArr = res.map((item) => ({
+          ...item,
+          childrenCount: { platform: 0, system: 0, userdefined: 0, none: 0 },
+        }))
+        const str = "newData[" + swrState.allIndex?.join("].children[") + "].children"
+        eval(str + "=childrenArr")
+        mutate(newData as any, false)
+      }
+    }
+  }
 
   // ebs结构ID
   const [ebsId, setEbsId] = React.useState(0)
@@ -62,43 +116,45 @@ export default function DesignDataPage() {
 
     // 获取到选中的树形节点
     const treeItem = eval("newData[" + allIndex?.join("].children[") + "]")
+    console.log(treeItem, value, allIndex)
     setTreeItem(treeItem)
+    setSWRState({ code: treeItem.code, level: treeItem.level + 1, allIndex: allIndex as any[] })
 
     // 获取子节点
     // eslint-disable-next-line no-unused-vars
-    const res = await getEBSListApi({ code: value, level: treeItem.level + 1 })
-
-    const codeArr = res.map((item) => item.code)
-    if (res.length > 0) {
-      const resCount = await getCodeCountApi({
-        code: JSON.stringify(codeArr),
-        level: treeItem.level + 2,
-      })
-      if (Object.keys(resCount).length > 0) {
-        // eslint-disable-next-line no-unused-vars
-        const childrenArr = res.map((item) => ({
-          ...item,
-          childrenCount: resCount[String(item.code) as any] || {
-            platform: 0,
-            system: 0,
-            userdefined: 0,
-            none: 0,
-          },
-        }))
-        const str = "newData[" + allIndex?.join("].children[") + "].children"
-        eval(str + "=childrenArr")
-        mutate(newData as any, false)
-      } else {
-        // eslint-disable-next-line no-unused-vars
-        const childrenArr = res.map((item) => ({
-          ...item,
-          childrenCount: { platform: 0, system: 0, userdefined: 0, none: 0 },
-        }))
-        const str = "newData[" + allIndex?.join("].children[") + "].children"
-        eval(str + "=childrenArr")
-        mutate(newData as any, false)
-      }
-    }
+    // const res = await getEBSListApi({ code: value, level: treeItem.level + 1 })
+    //
+    // const codeArr = res.map((item) => item.code)
+    // if (res.length > 0) {
+    //   const resCount = await getCodeCountApi({
+    //     code: JSON.stringify(codeArr),
+    //     level: treeItem.level + 2,
+    //   })
+    //   if (Object.keys(resCount).length > 0) {
+    //     // eslint-disable-next-line no-unused-vars
+    //     const childrenArr = res.map((item) => ({
+    //       ...item,
+    //       childrenCount: resCount[String(item.code) as any] || {
+    //         platform: 0,
+    //         system: 0,
+    //         userdefined: 0,
+    //         none: 0,
+    //       },
+    //     }))
+    //     const str = "newData[" + allIndex?.join("].children[") + "].children"
+    //     eval(str + "=childrenArr")
+    //     mutate(newData as any, false)
+    //   } else {
+    //     // eslint-disable-next-line no-unused-vars
+    //     const childrenArr = res.map((item) => ({
+    //       ...item,
+    //       childrenCount: { platform: 0, system: 0, userdefined: 0, none: 0 },
+    //     }))
+    //     const str = "newData[" + allIndex?.join("].children[") + "].children"
+    //     eval(str + "=childrenArr")
+    //     mutate(newData as any, false)
+    //   }
+    // }
   }
 
   // 修改EBS节点的方法
@@ -158,7 +214,7 @@ export default function DesignDataPage() {
       <div className="flex-1 flex-shrink-0 overflow-auto bg-white">
         <div className="flex w-full h-full page_main design_data">
           <aside className="w-96 border min-w-[24rem] h-full px-4 py-5">
-            <SideBar getSubEBSList={getSubEBSList} />
+            <SideBar getSubEBSList={getSubEBSList} subIsLoading={subIsLoading} />
           </aside>
           <main className="flex-1 flex-shrink-0 ml-3 border min-w-[62.5rem] overflow-auto">
             <Main getSubEBSList={getSubEBSList} />
