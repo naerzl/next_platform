@@ -2,6 +2,7 @@ import React from "react"
 import { Metadata } from "next"
 import MemberDepartmentPage from "@/app/member-department/components/MemberDepartmentPage"
 
+// 重新推
 export default function page() {
   return <MemberDepartmentPage></MemberDepartmentPage>
 }
