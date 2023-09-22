@@ -17,7 +17,8 @@ function nav() {
 
   const handleLogout = () => {
     // 清楚cookie 跳到官网
-    removeCookie(OAUTH2_ACCESS_TOKEN)
+    // removeCookie(OAUTH2_ACCESS_TOKEN)
+    removeCookie("oauth2_access_token")
     router.push("/" as string)
   }
 
