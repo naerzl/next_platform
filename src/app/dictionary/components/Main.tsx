@@ -14,6 +14,7 @@ import { DICTIONARY_CLASS_LIMIT, DICTIONARY_LIMIT } from "../const"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
 import AddIcon from "@mui/icons-material/Add"
+import { message } from "antd"
 
 // 获取字典列表数据函数的参数类型
 export interface GetDictionaryDataOption {
@@ -21,7 +22,7 @@ export interface GetDictionaryDataOption {
   class_id?: number
 }
 
-export default function DictionaryMain() {
+export default function dictionaryMain() {
   // 控制添加字典dialog显示隐藏
   const [params, setParams] = React.useState<ReqGetDictionaryParams>({
     limit: DICTIONARY_LIMIT,
@@ -147,7 +148,7 @@ export default function DictionaryMain() {
       <h3 className="font-bold text-[1.875rem]">数据字典</h3>
       <div className="mb-9 mt-7">
         <Breadcrumbs aria-label="breadcrumb" separator=">">
-          <Link underline="hover" color="inherit" href="/">
+          <Link underline="hover" color="inherit" href="/dashboard">
             <i className="iconfont icon-homefill" style={{ fontSize: "14px" }}></i>
           </Link>
           <Typography color="text.primary" sx={{ fontSize: "14px" }}>

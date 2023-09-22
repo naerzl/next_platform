@@ -6,7 +6,7 @@ type Props = {
   text?: React.ReactNode
   className?: string
 }
-function Empty(props: Props) {
+function empty(props: Props) {
   const { fontSize, color, text, className } = props
   return (
     <div style={{ color: color ? color : "#737373" }} className={className ? className : ""}>
@@ -18,4 +18,4 @@ function Empty(props: Props) {
   )
 }
 
-export default Empty
+export default empty

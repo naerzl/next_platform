@@ -15,7 +15,9 @@ import { useSearchParams } from "next/navigation"
 import { Breadcrumbs } from "@mui/material"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
-import LayoutContext from "@/app/context/LayoutContext"
+import DrawerProcessList from "@/app/ebs-profession/ebs-data/components/DrawerProcessList"
+import useAuthSettingDialog from "@/app/member-department/hooks/useAuthSettingDialog"
+import useDrawerProcess from "@/app/ebs-profession/ebs-data/hooks/useDrawerProcess"
 
 // 表格每一列的字段
 const columns = [
@@ -80,7 +82,7 @@ const changeTreeArr = (arr: TypeEBSDataList[], indexStr = ""): TypeEBSDataList[]
   })
 }
 
-function EBSDataPage() {
+export default function ebsDataPage() {
   // 获取EBS结构数据
   const { trigger: getEBSApi } = useSWRMutation("/ebs", reqGetEBS)
   const [tableData, setTableData] = React.useState<TypeEBSDataList[]>([])
@@ -217,6 +219,7 @@ function EBSDataPage() {
         code: searchParams.get("code") as string,
         locate_code_or_name: value,
       })
+      console.log(res)
       if (!res) return
       const newArr = res.map((item) => {
         let str = ""
@@ -239,12 +242,20 @@ function EBSDataPage() {
     }
   }
 
+  const {
+    drawerProcessOpen,
+    handleOpenDrawerProcess,
+    handleCloseDrawerProcess,
+    item: ebsItemWithProcess,
+  } = useDrawerProcess()
+
   // 渲染表格每一行
   const renderTableTr = (arr: TypeEBSDataList[]) => {
     return arr.map((item) => (
       <TableTr
         item={item}
         key={item.id}
+        handleOpenDrawerProcess={handleOpenDrawerProcess}
         handleGetParentChildren={handleGetParentChildren}
         handleAddCustomEBS={handleAddCustomEBS}
         handleEditCustomEBS={handleEditCustomEBS}
@@ -269,7 +280,7 @@ function EBSDataPage() {
       <h3 className="font-bold text-[1.875rem]">EBS模板</h3>
       <div className="mb-9 mt-7">
         <Breadcrumbs aria-label="breadcrumb" separator=">">
-          <Link underline="hover" color="inherit" href="/">
+          <Link underline="hover" color="inherit" href="/dashboard">
             <i className="iconfont icon-homefill" style={{ fontSize: "14px" }}></i>
           </Link>
           <Link underline="hover" color="inherit" href="/ebs-profession" sx={{ fontSize: "14px" }}>
@@ -308,9 +319,15 @@ function EBSDataPage() {
             ebsOption={ebsOption}
             getEBSOption={getEBSOption}></DialogEBS>
         </div>
+
+        {drawerProcessOpen && (
+          <DrawerProcessList
+            open={drawerProcessOpen}
+            handleCloseDrawerProcess={handleCloseDrawerProcess}
+            item={ebsItemWithProcess}
+          />
+        )}
       </div>
     </EBSDataContext.Provider>
   )
 }
-
-export default EBSDataPage

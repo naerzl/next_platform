@@ -9,5 +9,5 @@ function CollectionDetail() {
 export default CollectionDetail
 
 export const metadata: Metadata = {
-  title: "EBS基础数据",
+  title: "EBS基础数据--平台端",
 }

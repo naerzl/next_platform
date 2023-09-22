@@ -31,7 +31,7 @@ interface Props {
   // eslint-disable-next-line no-unused-vars
   getSubEBSList: (value: string, allIndex?: number[], ifFlag?: boolean) => void
 }
-export default function DataList(props: Props) {
+export default function dataList(props: Props) {
   const { selectTag, getSubEBSList } = props
   const ctx = React.useContext(DesignDataContext)
   const { trigger: getEBSStructureApi } = useSWRMutation("/ebs-structure", reqDesignDataBaseData)

@@ -16,7 +16,7 @@ interface Props {
   getSubEBSList: (value: string, allIndex?: number[], ifFlag?: boolean) => void
 }
 
-function Main(props: Props) {
+export default function main(props: Props) {
   const { getSubEBSList } = props
   // 全局共享上下文数据
   const ctx = React.useContext(DesignDataContext)
@@ -97,26 +97,6 @@ function Main(props: Props) {
       const strArr = ctx.treeStr.split("-")
       getSubEBSList(strArr[0], strArr.slice(2) as any, true)
     }
-  }
-
-  const dropdownRender = () => {
-    return (
-      <div>
-        {allTagsList.length > 0 ? (
-          <ul>
-            {allTagsList.map((tag) => (
-              <li key={tag.id}>{tag.name}</li>
-            ))}
-          </ul>
-        ) : (
-          <Empty
-            className={"h-20 flex flex-col justify-center items-center"}
-            text="没有可选项"
-            fontSize="2rem"
-          />
-        )}
-      </div>
-    )
   }
 
   return (
@@ -206,5 +186,3 @@ function Main(props: Props) {
     </div>
   )
 }
-
-export default Main

@@ -21,7 +21,7 @@ import { message } from "antd"
 import { usePathname, useRouter } from "next/navigation"
 import Empty from "@/components/Empty"
 
-export default function SideBar() {
+export default function sideBar() {
   // 获取上下文来共享全局变量
   const ctx = React.useContext(CollectionContext)
   // 控制菜单的位置
@@ -96,7 +96,6 @@ export default function SideBar() {
   const [editItem, setEditItem] = React.useState<undefined | ReqGetAddCollectionClassResponse>()
   // 点击菜单编辑按钮
   const handleClickMenuEdit = () => {
-    console.log(addIndexStr)
     const indexArr = addIndexStr.split("-")
     // eslint-disable-next-line no-unused-vars
     const arr = ctx.sideBarList
@@ -119,7 +118,6 @@ export default function SideBar() {
     handleCloseMenu()
     await delCollectionClassApi({ id: handleId })
     message.success("删除成功")
-
     ctx.getSubClassList(id, indexArr.length > 1 ? resultArr.join("-") : "")
   }
 
@@ -198,7 +196,12 @@ export default function SideBar() {
           {RenderListItem(ctx.sideBarList)}
         </List>
       ) : (
-        <Empty className="w-full  flex flex-col justify-center items-center" fontSize="5rem" />
+        <Empty
+          className="w-full  flex flex-col justify-center items-center"
+          fontSize="3rem"
+          color="#dce0e6"
+          text={<div>暂时还没有数据</div>}
+        />
       )}
       <Menu
         id="language"

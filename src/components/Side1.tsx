@@ -13,7 +13,7 @@ import {
   ListItemText,
   ListSubheader,
 } from "@mui/material"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 
 export const dynamic = "force-dynamic"
 
@@ -40,9 +40,12 @@ const pathList = [
   },
 ]
 
-function Side() {
+function side(props: { pathName: string }) {
+  const { pathName: pathName1 } = props
   const logo = "/static/images/logo.png"
   const pathName = usePathname()
+
+  const router = useRouter()
 
   const [openList, setOpen] = React.useState<string[]>([])
 
@@ -64,11 +67,15 @@ function Side() {
   }
 
   React.useEffect(() => {
-    const obj = pathList.find((item) => pathName.startsWith(item.path))
+    const obj = pathList.find((item) => pathName1.startsWith(item.path))
     if (obj) {
       setOpen([obj!.open])
     }
   }, [])
+
+  const goto = (path: string) => {
+    router.push(path)
+  }
 
   return (
     <>
@@ -102,7 +109,9 @@ function Side() {
           <List component="div" disablePadding>
             <ListItemButton
               sx={pathName == "/dictionary/" ? { bgcolor: "#eef0f1" } : {}}
-              href="/dictionary">
+              onClick={() => {
+                goto("/dictionary")
+              }}>
               <ListItemIcon
                 className="min-w-0 mr-2.5 flex justify-center items-center"
                 sx={{ width: "1.5rem", height: "1.5rem" }}>
@@ -116,7 +125,9 @@ function Side() {
 
             <ListItemButton
               sx={pathName.startsWith("/collection/") ? { bgcolor: "#eef0f1" } : {}}
-              href="/collection">
+              onClick={() => {
+                goto("/collection")
+              }}>
               <ListItemIcon
                 className="min-w-0 mr-2.5 flex justify-center items-center"
                 sx={{ width: "1.5rem", height: "1.5rem" }}>
@@ -146,7 +157,9 @@ function Side() {
           <List component="div" disablePadding>
             <ListItemButton
               sx={pathName.startsWith("/ebs-profession/") ? { bgcolor: "#eef0f1" } : {}}
-              href="/ebs-profession">
+              onClick={() => {
+                goto("/ebs-profession")
+              }}>
               <ListItemIcon
                 className="min-w-0 mr-2.5 flex justify-center items-center"
                 sx={{ width: "1.5rem", height: "1.5rem" }}>
@@ -160,7 +173,9 @@ function Side() {
 
             <ListItemButton
               sx={pathName.startsWith("/engineering/") ? { bgcolor: "#eef0f1" } : {}}
-              href="/engineering">
+              onClick={() => {
+                goto("/engineering")
+              }}>
               <ListItemIcon
                 className="min-w-0 mr-2.5 flex justify-center items-center"
                 sx={{ width: "1.5rem", height: "1.5rem" }}>
@@ -174,7 +189,9 @@ function Side() {
 
             <ListItemButton
               sx={pathName.startsWith("/design-data-list/") ? { bgcolor: "#eef0f1" } : {}}
-              href="/design-data-list">
+              onClick={() => {
+                goto("/design-data-list")
+              }}>
               <ListItemIcon
                 className="min-w-0 mr-2.5 flex justify-center items-center"
                 sx={{ width: "1.5rem", height: "1.5rem" }}>
@@ -192,4 +209,4 @@ function Side() {
   )
 }
 
-export default Side
+export default side

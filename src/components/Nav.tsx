@@ -11,14 +11,14 @@ import { OAUTH2_ACCESS_TOKEN } from "@/libs/const"
 //   changeCollapsed: (bool: boolean) => void
 //   collapsed: boolean
 // }
-function Nav() {
+function nav() {
   //  跳转到登录的（后期删掉）
   const router = useRouter()
 
   const handleLogout = () => {
     // 清楚cookie 跳到官网
     removeCookie(OAUTH2_ACCESS_TOKEN)
-    router.push(process.env.NEXT_PUBLIC_WEB_PATH as string)
+    router.push("/" as string)
   }
 
   return (
@@ -42,4 +42,4 @@ function Nav() {
   )
 }
 
-export default Nav
+export default nav

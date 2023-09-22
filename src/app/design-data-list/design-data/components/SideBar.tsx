@@ -15,7 +15,7 @@ interface Props {
   subIsLoading: boolean
 }
 
-export default function SideBar(props: Props) {
+export default function sideBar(props: Props) {
   const { getSubEBSList, subIsLoading } = props
   const ctx = React.useContext(DesignDataContext)
   const handleSelectTree = async (event: React.SyntheticEvent, value: string) => {

@@ -48,7 +48,7 @@ const changeTreeArr = (arr: TypeSubsectionData[], indexStr = ""): TypeSubsection
   })
 }
 
-export default function EBSDetailPage() {
+export default function ebsDetailPage() {
   // 获取表格数据SWR请求
   const { trigger: getSubSectionApi } = useSWRMutation("/subsection", reqGetSubsection)
 
@@ -155,7 +155,7 @@ export default function EBSDetailPage() {
       <h3 className="font-bold text-[1.875rem]">分部分项模板</h3>
       <div className="mb-9 mt-7">
         <Breadcrumbs aria-label="breadcrumb" separator=">">
-          <Link underline="hover" color="inherit" href="/">
+          <Link underline="hover" color="inherit" href="/dashboard">
             <i className="iconfont icon-homefill" style={{ fontSize: "14px" }}></i>
           </Link>
           <Link underline="hover" color="inherit" href="/engineering" sx={{ fontSize: "14px" }}>

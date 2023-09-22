@@ -21,7 +21,7 @@ import { reqDeleteDictionaryClass } from "../api"
 import { iconList } from "./IconEnum"
 import Empty from "@/components/Empty"
 
-export default function SideBar() {
+export default function sideBar() {
   // 获取上下文来共享全局变量
   const ctx = React.useContext(SideContext)
   // 控制菜单的位置
@@ -134,24 +134,6 @@ export default function SideBar() {
     ctx.getSubClassList(id, newStr)
   }
 
-  const items: MenuProps["items"] = [
-    {
-      key: "1",
-      label: "编辑",
-    },
-    {
-      key: "2",
-      label: (
-        <span
-          onClick={() => {
-            handleClickMenuDel()
-          }}>
-          删除
-        </span>
-      ),
-    },
-  ]
-
   const RenderListItem = (arr: any[], indexStr = "") => {
     return arr.map((item, index) => {
       let str = indexStr ? `${indexStr}-${index}` : `${index}`
@@ -212,7 +194,11 @@ export default function SideBar() {
           {RenderListItem(ctx.sideBarList)}
         </List>
       ) : (
-        <Empty></Empty>
+        <Empty
+          className="w-full flex flex-col justify-center items-center"
+          fontSize="2rem"
+          color="#dce0e6"
+          text={<div>暂时还没有数据</div>}></Empty>
       )}
       <Menu
         sx={{ zIndex: "10" }}

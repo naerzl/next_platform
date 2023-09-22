@@ -4,7 +4,12 @@ import useSWRMutation from "swr/mutation"
 import { reqDeleteEBS, reqGetEBS } from "@/app/ebs-profession/ebs-data/api"
 import EBSDataContext from "@/app/ebs-profession/ebs-data/context/ebsDataContext"
 import { ENUM_ATTRIBUTION, ENUM_SUBPARY_CLASS } from "@/libs/const"
-import { Menu, MenuItem, Switch } from "@mui/material"
+import { IconButton, Menu, MenuItem, Switch, Tooltip } from "@mui/material"
+import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined"
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined"
+import DeleteIcon from "@mui/icons-material/DeleteOutlined"
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
+import useHooksConfirm from "@/hooks/useHooksConfirm"
 
 interface Props {
   item: TypeEBSDataList
@@ -23,13 +28,23 @@ interface Props {
   handleAddCustomEBS: (item: TypeEBSDataList, type: Type_Is_system) => void
   // eslint-disable-next-line no-unused-vars
   handleEditCustomEBS: (item: TypeEBSDataList) => void
+  // eslint-disable-next-line no-unused-vars
+  handleOpenDrawerProcess: (item: TypeEBSDataList) => void
 }
 
 export type Type_Is_system = "platform" | "system" | "userdefined"
 
-function TableTr(props: Props) {
+export default function tableTr(props: Props) {
   const ctx = React.useContext(EBSDataContext)
-  const { item, handleGetParentChildren, handleAddEBS, handleEditCustomEBS } = props
+  const {
+    item,
+    handleGetParentChildren,
+    handleAddEBS,
+    handleEditCustomEBS,
+    handleOpenDrawerProcess,
+  } = props
+
+  const { handleConfirm } = useHooksConfirm()
 
   // 删除EBS结构api
   const { trigger: deleteEBSApi } = useSWRMutation("/ebs", reqDeleteEBS)
@@ -46,19 +61,26 @@ function TableTr(props: Props) {
     handleCloseMenu()
   }
 
+  const handleIconLookProcess = () => {
+    // 查看工序
+    handleOpenDrawerProcess(item)
+  }
+
   const handleIconEdit = () => {
     handleEditCustomEBS(item)
     handleCloseMenu()
   }
 
-  const handleIconDel = async () => {
-    // 调佣删除接口
-    await deleteEBSApi({ id: item.id, project_id: 1 })
-    //   删除成功需要刷新父级节点下面的children
-    const parentIndexArr = item.key?.split("-").slice(0, item.key?.split("-").length - 1)
-    //   获取父级节点的层级 拿到当前的层级删除最后一个 即是父级层级
-    handleGetParentChildren(parentIndexArr as string[])
-    handleCloseMenu()
+  const handleIconDel = () => {
+    handleConfirm(async () => {
+      // 调佣删除接口
+      await deleteEBSApi({ id: item.id, project_id: 1 })
+      //   删除成功需要刷新父级节点下面的children
+      const parentIndexArr = item.key?.split("-").slice(0, item.key?.split("-").length - 1)
+      //   获取父级节点的层级 拿到当前的层级删除最后一个 即是父级层级
+      handleGetParentChildren(parentIndexArr as string[])
+      handleCloseMenu()
+    })
   }
 
   const [haveChildren, setHaveChildren] = React.useState(true)
@@ -133,7 +155,9 @@ function TableTr(props: Props) {
             <span>{item.name}</span>
           </div>
         </td>
-        <td className="flex justify-between items-center pl-4" title={item.code}>
+        <td
+          className="pl-4 leading-[55px] whitespace-nowrap text-ellipsis overflow-hidden"
+          title={item.code}>
           {item.code}
         </td>
         <td className="flex justify-between items-center pl-4">{item.unit}</td>
@@ -158,7 +182,7 @@ function TableTr(props: Props) {
           <div className="text-[#757575] flex gap-x-2.5 w-[6.25rem] justify-start">
             <i
               className="iconfont icon-gengduo text-[1.25rem] cursor-pointer"
-              onClick={handleClickMenuIcon}></i>
+              onMouseEnter={handleClickMenuIcon}></i>
             <Menu
               id="basic-menu"
               anchorEl={anchorEl}
@@ -166,31 +190,46 @@ function TableTr(props: Props) {
               onClose={handleCloseMenu}
               MenuListProps={{
                 "aria-labelledby": "basic-button",
+                sx: { boxShadow: "none" },
               }}>
-              <MenuItem onClick={handleIconAdd}>
-                <div className="flex gap-x-1.5 items-center">
-                  <i
-                    className="iconfont icon-jia w-4 aspect-square cursor-pointer"
-                    title="添加"></i>
-                  <span>添加</span>
-                </div>
-              </MenuItem>
-              <MenuItem onClick={handleIconEdit}>
-                <div className="flex gap-x-1.5 items-center">
-                  <i
-                    className="iconfont icon-bianji w-4 aspect-square cursor-pointer"
-                    title="修改"></i>
-                  <span>修改</span>
-                </div>
-              </MenuItem>
-              <MenuItem onClick={handleIconDel}>
-                <div className="flex gap-x-1.5 items-center">
-                  <i
-                    className="iconfont icon-shanchu w-4 aspect-square cursor-pointer"
-                    title="删除"></i>
-                  <span>删除</span>
-                </div>
-              </MenuItem>
+              <div className="flex">
+                <MenuItem onClick={handleIconLookProcess} sx={{ p: 0 }}>
+                  <div className="flex gap-x-1.5 items-center">
+                    <Tooltip title="查看工序">
+                      <IconButton>
+                        <SearchOutlinedIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </div>
+                </MenuItem>
+                <MenuItem onClick={handleIconAdd} sx={{ p: 0 }}>
+                  <div className="flex gap-x-1.5 items-center">
+                    <Tooltip title="添加EBS结构">
+                      <IconButton>
+                        <AddOutlinedIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </div>
+                </MenuItem>
+                <MenuItem onClick={handleIconEdit} sx={{ p: 0 }}>
+                  <div className="flex gap-x-1.5 items-center">
+                    <Tooltip title="修改EBS结构">
+                      <IconButton>
+                        <EditOutlinedIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </div>
+                </MenuItem>
+                <MenuItem onClick={handleIconDel} sx={{ p: 0 }}>
+                  <div className="flex gap-x-1.5 items-center">
+                    <Tooltip title="删除EBS结构">
+                      <IconButton>
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </div>
+                </MenuItem>
+              </div>
             </Menu>
           </div>
         </td>
@@ -199,5 +238,3 @@ function TableTr(props: Props) {
     </>
   )
 }
-
-export default TableTr

@@ -44,6 +44,7 @@ export default function useEBSDataDialog() {
 
   const changeDialogOpen = (open: boolean) => {
     setDialogOpen(open)
+    !open && setItem({} as TypeEBSDataList)
   }
   return {
     item,

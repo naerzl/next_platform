@@ -72,3 +72,15 @@ export function convertModelToFormData(model: any, form?: FormData, namespace = 
   }
   return formData
 }
+
+// 过滤字符串左右两边指定字符
+export function trim(str: string, ch: string) {
+  let start = 0,
+    end = str.length
+
+  while (start < end && str[start] === ch) ++start
+
+  while (end > start && str[end - 1] === ch) --end
+
+  return start > 0 || end < str.length ? str.substring(start, end) : str
+}

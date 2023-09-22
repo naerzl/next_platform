@@ -115,6 +115,19 @@ html {
   }
 }
 
+.h-10{
+  .ant-select-selector{
+    height: 100% !important;
+    .ant-select-selection-search-input{
+      height: 100% !important;
+    }
+    .ant-select-selection-placeholder,.ant-select-selection-item{
+      line-height: 40px!important;
+    }
+  }
+}
+
+
 .ant-input-group-addon {
   .ant-btn {
     display: flex;
@@ -131,4 +144,34 @@ html {
 
 .ant-table-header,.ant-table-sticky-holder{
   top:64px !important;
+}
+
+.css-1f8bwsm{
+  color: #303133 !important;
+}
+
+.css-3dzjca-MuiPaper-root-MuiPopover-paper-MuiMenu-paper{
+  box-shadow: 0 2px 8px 2px rgba(#ccc,0.5);
+}
+
+.MuiSpeedDial-root{
+  .MuiButtonBase-root{
+    background: #fafafa;
+  }
+  &> .MuiButtonBase-root{
+    width: 40px;
+    height: 40px;
+    background: #0162B1;
+  }
+
+}
+
+.custom{
+  .css-1t1j96h-MuiPaper-root-MuiDialog-paper{
+    max-width: none;
+  }
+}
+
+.ant-message{
+  z-index: 9999999 !important;
 }

@@ -10,14 +10,13 @@ import { ReqGetAddCollectionResponse } from "../types"
 import { reqDelCollection, reqPutEditCollection } from "../api"
 import { useRouter } from "next/navigation"
 import Empty from "@/components/Empty"
-import { Button } from "@mui/material"
 
 interface Props {
   tableData: ReqGetAddCollectionResponse[]
   getCollectionData: () => void
 }
 
-export default function Table(props: Props) {
+export default function table(props: Props) {
   const { tableData, getCollectionData } = props
   const router = useRouter()
 
@@ -112,6 +111,7 @@ export default function Table(props: Props) {
           className="w-full h-full flex flex-col justify-center items-center"
           fontSize="5rem"
           color="#dce0e6"
+          text={<div>暂时还没有数据</div>}
         />
       )}
     </div>

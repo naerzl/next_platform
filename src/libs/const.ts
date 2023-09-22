@@ -5,6 +5,9 @@ export const REGEXP_PASSWORD =
 // 手机号正则
 export const REGEXP_PHONE = /^1[3456789]\d{9}$/
 
+// 邮箱正则
+export const REGEXP_MAIL = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+
 // 成功状态码
 export const STATUS_SUCCESS = 2000
 

@@ -6,7 +6,7 @@ import React from "react"
 import { getV1BaseURL } from "@/libs/fetch"
 import { OAUTH2_ACCESS_TOKEN, OAUTH2_PATH_FROM } from "@/libs/const"
 
-function Auth2() {
+export default function auth2() {
   const searchParams = useSearchParams()
   const router = useRouter()
   React.useEffect(() => {
@@ -17,7 +17,7 @@ function Auth2() {
       })
       .then((res) => {
         if (res.code !== 2000) return
-        setCookie(OAUTH2_ACCESS_TOKEN as string, JSON.stringify(res.data))
+        setCookie(OAUTH2_ACCESS_TOKEN as string, res.data.access_token)
         if (searchParams.get("is_first_login") == "true") {
           router.push(`${process.env.NEXT_PUBLIC_AUTH_PATH}/firstchangepassword`)
         } else {
@@ -28,5 +28,3 @@ function Auth2() {
   }, [])
   return <></>
 }
-
-export default Auth2

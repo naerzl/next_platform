@@ -5,6 +5,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Drawer,
   InputLabel,
   ListItemIcon,
   MenuItem,
@@ -43,7 +44,7 @@ interface IForm {
   icon: string
 }
 
-function DialogSideBar(props: Props) {
+export default function dialogSideBar(props: Props) {
   const ctx = React.useContext(SideContext)
   const { open, close, parent_id, cb, editItem, setEditItem } = props
 
@@ -100,17 +101,20 @@ function DialogSideBar(props: Props) {
   }
 
   return (
-    <Dialog open={open} onClose={handleClose}>
-      <DialogTitle sx={{ px: "40px", pt: "30px" }}>新增字典</DialogTitle>
-      <DialogContent sx={{ width: 500, px: "40px", pb: "30px" }}>
+    <Drawer open={open} onClose={handleClose} anchor="right">
+      <div className="w-[500px] p-10">
+        <header className="text-3xl text-[#44566C] mb-8">
+          {Boolean(editItem) ? "修改字典" : "添加字典"}
+        </header>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-4">
-            <div className="flex items-center">
-              <InputLabel htmlFor="name" className="mr-3 w-20 text-right inline-block">
+          <div className="mb-8 relative">
+            <div className="flex items-start flex-col">
+              <InputLabel htmlFor="name" className="mr-3 mb-2.5 w-24 text-left inline-block">
                 字典名称*:
               </InputLabel>
               <TextField
                 id="name"
+                fullWidth
                 error={Boolean(errors.name)}
                 variant="outlined"
                 placeholder="请输入字典名称"
@@ -122,19 +126,20 @@ function DialogSideBar(props: Props) {
               errors={errors}
               name="name"
               render={({ message }) => (
-                <p className="text-railway_error text-sm pl-24">{message}</p>
+                <p className="text-railway_error text-sm absolute">{message}</p>
               )}
             />
           </div>
-          <div className="mb-4">
-            <div className="flex items-center">
-              <InputLabel htmlFor="icon" className="mr-3 w-20 text-right">
+          <div className="mb-8 relative">
+            <div className="flex items-start flex-col">
+              <InputLabel htmlFor="icon" className="mr-3 mb-2.5 w-24 text-left inline-block">
                 选择图标*:
               </InputLabel>
               <Select
                 error={Boolean(errors.icon)}
                 sx={{ flex: 1 }}
                 id="icon"
+                fullWidth
                 placeholder="请选择一个图标"
                 defaultValue={"FolderOpenSharpIcon"}
                 {...register("icon", { required: "请选择一个图标" })}>
@@ -149,18 +154,18 @@ function DialogSideBar(props: Props) {
               errors={errors}
               name="icon"
               render={({ message }) => (
-                <p className="text-railway_error text-sm pl-24">{message}</p>
+                <p className="text-railway_error text-sm absolute">{message}</p>
               )}
             />
           </div>
           <DialogActions>
             <Button onClick={handleClose}>取消</Button>
-            <Button type="submit">确定</Button>
+            <Button type="submit" variant="contained" className="bg-railway_blue">
+              确定
+            </Button>
           </DialogActions>
         </form>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </Drawer>
   )
 }
-
-export default DialogSideBar

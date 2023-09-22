@@ -21,7 +21,7 @@ const EnumNodeClass: { [key: string]: string } = {
   examination: "检验批",
 }
 
-function TableTr(props: Props) {
+export default function tableTr(props: Props) {
   const { item, handleExpandOrClose } = props
 
   const handleClickClose = () => {
@@ -80,5 +80,3 @@ function TableTr(props: Props) {
     </>
   )
 }
-
-export default TableTr

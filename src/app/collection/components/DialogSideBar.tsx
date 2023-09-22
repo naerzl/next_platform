@@ -1,13 +1,5 @@
 "use client"
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  InputLabel,
-  TextField,
-} from "@mui/material"
+import { Button, DialogActions, InputLabel, TextField, Drawer } from "@mui/material"
 import React from "react"
 import useDebounce from "@/hooks/useDebounce"
 import useSWRMutation from "swr/mutation"
@@ -34,7 +26,7 @@ interface IForm {
   name: string
 }
 
-function DialogSideBar(props: Props) {
+export default function dialogSideBar(props: Props) {
   const ctx = React.useContext(CollectionContext)
   const { open, close, parent_id, cb, editItem, setEditItem } = props
 
@@ -86,17 +78,20 @@ function DialogSideBar(props: Props) {
   }
 
   return (
-    <Dialog open={open} onClose={handleClose}>
-      <DialogTitle sx={{ px: "40px", pt: "30px" }}>添加表结构名称</DialogTitle>
-      <DialogContent sx={{ px: "40px", pb: "30px", width: 500 }}>
+    <Drawer open={open} onClose={handleClose} anchor="right">
+      <div className="w-[500px] p-10">
+        <header className="text-3xl text-[#44566C] mb-8">
+          {Boolean(editItem) ? "修改表结构名称" : "添加表结构名称"}
+        </header>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-4">
-            <div className="flex items-center">
-              <InputLabel htmlFor="name" className="mr-3 w-24 text-right inline-block">
+          <div className="mb-8 relative">
+            <div className="flex items-start flex-col">
+              <InputLabel htmlFor="name" className="mr-3 mb-2.5 w-24 text-left inline-block">
                 表结构名称:
               </InputLabel>
               <TextField
                 id="name"
+                fullWidth
                 error={Boolean(errors.name)}
                 variant="outlined"
                 placeholder="请输入表结构名称"
@@ -108,18 +103,18 @@ function DialogSideBar(props: Props) {
               errors={errors}
               name="name"
               render={({ message }) => (
-                <p className="text-railway_error text-sm pl-24">{message}</p>
+                <p className="text-railway_error text-sm absolute">{message}</p>
               )}
             />
           </div>
           <DialogActions>
             <Button onClick={handleClose}>取消</Button>
-            <Button type="submit">确定</Button>
+            <Button type="submit" variant="contained" className="bg-railway_blue">
+              确定
+            </Button>
           </DialogActions>
         </form>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </Drawer>
   )
 }
-
-export default DialogSideBar

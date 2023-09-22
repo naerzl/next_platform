@@ -9,7 +9,7 @@ import { Breadcrumbs } from "@mui/material"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
 
-export default function CollectionLayout({ children }: { children: React.ReactNode }) {
+export default function collectionLayout({ children }: { children: React.ReactNode }) {
   // 获取集合分类接口
   const { data, isLoading, mutate } = useSWR(
     "/structure-collection-class",
@@ -37,7 +37,6 @@ export default function CollectionLayout({ children }: { children: React.ReactNo
   }, [data])
 
   const getSubClassList = async (id: number, indexStr: string) => {
-    console.log("class更新了", id, indexStr)
     // 如果不传indexStr的话获取第一层级的
     if (indexStr == "") {
       const res = await getCollectionClassApi({})
@@ -53,9 +52,11 @@ export default function CollectionLayout({ children }: { children: React.ReactNo
     eval(str + "=res")
     mutate(newArr, false)
   }
+
   if (isLoading) {
     return <></>
   }
+
   return (
     <CollectionContext.Provider
       value={{
@@ -68,7 +69,7 @@ export default function CollectionLayout({ children }: { children: React.ReactNo
       <h3 className="font-bold text-[1.875rem]">表结构库</h3>
       <div className="mb-9 mt-7">
         <Breadcrumbs aria-label="breadcrumb" className="my-2" separator=">">
-          <Link underline="hover" color="inherit" href="/">
+          <Link underline="hover" color="inherit" href="/dashboard">
             <i className="iconfont icon-homefill" style={{ fontSize: "14px" }}></i>
           </Link>
           <Typography color="text.primary" sx={{ fontSize: "14px" }}>

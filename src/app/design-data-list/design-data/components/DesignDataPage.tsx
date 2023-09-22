@@ -13,7 +13,7 @@ import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
 import { reqGetCodeCount } from "@/app/ebs-profession/ebs-data/api"
 
-export default function DesignDataPage() {
+export default function designDataPage() {
   // 获取路由的查询参数
   const searchParams = useSearchParams()
 
@@ -196,7 +196,7 @@ export default function DesignDataPage() {
       <h3 className="font-bold text-[1.875rem]">设计数据模板</h3>
       <div className="mt-9 mb-7">
         <Breadcrumbs aria-label="breadcrumb" separator=">">
-          <Link underline="hover" color="inherit" href="/">
+          <Link underline="hover" color="inherit" href="/dashboard">
             <i className="iconfont icon-homefill" style={{ fontSize: "14px" }}></i>
           </Link>
           <Link

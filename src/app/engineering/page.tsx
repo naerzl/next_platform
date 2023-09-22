@@ -2,7 +2,7 @@ import { Metadata } from "next"
 import React from "react"
 import EngineeringPage from "./components/EngineeringPage"
 
-export default function Page() {
+export default function page() {
   return <EngineeringPage />
 }
 

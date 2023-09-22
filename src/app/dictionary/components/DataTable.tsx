@@ -28,7 +28,7 @@ interface Props {
   handleSortTable: (order: Order) => void
 }
 
-export default function DataTable(props: Props) {
+export default function dataTable(props: Props) {
   const { tableData, getDictionaryData, handleSortTable } = props
 
   const { trigger: putDictionaryApi } = useSWRMutation("/dictionary", reqPutDictionary)
@@ -38,7 +38,12 @@ export default function DataTable(props: Props) {
 
   if (tableData.length <= 0) {
     return (
-      <Empty className="w-full h-full flex flex-col justify-center items-center" fontSize="5rem" />
+      <Empty
+        className="w-full h-full flex flex-col justify-center items-center"
+        fontSize="5rem"
+        color="#dce0e6"
+        text={<div>暂时还没有数据</div>}
+      />
     )
   }
 

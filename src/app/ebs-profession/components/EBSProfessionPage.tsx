@@ -24,7 +24,7 @@ import IconButton from "@mui/material/IconButton"
 import SearchIcon from "@mui/icons-material/Search"
 import useSWR from "swr"
 
-export default function EBSProfessionPage() {
+export default function ebsProfessionPage() {
   const [swrState, setSwrState] = React.useState({
     level: 1,
     name: "",
@@ -86,7 +86,7 @@ export default function EBSProfessionPage() {
       <h3 className="font-bold text-[1.875rem]">EBS专业列表</h3>
       <div className="mb-9 mt-7">
         <Breadcrumbs aria-label="breadcrumb" separator=">">
-          <Link underline="hover" color="inherit" href="/">
+          <Link underline="hover" color="inherit" href="/dashboard">
             <i className="iconfont icon-homefill" style={{ fontSize: "14px" }}></i>
           </Link>
           <Typography color="text.primary" sx={{ fontSize: "14px" }}>

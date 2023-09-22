@@ -48,6 +48,8 @@ export interface TypeApiPostEBSParams {
   is_loop: "yes" | "no"
   subpart_class: string
   related_to?: number | string
+  h_subpart_code?: string
+  n_subpart_code?: string
 }
 
 /*创建EBS结构 响应结果*/
@@ -95,4 +97,57 @@ export interface TypeApiGetCodeRelationship {
     name: string
     level: number
   }[]
+}
+
+// 基础工序类型
+export interface ProcessListData {
+  id: number
+  name: string
+  desc: string
+  created_at: string
+  updated_at: string
+  percentage: number
+  stage: number
+  roles: ProcessRoleData[]
+}
+
+export interface ProcessRoleData {
+  flag: string
+  flag_name: string
+}
+
+export interface TypeApiPostProcessParams {
+  ebs_id: number
+  name: string
+  desc: string
+  percentage: number
+  stage: number
+}
+
+export interface TypeApiPutProcessParams {
+  id: number
+  name: string
+  desc: string
+  percentage: number
+  stage: number
+}
+
+export interface ProcessFormListData {
+  id: number
+  process_id: number
+  form_no: string
+  name: string
+  desc: string
+  is_loop: number
+  created_at: string
+  updated_at: string
+  roles: ProcessRoleData[]
+}
+
+export interface TypeApiPostProcessFormParams {
+  process_id: number
+  name: string
+  desc: string
+  is_loop: number
+  role_flags: string
 }

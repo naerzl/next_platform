@@ -1,17 +1,8 @@
 "use client"
 import React from "react"
-import useSWRMutation from "swr/mutation"
 import { reqGetEBS } from "@/app/ebs-profession/ebs-data/api"
-import { TypeEBSDataList } from "@/app/ebs-profession/ebs-data/types"
 import dayjs from "dayjs"
-import {
-  Breadcrumbs,
-  InputAdornment,
-  InputBase,
-  Button,
-  Backdrop,
-  CircularProgress,
-} from "@mui/material"
+import { Breadcrumbs, InputAdornment, InputBase, Button, CircularProgress } from "@mui/material"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
@@ -23,9 +14,8 @@ import TableRow from "@mui/material/TableRow"
 import IconButton from "@mui/material/IconButton"
 import SearchIcon from "@mui/icons-material/Search"
 import useSWR from "swr"
-import { Skeleton } from "@mui/lab"
 
-export default function EBSProfessionPage() {
+export default function designDataListPage() {
   const [swrState, setSwrState] = React.useState({
     level: 1,
     name: "",
@@ -87,7 +77,7 @@ export default function EBSProfessionPage() {
       <h3 className="font-bold text-[1.875rem]">设计数据列表</h3>
       <div className="mb-9 mt-7">
         <Breadcrumbs aria-label="breadcrumb" separator=">">
-          <Link underline="hover" color="inherit" href="/">
+          <Link underline="hover" color="inherit" href="/dashboard">
             <i className="iconfont icon-homefill" style={{ fontSize: "14px" }}></i>
           </Link>
           <Typography color="text.primary" sx={{ fontSize: "14px" }}>

@@ -1,12 +1,10 @@
 import { Metadata } from "next"
 import DesignDataPage from "./components/DesignDataPage"
 
-function DesignData() {
+export default function designData() {
   return <DesignDataPage />
 }
 
-export default DesignData
-
 export const metadata: Metadata = {
-  title: "设计数据",
+  title: "设计数据--平台端",
 }

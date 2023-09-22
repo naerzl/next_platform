@@ -3,6 +3,7 @@ export interface ReqAddDictionaryParams {
   name: string // 字典名换成呢个
   serial: string | number // 字典序号
   class_id: string | number // 字典分类
+  properties?: string
 }
 
 // 获取字典数据请求参数

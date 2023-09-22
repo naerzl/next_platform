@@ -1,7 +1,7 @@
 import React from "react"
 import DesignDataContext from "../context/useDesignData"
 
-function MainHeader() {
+export default function mainHeader() {
   const ctx = React.useContext(DesignDataContext)
   return (
     <header className="h-28 flex items-center justify-between px-4">
@@ -25,5 +25,3 @@ function MainHeader() {
     </header>
   )
 }
-
-export default MainHeader

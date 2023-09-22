@@ -55,15 +55,13 @@ export async function fetcher<T>(params: FetcherOptions<T>) {
   // 闭包一个请求
   const ufetch = () => {
     // 从cookie里面获取oauth2的token
-    authCodeOfCookie =
-      getCookie(OAUTH2_ACCESS_TOKEN as string) &&
-      JSON.parse(getCookie(OAUTH2_ACCESS_TOKEN as string) as string)
+    authCodeOfCookie = getCookie(OAUTH2_ACCESS_TOKEN as string)
     return fetch(`${url}`, {
       method: method || "get",
       body,
       headers: authCodeOfCookie
         ? {
-            Authorization: `Bearer ${authCodeOfCookie.access_token}`,
+            Authorization: `Bearer ${authCodeOfCookie}`,
           }
         : undefined,
     })
@@ -78,7 +76,7 @@ export async function fetcher<T>(params: FetcherOptions<T>) {
       // 刷新token
       const resRefresh = await lrsOAuth2Instance.lrsOAuth2rRefreshToken(
         getV1BaseURL("/refresh"),
-        `Bearer ${authCodeOfCookie.access_token}`,
+        `Bearer ${authCodeOfCookie}`,
       )
       if (resRefresh.status == StatusCodes.UNAUTHORIZED) {
         throw new Error("401")
@@ -86,7 +84,7 @@ export async function fetcher<T>(params: FetcherOptions<T>) {
       const result = await resRefresh.json()
       if (result.code == STATUS_SUCCESS) {
         // 设置新的cookie
-        setCookie(OAUTH2_ACCESS_TOKEN, result.data)
+        setCookie(OAUTH2_ACCESS_TOKEN, result.data.access_token)
       } else {
         throw new Error("500")
       }

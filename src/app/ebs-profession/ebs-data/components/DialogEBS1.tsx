@@ -8,6 +8,7 @@ import EBSDataContext from "@/app/ebs-profession/ebs-data/context/ebsDataContext
 import { Type_Is_system } from "@/app/ebs-profession/ebs-data/components/TableTr"
 import { ENUM_SUBPARY_CLASS } from "@/libs/const"
 import { reqGetSubsection } from "@/app/engineering/api"
+import { Drawer } from "@mui/material"
 
 interface Props {
   open: boolean
@@ -26,7 +27,7 @@ interface Props {
   getEBSOption: (value: string) => void
 }
 
-function DialogEBS(props: Props) {
+export default function dialogEBS(props: Props) {
   const ctx = React.useContext(EBSDataContext)
   const {
     open,
@@ -155,7 +156,12 @@ function DialogEBS(props: Props) {
   //  系统添加的 表单
 
   const renderForm = () => (
-    <Form onFinish={onFinish} form={form} className="ebs_data" labelCol={{ span: 4, offset: 0 }}>
+    <Form
+      onFinish={onFinish}
+      form={form}
+      className="ebs_data"
+      labelCol={{ span: 6, offset: 0 }}
+      layout="vertical">
       {!(isEdit && item.is_system == "system") && (
         <>
           <Form.Item
@@ -169,13 +175,11 @@ function DialogEBS(props: Props) {
           </Form.Item>
         </>
       )}
-      <div className="mb-6 flex items-center">
-        <div className="my-2">
-          <span>(选填)</span>是否可循环：
-        </div>
+      <div className="mb-6">
+        <div className="my-2">是否可循环：</div>
         <Switch
           className="bg-[#bfbfbf]"
-          checked={apiParams.is_loop == "yes" ? true : false}
+          checked={apiParams.is_loop == "yes"}
           onChange={handleSwitchChange}
         />
       </div>
@@ -212,7 +216,7 @@ function DialogEBS(props: Props) {
             </Form.Item>
           </>
         )}
-      {item.is_system != "system" && (
+      {(item.is_system != "system" || !isEdit) && (
         <Form.Item name="related_to" label="关联EBS">
           <Select
             defaultActiveFirstOption={false}
@@ -239,17 +243,12 @@ function DialogEBS(props: Props) {
 
   return (
     <>
-      <Modal
-        className="custom-modal"
-        maskClosable={false}
-        title={isEdit ? "修改" : "添加"}
-        open={open}
-        footer={null}
-        onCancel={handleCancel}>
-        {renderForm()}
-      </Modal>
+      <Drawer open={open} onClose={handleCancel} anchor="right">
+        <div className="w-[500px] p-10">
+          <header className="text-3xl text-[#44566C] mb-8">{isEdit ? "修改ebs" : "添加ebs"}</header>
+          {renderForm()}
+        </div>
+      </Drawer>
     </>
   )
 }
-
-export default DialogEBS

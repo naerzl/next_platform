@@ -8,7 +8,7 @@ import CollectionContext from "../context/collectionContext"
 import { ReqGetAddCollectionClassResponse } from "../types"
 import Table from "./Table"
 
-export default function CollectionPage() {
+export default function collectionPage() {
   // 获取全局上下文
   const ctx = React.useContext(CollectionContext)
   // 头部结构名称添加
