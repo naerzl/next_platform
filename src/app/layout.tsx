@@ -15,7 +15,6 @@ import { trim } from "@/libs/methods"
 
 const inter = Inter({ subsets: ["latin"] })
 
-<<<<<<< HEAD
 const menuList: MenuItemX = {
   commonLibrary: {
     title: "公共库",
@@ -70,8 +69,6 @@ const menuList: MenuItemX = {
   },
 }
 
-=======
->>>>>>> 488a6effd2481699d397f076161ac99025a52b4a
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   // const scroll_dom = React.useRef<HTMLDivElement>(null)
   //
@@ -85,7 +82,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   //
   //   return () => scroll_dom.current?.removeEventListener("scroll", handleScroll)
   // }, [scroll])
-<<<<<<< HEAD
 
   // 处理展开菜单展开
   const pathname = usePathname()
@@ -119,14 +115,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     })
     setMenus({ ...menuList })
   }, [pathname])
-=======
->>>>>>> 488a6effd2481699d397f076161ac99025a52b4a
 
   return (
     <html lang="en" id="_next">
       <body className={`${inter.className} flex`}>
         <StyledComponentsRegistry>
-<<<<<<< HEAD
           <ConfirmProvider>
             <SWRConfig value={{ provider: () => new Map() }}>
               {pathname != "/" ? (
@@ -144,20 +137,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               )}
             </SWRConfig>
           </ConfirmProvider>
-=======
-          <SWRConfig value={{ provider: () => new Map() }}>
-            <aside className={`h-full min-w-[15rem] w-60 border-r`}>
-              <Side />
-            </aside>
-            <div
-              className="flex-1 flex  flex-col bg-[#f8fafb] min-w-[50.625rem] overflow-auto "
-              // ref={scroll_dom}
-            >
-              <Nav />
-              <main className="px-7.5 py-12  flex flex-col ">{children}</main>
-            </div>
-          </SWRConfig>
->>>>>>> 488a6effd2481699d397f076161ac99025a52b4a
         </StyledComponentsRegistry>
       </body>
     </html>
