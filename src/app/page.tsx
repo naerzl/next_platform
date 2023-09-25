@@ -9,5 +9,3 @@ const HomePage = dynamic(() => import("@/components/HomePage"), { ssr: false })
 export default function home() {
   return <HomePage />
 }
-
-//
