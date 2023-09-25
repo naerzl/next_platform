@@ -28,9 +28,15 @@ export default function HomePage(props: any) {
     }
   }
 
+  let cookie = localStorage.getItem(OAUTH2_ACCESS_TOKEN)
+
   React.useEffect(() => {
-    getCookie(OAUTH2_ACCESS_TOKEN) && router.push("/dashboard")
+    cookie && router.push("/dashboard")
   }, [])
+
+  if (cookie) {
+    return <></>
+  }
   return (
     <div className="h-full overflow-auto w-full flex relative">
       <div className="flex-1 bg-[#0081ff] relative">

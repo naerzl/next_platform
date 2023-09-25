@@ -1,6 +1,6 @@
 import React from "react"
 
-function Page(props: any) {
+function Page() {
   return <div>dashboard</div>
 }
 

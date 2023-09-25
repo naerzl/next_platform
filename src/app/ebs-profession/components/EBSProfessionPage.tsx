@@ -1,17 +1,8 @@
 "use client"
 import React from "react"
-import useSWRMutation from "swr/mutation"
 import { reqGetEBS } from "@/app/ebs-profession/ebs-data/api"
-import { TypeEBSDataList } from "@/app/ebs-profession/ebs-data/types"
 import dayjs from "dayjs"
-import {
-  Breadcrumbs,
-  InputAdornment,
-  InputBase,
-  Button,
-  Backdrop,
-  CircularProgress,
-} from "@mui/material"
+import { Breadcrumbs, InputAdornment, InputBase, Button, CircularProgress } from "@mui/material"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
