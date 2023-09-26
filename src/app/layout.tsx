@@ -129,19 +129,32 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     }
   }
 
-  let token = localStorage.getItem(OAUTH2_ACCESS_TOKEN)
-  if (pathname != "/" && pathname != "/auth2/") {
-    if (!token) {
-      handleGoToLogin()
-      return <></>
-    } else {
-      const time = localStorage.getItem(OAUTH2_TOKEN_EXPIRY)
-      if (dayjs(time).unix() * 1000 - Date.now() < MINTE5) {
-        refreshToken(token)
+  const [accessToken, setAccessToken] = React.useState<string | null>(null)
+
+  React.useEffect(() => {
+    let token = localStorage.getItem(OAUTH2_ACCESS_TOKEN)
+
+    setAccessToken(token)
+
+    if (pathname != "/" && pathname != "/auth2/") {
+      if (!token) {
+        handleGoToLogin()
+      } else {
+        const time = localStorage.getItem(OAUTH2_TOKEN_EXPIRY)
+        if (dayjs(time).unix() * 1000 - Date.now() < MINTE5) {
+          refreshToken(token)
+        }
       }
     }
-  }
+  }, [])
 
+  if (!accessToken) {
+    return (
+      <html lang="en" id="_next">
+        <body className={`${inter.className} flex`}></body>
+      </html>
+    )
+  }
   return (
     <html lang="en" id="_next">
       <body className={`${inter.className} flex`}>
