@@ -148,6 +148,7 @@ export default function AddProcess(props: Props) {
                   error={Boolean(errors.name)}
                   {...register("name", { required: "请输入名称" })}
                   label="请输入名称"
+                  autoComplete="off"
                 />
               </div>
               <ErrorMessage
@@ -172,6 +173,7 @@ export default function AddProcess(props: Props) {
                   error={Boolean(errors.percentage)}
                   {...register("percentage", { required: "请输入工作量" })}
                   label="请输入工作量"
+                  autoComplete="off"
                 />
               </div>
             </div>
@@ -232,6 +234,7 @@ export default function AddProcess(props: Props) {
                   })}
                   label="请输入工序说明"
                   className="flex-1"
+                  autoComplete="off"
                 />
               </div>
               <ErrorMessage
