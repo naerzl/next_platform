@@ -148,7 +148,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     }
   }, [])
 
-  if (!accessToken) {
+  if (!accessToken && pathname != "/" && pathname != "/auth2/") {
     return (
       <html lang="en" id="_next">
         <body className={`${inter.className} flex`}></body>
