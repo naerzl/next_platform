@@ -81,7 +81,7 @@ const menuList = {
   },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: any }) {
   // const scroll_dom = React.useRef<HTMLDivElement>(null)
   //
   // const [scroll, setScroll] = useState(0)
@@ -136,6 +136,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
     setAccessToken(token)
 
+    console.log(accessToken, pathname)
     if (pathname != "/" && pathname != "/auth2/") {
       if (!token) {
         handleGoToLogin()
@@ -148,13 +149,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     }
   }, [])
 
-  if (!accessToken && pathname != "/" && pathname != "/auth2/") {
-    return (
-      <html lang="en" id="_next">
-        <body className={`${inter.className} flex`}></body>
-      </html>
-    )
-  }
+  // if (!accessToken && pathname != "/" && pathname != "/auth2/") {
+  //   return (
+  //     <html lang="en" id="_next">
+  //       <body className={`${inter.className} flex`}></body>
+  //     </html>
+  //   )
+  // }
+
   return (
     <html lang="en" id="_next">
       <body className={`${inter.className} flex`}>
