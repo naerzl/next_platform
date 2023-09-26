@@ -11,7 +11,12 @@ import { ConfirmProvider } from "material-ui-confirm"
 import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined"
 import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined"
 import SupervisedUserCircleOutlinedIcon from "@mui/icons-material/SupervisedUserCircleOutlined"
-import { trim } from "@/libs/methods"
+import { generateRandomString, trim } from "@/libs/methods"
+import { OAUTH2_ACCESS_TOKEN, OAUTH2_PATH_FROM, STATUS_SUCCESS } from "@/libs/const"
+import { lrsOAuth2Instance } from "@/libs/init_oauth"
+import { getV1BaseURL } from "@/libs/fetch"
+import { setCookie } from "@/libs/cookies"
+import { StatusCodes } from "http-status-codes"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -85,6 +90,49 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   // 处理展开菜单展开
   const pathname = usePathname()
+
+  const handleGoToLogin = async () => {
+    const state = generateRandomString()
+    // 补货到抛出的错误 重新初始化token 重新登录
+    const res = await lrsOAuth2Instance.lrsOAuth2Initiate(getV1BaseURL("/initiate"), {
+      state,
+      redirect_url: location.origin + "/auth2",
+    })
+    if (res.code === STATUS_SUCCESS) {
+      // 存储当前的url地址
+      setCookie(OAUTH2_PATH_FROM as string, location.origin + "/dashboard")
+      // 跳转到登录页面的地址
+      location.href = res.data.location
+    }
+  }
+
+  const refreshToken = async (token: string) => {
+    const resRefresh = await lrsOAuth2Instance.lrsOAuth2rRefreshToken(
+      getV1BaseURL("/refresh"),
+      `Bearer ${token}`,
+    )
+    if (resRefresh.status == StatusCodes.UNAUTHORIZED) {
+      throw new Error("401")
+    }
+    const result = await resRefresh.json()
+    if (result.code == STATUS_SUCCESS) {
+      // 设置新的cookie
+      // setCookie(OAUTH2_ACCESS_TOKEN, result.data.access_token)
+      localStorage.setItem(OAUTH2_ACCESS_TOKEN, result.data.access_token)
+    }
+  }
+
+  React.useEffect(() => {
+    let token = localStorage.getItem(OAUTH2_ACCESS_TOKEN)
+    if (pathname != "/" && pathname != "/auth2/") {
+      if (!token) {
+        handleGoToLogin()
+      } else {
+        console.log(token)
+        refreshToken(token)
+      }
+    }
+  }, [pathname])
 
   return (
     <html lang="en" id="_next">
