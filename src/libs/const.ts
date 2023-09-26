@@ -16,6 +16,10 @@ export const OAUTH2_ACCESS_TOKEN = "oauth2_access_token"
 
 export const OAUTH2_PATH_FROM = "oauth2_path_from"
 
+export const OAUTH2_TOKEN_EXPIRY = "oauth2_token_expiry"
+
+export const MINTE5 = 300000
+
 export const ENUM_SUBPARY_CLASS = [
   { label: "专业", value: "field" },
   { label: "分部", value: "subpart" },

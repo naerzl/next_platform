@@ -1,7 +1,7 @@
 "use client"
 import { Inter } from "next/font/google"
 import Side from "@/components/Side"
-import React, { useEffect, useState } from "react"
+import React from "react"
 import Nav from "@/components/Nav"
 import { SWRConfig } from "swr"
 import StyledComponentsRegistry from "@/libs/AntdRegistry"
@@ -12,11 +12,18 @@ import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined"
 import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined"
 import SupervisedUserCircleOutlinedIcon from "@mui/icons-material/SupervisedUserCircleOutlined"
 import { generateRandomString, trim } from "@/libs/methods"
-import { OAUTH2_ACCESS_TOKEN, OAUTH2_PATH_FROM, STATUS_SUCCESS } from "@/libs/const"
+import {
+  OAUTH2_ACCESS_TOKEN,
+  OAUTH2_PATH_FROM,
+  OAUTH2_TOKEN_EXPIRY,
+  STATUS_SUCCESS,
+  MINTE5,
+} from "@/libs/const"
 import { lrsOAuth2Instance } from "@/libs/init_oauth"
 import { getV1BaseURL } from "@/libs/fetch"
 import { setCookie } from "@/libs/cookies"
 import { StatusCodes } from "http-status-codes"
+import dayjs from "dayjs"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -122,15 +129,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     }
   }
 
-  React.useEffect(() => {
-    let token = localStorage.getItem(OAUTH2_ACCESS_TOKEN)
-    if (pathname != "/" && pathname != "/auth2/") {
-      if (!token) {
-        handleGoToLogin()
-      } else {
+  let token = localStorage.getItem(OAUTH2_ACCESS_TOKEN)
+  if (pathname != "/" && pathname != "/auth2/") {
+    if (!token) {
+      handleGoToLogin()
+      return <></>
+    } else {
+      const time = localStorage.getItem(OAUTH2_TOKEN_EXPIRY)
+      if (dayjs(time).unix() * 1000 - Date.now() < MINTE5) {
+        refreshToken(token)
       }
     }
-  }, [pathname])
+  }
 
   return (
     <html lang="en" id="_next">
