@@ -99,7 +99,7 @@ export default function dialogSideBar(props: Props) {
                 fullWidth
                 error={Boolean(errors.name)}
                 variant="outlined"
-                placeholder="角色名称"
+                label="角色名称"
                 className="flex-1"
                 {...register("name", { required: "角色名称" })}
               />
@@ -124,7 +124,7 @@ export default function dialogSideBar(props: Props) {
                 fullWidth
                 error={Boolean(errors.desc)}
                 variant="outlined"
-                placeholder="角色备注"
+                label="角色备注"
                 className="flex-1"
                 {...register("desc")}
               />

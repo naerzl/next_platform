@@ -22,6 +22,7 @@ export interface ReqPutDictionaryParams {
   name: string
   serial: number
   class_id: number
+  properties?: string
 }
 
 // 获取数据列表响应数据
@@ -39,6 +40,7 @@ export interface DictionaryData {
   id: number
   serial: number
   class_id: number
+  properties: string
 }
 
 // 数据字典类型数据

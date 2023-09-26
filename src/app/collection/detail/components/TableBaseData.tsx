@@ -20,7 +20,6 @@ import useSWR from "swr"
 import { reqDelEBSStructure, reqGetEBSStructure, reqPostEBSStructure } from "../../api"
 import { message } from "antd"
 import DeleteIcon from "@mui/icons-material/DeleteOutlined"
-import { Cascader } from "antd"
 import { reqGetDictionary, reqGetDictionaryClass } from "@/app/dictionary/api"
 import { DictionaryClassData } from "@/app/dictionary/types"
 
@@ -228,26 +227,7 @@ export default function TableBaseData() {
               ))}
             </Select>
           </div>
-          <div className="w-60">
-            {item.type == 4 && (
-              <div className="flex py-1 items-center gap-x-2">
-                <InputLabel className="text-railway_303">选项</InputLabel>
-                <Cascader
-                  displayRender={(label) => {
-                    return <div>{label[label.length - 1]}</div>
-                  }}
-                  fieldNames={{ label: "name", value: "id" }}
-                  options={options}
-                  loadData={loadData}
-                  onChange={(value, selectOption) => {
-                    hanldeChangeCascader(value, selectOption, index)
-                  }}
-                  size="large"
-                  className="bg-transparent"
-                />
-              </div>
-            )}
-          </div>
+          <div className="w-60"></div>
           <div>
             <FormControlLabel
               control={

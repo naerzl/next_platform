@@ -1,5 +1,4 @@
 import React from "react"
-import { Select } from "antd"
 import { TypeApiPostEBSParams, TypeEBSDataList } from "@/app/ebs-profession/ebs-data/types"
 import useDebounce from "@/hooks/useDebounce"
 import useSWRMutation from "swr/mutation"
@@ -8,9 +7,19 @@ import EBSDataContext from "@/app/ebs-profession/ebs-data/context/ebsDataContext
 import { Type_Is_system } from "@/app/ebs-profession/ebs-data/components/TableTr"
 import { ENUM_SUBPARY_CLASS } from "@/libs/const"
 import { reqGetSubsection } from "@/app/engineering/api"
-import { Button, DialogActions, Drawer, InputLabel, TextField, Switch } from "@mui/material"
+import {
+  Button,
+  DialogActions,
+  Drawer,
+  InputLabel,
+  TextField,
+  Switch,
+  Autocomplete,
+  Chip,
+} from "@mui/material"
 import { ErrorMessage } from "@hookform/error-message"
 import { useForm } from "react-hook-form"
+import { Select } from "antd"
 
 interface Props {
   open: boolean
@@ -60,12 +69,15 @@ export default function dialogEBS(props: Props) {
   // 获取分部分项列表
   const { trigger: getSubsectionApi } = useSWRMutation("/subsection", reqGetSubsection)
 
-  // 弹窗取消事件
+  const [autoSubpart, setAutoSubpart] = React.useState<{ label: string; value: string } & any>(null)
 
-  const [apiParams, setApiParams] = React.useState<TypeApiPostEBSParams>({
-    is_loop: "no",
-    subpart_class: "",
-  } as TypeApiPostEBSParams)
+  const [autoH, setAutoH] = React.useState<{ label: string; value: string } & any>(null)
+
+  const [autoN, setAutoN] = React.useState<{ label: string; value: string } & any>(null)
+
+  const [relatedTo, setRelatedTo] = React.useState("")
+
+  const [switchState, setSwitchState] = React.useState("no")
 
   const {
     register,
@@ -79,60 +91,76 @@ export default function dialogEBS(props: Props) {
     reset()
     changeDialogOpen(false)
     changeIsEdit(false)
-    setApiParams({ is_loop: "no" } as TypeApiPostEBSParams)
     getEBSOption("")
+    setAutoN(null)
+    setAutoH(null)
+    setRelatedTo("")
+    setSwitchState("no")
   }
 
   // 提交表单事件（防抖）
   const { run: onSubmit } = useDebounce(async (value: any) => {
-    console.log(value)
     if (isEdit) {
-      console.log(apiParams)
       await putEBSApi(
-        Object.assign({ id: item.id, name: item.name, unit: item.unit }, apiParams, value),
+        Object.assign(
+          {
+            id: item.id,
+            name: item.name,
+            unit: item.unit,
+            is_loop: switchState,
+            h_subpart_code: autoH ? autoH.value : "",
+            n_subpart_code: autoN ? autoN.value : "",
+            subpart_class: autoSubpart ? autoSubpart.value : "",
+            related_to: relatedTo ?? "",
+          },
+          value,
+        ),
       )
       const parentIndexArr = item.key?.split("-").slice(0, item.key?.split("-").length - 1)
       handleGetParentChildren(parentIndexArr as string[])
     } else {
-      await postEBSApi(Object.assign({ parent_id: item.id }, apiParams, value))
+      await postEBSApi(
+        Object.assign(
+          {
+            parent_id: item.id,
+            is_loop: switchState,
+            h_subpart_code: autoH ? autoH.value : "",
+            n_subpart_code: autoN ? autoN.value : "",
+            subpart_class: autoSubpart ? autoSubpart.value : "",
+            related_to: relatedTo ?? "",
+          },
+          value,
+        ),
+      )
       // 添加
       ctx.handleExpandChange(true, item)
     }
     handleCancel()
   })
 
+  const fillAutoComputedData = () => {
+    const obj = ENUM_SUBPARY_CLASS.find((el) => item.subpart_class == el.value)
+    setAutoSubpart(obj ?? null)
+  }
+
   React.useEffect(() => {
     if (isEdit) {
       setValue("name", item.name)
       setValue("unit", item.unit)
-      setApiParams((pre) =>
-        item.subpart_class
-          ? {
-              ...pre,
-              is_loop: item.is_loop ? item.is_loop : "no",
-              h_subpart_code: item.h_subpart_code,
-              n_subpart_code: item.n_subpart_code,
-              subpart_class: item.subpart_class,
-              related_to: item.related_ebs ? item.related_ebs.id : "",
-            }
-          : {
-              ...pre,
-              is_loop: item.is_loop ? item.is_loop : "no",
-              h_subpart_code: item.h_subpart_code,
-              n_subpart_code: item.n_subpart_code,
-              related_to: item.related_ebs ? item.related_ebs.id : "",
-            },
-      )
+      setSwitchState(item.is_loop)
+      setRelatedTo((item.related_ebs ? item.related_ebs.id : "") as any)
+      fillAutoComputedData()
       getHighOrNormalSpeed(item.subpart_class)
     }
   }, [isEdit])
 
   // 处理滑块切换时间
   const handleSwitchChange = (value: boolean) => {
-    setApiParams((pre) => ({ ...pre, is_loop: value ? "yes" : "no" }))
+    setSwitchState(value ? "yes" : "no")
   }
 
   const [highSpeed, setHighSpeed] = React.useState<any[]>([])
+
   const [normalSpeed, setNormalSpeed] = React.useState<any[]>([])
 
   const getHighOrNormalSpeed = (subpart_class: string) => {
@@ -161,10 +189,10 @@ export default function dialogEBS(props: Props) {
   }
 
   React.useEffect(() => {
-    if (apiParams.subpart_class) {
-      getHighOrNormalSpeed(apiParams.subpart_class)
+    if (autoSubpart) {
+      getHighOrNormalSpeed(autoSubpart.value)
     }
-  }, [apiParams])
+  }, [autoSubpart])
 
   // 页面加载获取当前目录下的所有EBS结构
   React.useEffect(() => {
@@ -178,11 +206,18 @@ export default function dialogEBS(props: Props) {
     getEBSOption(value)
   })
 
-  const handleSubClassChange = (value: any, type: keyof TypeApiPostEBSParams) => {
-    console.log(value)
-    setApiParams((prevState) => ({ ...prevState, [type]: value }))
-  }
-
+  React.useEffect(() => {
+    if (isEdit) {
+      if (highSpeed.length > 0) {
+        const objH = highSpeed.find((el) => item.h_subpart_code == el.value)
+        setAutoH(objH ?? null)
+      }
+      if (normalSpeed.length > 0) {
+        const objN = normalSpeed.find((el) => item.n_subpart_code == el.value)
+        setAutoN(objN ?? null)
+      }
+    }
+  }, [highSpeed, normalSpeed])
   //  系统添加的 表单
 
   const renderForm = () => {
@@ -200,8 +235,9 @@ export default function dialogEBS(props: Props) {
               size="small"
               error={Boolean(errors.name)}
               variant="outlined"
-              placeholder="请输入名称"
               className="flex-1"
+              label="请输入名称"
+              autoComplete="off"
               {...register("name", { required: "请输入名称" })}
             />
           </div>
@@ -222,7 +258,8 @@ export default function dialogEBS(props: Props) {
               error={Boolean(errors.name)}
               fullWidth
               variant="outlined"
-              placeholder="请输入单位"
+              label={"请输入单位"}
+              autoComplete="off"
               className="flex-1"
               {...register("unit", { required: "请输入单位" })}
             />
@@ -241,7 +278,7 @@ export default function dialogEBS(props: Props) {
             </InputLabel>
             <Switch
               id="name"
-              checked={apiParams.is_loop == "yes"}
+              checked={switchState == "yes"}
               onChange={(event, checked) => {
                 handleSwitchChange(checked)
               }}
@@ -255,20 +292,36 @@ export default function dialogEBS(props: Props) {
               className="mr-3 mb-2.5 w-full text-left inline-block">
               <span>(选填)</span>节点类型:
             </InputLabel>
-            <Select
-              className="w-full h-10"
-              dropdownStyle={{ zIndex: 2000 }}
+
+            <Autocomplete
+              disablePortal
               id="subpart_class"
-              allowClear
-              placeholder="请选择分部分项类型"
-              value={apiParams.subpart_class}
-              onChange={(value) => {
-                handleSubClassChange(value, "subpart_class")
+              options={ENUM_SUBPARY_CLASS}
+              fullWidth
+              value={autoSubpart}
+              size="small"
+              onChange={(event, value, reason, details) => {
+                setAutoSubpart(value)
+                setAutoH(null)
+                setAutoN(null)
               }}
-              options={ENUM_SUBPARY_CLASS}></Select>
+              renderInput={(params) => <TextField {...params} label="请选择分部分项类型" />}
+              renderOption={(props, option) => {
+                return (
+                  <li {...props} key={option.value}>
+                    {option.label}
+                  </li>
+                )
+              }}
+              renderTags={(tagValue, getTagProps) => {
+                return tagValue.map((option, index) => (
+                  <Chip {...getTagProps({ index })} key={option.value} label={option.label} />
+                ))
+              }}
+            />
           </div>
         </div>
-        {apiParams.subpart_class && apiParams.subpart_class != "examination" && (
+        {autoSubpart && autoSubpart.value != "examination" && (
           <>
             <div className="mb-8 relative">
               <div className="flex items-start flex-col">
@@ -277,19 +330,31 @@ export default function dialogEBS(props: Props) {
                   className="mr-3 mb-2.5 w-full text-left inline-block">
                   高速编码:
                 </InputLabel>
-                <Select
-                  className="w-full h-10"
+
+                <Autocomplete
+                  disablePortal
                   id="h_subpart_code"
-                  dropdownStyle={{ zIndex: 2000 }}
-                  allowClear
-                  showSearch
-                  placeholder="输入文字可检索"
-                  value={apiParams.h_subpart_code}
-                  onChange={(value) => {
-                    handleSubClassChange(value, "h_subpart_code")
+                  options={highSpeed}
+                  fullWidth
+                  value={autoH}
+                  size="small"
+                  onChange={(event, value, reason, details) => {
+                    setAutoH(value)
                   }}
-                  filterOption={(input, option) => (option?.label ?? "").includes(input)}
-                  options={highSpeed}></Select>
+                  renderInput={(params) => <TextField {...params} label="请选择高速编码" />}
+                  renderOption={(props, option) => {
+                    return (
+                      <li {...props} key={option.value}>
+                        {option.label}
+                      </li>
+                    )
+                  }}
+                  renderTags={(tagValue, getTagProps) => {
+                    return tagValue.map((option, index) => (
+                      <Chip {...getTagProps({ index })} key={option.value} label={option.label} />
+                    ))
+                  }}
+                />
               </div>
             </div>
             <div className="mb-8 relative">
@@ -299,19 +364,30 @@ export default function dialogEBS(props: Props) {
                   className="mr-3 mb-2.5 w-full text-left inline-block">
                   普速编码:
                 </InputLabel>
-                <Select
-                  className="w-full h-10"
+                <Autocomplete
+                  disablePortal
                   id="n_subpart_code"
-                  dropdownStyle={{ zIndex: 2000 }}
-                  allowClear
-                  showSearch
-                  value={apiParams.n_subpart_code}
-                  placeholder="输入文字可检索"
-                  onChange={(value) => {
-                    handleSubClassChange(value, "n_subpart_code")
+                  options={normalSpeed}
+                  fullWidth
+                  value={autoN}
+                  size="small"
+                  onChange={(event, value, reason, details) => {
+                    setAutoN(value)
                   }}
-                  filterOption={(input, option) => (option?.label ?? "").includes(input)}
-                  options={normalSpeed}></Select>
+                  renderInput={(params) => <TextField {...params} label="请选择普速编码" />}
+                  renderOption={(props, option) => {
+                    return (
+                      <li {...props} key={option.value}>
+                        {option.label}
+                      </li>
+                    )
+                  }}
+                  renderTags={(tagValue, getTagProps) => {
+                    return tagValue.map((option, index) => (
+                      <Chip {...getTagProps({ index })} key={option.value} label={option.label} />
+                    ))
+                  }}
+                />
               </div>
             </div>
           </>
@@ -333,9 +409,9 @@ export default function dialogEBS(props: Props) {
                 notFoundContent={null}
                 placeholder="搜索关联EBS节点"
                 options={ebsOption}
-                value={apiParams.related_to}
+                value={relatedTo}
                 onChange={(value) => {
-                  handleSubClassChange(value, "related_to")
+                  setRelatedTo(value)
                 }}
                 onSearch={handleEBSSearch}></Select>
             </div>

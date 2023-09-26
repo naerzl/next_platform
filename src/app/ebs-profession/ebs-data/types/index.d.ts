@@ -46,7 +46,7 @@ export interface TypeApiPostEBSParams {
   name: string
   unit: string
   is_loop: "yes" | "no"
-  subpart_class: string
+  subpart_class: string | null
   related_to?: number | string
   h_subpart_code?: string
   n_subpart_code?: string

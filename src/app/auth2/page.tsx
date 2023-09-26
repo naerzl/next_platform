@@ -19,11 +19,13 @@ export default function auth2() {
         if (res.code !== 2000) return
         // setCookie(OAUTH2_ACCESS_TOKEN as string, res.data.access_token)
         localStorage.setItem(OAUTH2_ACCESS_TOKEN as string, res.data.access_token)
-        // if (searchParams.get("is_first_login") == "true") {
-        //   router.push(`${process.env.NEXT_PUBLIC_AUTH_PATH}/firstchangepassword`)
-        // } else {
-        // }
-        router.push(getCookie(OAUTH2_PATH_FROM as string) || "/")
+        if (searchParams.get("is_first_login") == "true") {
+          router.push(
+            `${process.env.NEXT_PUBLIC_AUTH_PATH}/firstchangepassword?t=${res.data.access_token}`,
+          )
+        } else {
+          router.push(getCookie(OAUTH2_PATH_FROM as string) || "/")
+        }
       })
     // @ts-ignore
   }, [])

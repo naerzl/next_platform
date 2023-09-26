@@ -1,6 +1,8 @@
 import React from "react"
 import {
+  Autocomplete,
   Button,
+  Chip,
   DialogActions,
   Drawer,
   InputLabel,
@@ -68,12 +70,12 @@ export default function DrawerAddForm(props: Props) {
       } as TypeApiPostProcessFormParams & { id: number }
 
       let roles = roleSelectState.map((roleFlag) => {
-        const role = roleOption.find((item) => item.flag == roleFlag)
+        const role = roleOption.find((item) => item.label == roleFlag)
         return { flag: role?.flag, name: role?.name }
       })
 
       let rolesList = roleSelectState.map((roleFlag) => {
-        const role = roleOption.find((item) => item.flag == roleFlag)
+        const role = roleOption.find((item) => item.label == roleFlag)
         return { flag: role?.flag, flag_name: role?.name }
       })
 
@@ -87,12 +89,12 @@ export default function DrawerAddForm(props: Props) {
       } as TypeApiPostProcessFormParams
 
       let roles = roleSelectState.map((roleFlag) => {
-        const role = roleOption.find((item) => item.flag == roleFlag)
+        const role = roleOption.find((item) => item.label == roleFlag)
         return { flag: role?.flag, name: role?.name }
       })
 
       let rolesList = roleSelectState.map((roleFlag) => {
-        const role = roleOption.find((item) => item.flag == roleFlag)
+        const role = roleOption.find((item) => item.label == roleFlag)
         return { flag: role?.flag, flag_name: role?.name }
       })
 
@@ -105,13 +107,6 @@ export default function DrawerAddForm(props: Props) {
 
   const [roleSelectState, setRoleSelectState] = React.useState<string[]>([])
 
-  const handleRoleSelect = (event: SelectChangeEvent<string[]>) => {
-    const {
-      target: { value },
-    } = event
-    setRoleSelectState(value as string[])
-  }
-
   const { trigger: getRoleApi } = useSWRMutation("/role", reqGetRole)
 
   const [roleOption, setRoleOption] = React.useState<
@@ -120,7 +115,6 @@ export default function DrawerAddForm(props: Props) {
 
   const getRoleAndSection = async () => {
     getRoleApi({ class: "normal" }).then((roleRes) => {
-      console.log(roleRes)
       roleRes &&
         setRoleOption(roleRes.map((item) => ({ ...item, label: item.name, value: item.flag })))
     })
@@ -140,7 +134,7 @@ export default function DrawerAddForm(props: Props) {
     if (editItem) {
       setValue("name", editItem.name)
       setValue("desc", editItem.desc)
-      setRoleSelectState(editItem.roles.map((item) => item.flag))
+      setRoleSelectState(editItem.roles.map((item) => item.flag_name))
       setSwitchState(editItem.is_loop)
     }
   }, [editItem])
@@ -165,7 +159,7 @@ export default function DrawerAddForm(props: Props) {
                 fullWidth
                 error={Boolean(errors.name)}
                 {...register("name", { required: "请输入名称" })}
-                placeholder="请输入名称"
+                label="请输入名称"
               />
             </div>
             <ErrorMessage
@@ -197,22 +191,48 @@ export default function DrawerAddForm(props: Props) {
               <InputLabel htmlFor="percentage" className="mr-3 w-20 text-left mb-2.5">
                 关联角色:
               </InputLabel>
-              <Select
+
+              <Autocomplete
+                disablePortal
+                id="h_subpart_code"
+                options={roleOption.map((item) => item.label)}
+                fullWidth
                 value={roleSelectState}
-                onChange={handleRoleSelect}
-                MenuProps={{ sx: { zIndex: 1702 } }}
-                sx={{ flex: 1, color: "#303133", zIndex: 1602 }}
-                id="role_list"
-                placeholder="请选择关联的角色"
-                size="small"
                 multiple
-                fullWidth>
-                {roleOption.map((item) => (
-                  <MenuItem value={item.value} key={item.value}>
-                    {item.label}
-                  </MenuItem>
-                ))}
-              </Select>
+                size="small"
+                onChange={(event, value, reason, details) => {
+                  setRoleSelectState(value)
+                }}
+                renderInput={(params) => <TextField {...params} label="请选择关联的角色" />}
+                renderOption={(props, option) => {
+                  return (
+                    <li {...props} key={option}>
+                      {option}
+                    </li>
+                  )
+                }}
+                renderTags={(tagValue, getTagProps) => {
+                  return tagValue.map((option, index) => (
+                    <Chip {...getTagProps({ index })} key={option} label={option} />
+                  ))
+                }}
+              />
+              {/*<Select*/}
+              {/*  value={roleSelectState}*/}
+              {/*  onChange={handleRoleSelect}*/}
+              {/*  MenuProps={{ sx: { zIndex: 1702 } }}*/}
+              {/*  sx={{ flex: 1, zIndex: 1602 }}*/}
+              {/*  id="role_list"*/}
+              {/*  label="请选择关联的角色"*/}
+              {/*  size="small"*/}
+              {/*  multiple*/}
+              {/*  fullWidth>*/}
+              {/*  {roleOption.map((item) => (*/}
+              {/*    <MenuItem value={item.value} key={item.value}>*/}
+              {/*      {item.label}*/}
+              {/*    </MenuItem>*/}
+              {/*  ))}*/}
+              {/*</Select>*/}
             </div>
           </div>
 
@@ -230,7 +250,7 @@ export default function DrawerAddForm(props: Props) {
                 {...register("desc", {
                   required: "请输入工序说明",
                 })}
-                placeholder="请输入工序说明"
+                label="请输入工序说明"
                 className="flex-1"
               />
             </div>

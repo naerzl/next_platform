@@ -9,6 +9,8 @@ import {
   ListItemIcon,
   Drawer,
   SelectChangeEvent,
+  Autocomplete,
+  Chip,
 } from "@mui/material"
 import React from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
@@ -43,7 +45,6 @@ const select_option = [
 ]
 
 type IForm = {
-  status: string
   name: string
   phone: string
   mail: string
@@ -67,21 +68,28 @@ export default function dialogUser(props: Props) {
   } = useForm<IForm>({
     defaultValues: {
       name: "",
-      status: "normal",
       phone: "",
       mail: "",
     },
   })
 
+  const [status, setStatus] = React.useState("正常")
+
   const { run: onSubmit }: { run: SubmitHandler<IForm> } = useDebounce(async (values: IForm) => {
     const params = {} as ReqPostUserParams
     params.role_flags = JSON.stringify(
-      sectionValue ? [...roleSelectState, sectionValue] : [...roleSelectState],
+      sectionValue
+        ? [
+            ...roleSelectState.map((i) => roleOption.find((el) => el.label == i)!.value),
+            sectionValue,
+          ]
+        : [...roleSelectState.map((i) => roleOption.find((el) => el.label == i)!.value)],
     )
     params.name = values.name
     params.phone = values.phone
     params.mail = values.mail
-    params.status = values.status
+    const obj = select_option.find((i) => i.label == status)
+    params.status = obj ? obj.value : "normal"
     if (isEdit) {
       await putUserApi(Object.assign({ unionid: item.unionid }, params))
       const res = structuredClone(item)
@@ -90,7 +98,7 @@ export default function dialogUser(props: Props) {
       if (roleSelectState.length > 0) {
         res.roles = roleSelectState.map((item) => {
           return {
-            ...(roleOption.find((role) => role.flag == item) as RolesListData),
+            ...(roleOption.find((role) => role.label == item) as RolesListData),
             class: "normal",
           }
         })
@@ -104,7 +112,7 @@ export default function dialogUser(props: Props) {
       if (roleSelectState.length > 0) {
         newRes.roles = roleSelectState.map((item) => {
           return {
-            ...(roleOption.find((role) => role.flag == item) as RolesListData),
+            ...(roleOption.find((role) => role.label == item) as RolesListData),
             class: "normal",
           }
         })
@@ -118,14 +126,14 @@ export default function dialogUser(props: Props) {
 
   const setFormValue = (item: UserListData) => {
     setValue("name", item.name)
-    setValue("status", item.status)
     setValue("phone", item.phone)
     setValue("mail", item.mail)
+    setStatus(select_option.find((el) => el.value == item.status)!.label)
     if (item.roles && item.roles.length > 0) {
       const sectionArr = item.roles.filter((item) => item.class == "special")
       setSectionValue(sectionArr.map((item) => item.name).join(""))
       const roleArr = item.roles.filter((item) => item.class == "normal")
-      setRoleSelectState(roleArr.map((item) => item.flag) as string[])
+      setRoleSelectState(roleArr.map((item) => item.name) as string[])
     }
   }
 
@@ -145,7 +153,7 @@ export default function dialogUser(props: Props) {
     (RolesListData & { title: string; value: string; children?: any[]; isLeaf?: boolean })[]
   >([])
 
-  const { trigger: getRoleApi } = useSWRMutation("/roles", reqGetRole)
+  const { trigger: getRoleApi } = useSWRMutation("/role", reqGetRole)
 
   const getRoleAndSection = async () => {
     getRoleApi({ class: "normal" }).then((roleRes) => {
@@ -213,13 +221,6 @@ export default function dialogUser(props: Props) {
   }
 
   const [roleSelectState, setRoleSelectState] = React.useState<string[]>([])
-  const handleRoleSelect = (event: SelectChangeEvent<typeof roleSelectState>) => {
-    const {
-      target: { value },
-    } = event
-    console.log(value)
-    setRoleSelectState(typeof value === "string" ? value.split(",") : value)
-  }
 
   return (
     <Drawer open={open} onClose={handleClose} anchor="right">
@@ -246,7 +247,8 @@ export default function dialogUser(props: Props) {
                   },
                   onChange: onPhoneChange,
                 })}
-                placeholder="请输入手机号"
+                label="请输入手机号"
+                autoComplete="off"
                 className="flex-1"
               />
             </div>
@@ -272,7 +274,8 @@ export default function dialogUser(props: Props) {
                 disabled={isEdit}
                 error={Boolean(errors.name)}
                 {...register("name", { required: "请输入名称" })}
-                placeholder="请输入名称"
+                label="请输入名称"
+                autoComplete="off"
               />
             </div>
             <ErrorMessage
@@ -289,27 +292,32 @@ export default function dialogUser(props: Props) {
               <InputLabel htmlFor="status" className="mr-3 w-20 text-left mb-2.5" required>
                 状态:
               </InputLabel>
-              <Select
-                error={Boolean(errors.status)}
-                sx={{ flex: 1 }}
-                id="status"
-                size="small"
-                placeholder="请选择用户状态"
+
+              <Autocomplete
+                disablePortal
+                id="h_subpart_code"
+                options={select_option.map((item) => item.label)}
                 fullWidth
-                defaultValue={"normal"}
-                {...register("status", { required: "请选择用户的状态" })}>
-                {select_option.map((item) => (
-                  <MenuItem value={item.value} key={item.value}>
-                    <ListItemIcon>{item.label}</ListItemIcon>
-                  </MenuItem>
-                ))}
-              </Select>
+                value={status}
+                size="small"
+                onChange={(event, value, reason, details) => {
+                  setStatus(value ?? "")
+                }}
+                renderInput={(params) => <TextField {...params} label="请选择用户状态" />}
+                renderOption={(props, option) => {
+                  return (
+                    <li {...props} key={option}>
+                      {option}
+                    </li>
+                  )
+                }}
+                renderTags={(tagValue, getTagProps) => {
+                  return tagValue.map((option, index) => (
+                    <Chip {...getTagProps({ index })} key={option} label={option} />
+                  ))
+                }}
+              />
             </div>
-            <ErrorMessage
-              errors={errors}
-              name="status"
-              render={({ message }) => <p className="text-railway_error text-sm">{message}</p>}
-            />
           </div>
 
           <div className="mb-8 relative">
@@ -326,7 +334,8 @@ export default function dialogUser(props: Props) {
                 {...register("mail", {
                   pattern: { value: REGEXP_MAIL, message: "邮箱格式不正确" },
                 })}
-                placeholder="请输入邮箱"
+                label="请输入邮箱"
+                autoComplete="off"
                 className="flex-1"
               />
             </div>
@@ -344,21 +353,32 @@ export default function dialogUser(props: Props) {
               <InputLabel htmlFor="role_list" className="mr-3 w-20 text-left mb-2.5">
                 角色:
               </InputLabel>
-              <Select
+
+              <Autocomplete
+                disablePortal
+                id="h_subpart_code"
+                options={roleOption.map((item) => item.label)}
+                fullWidth
                 value={roleSelectState}
-                onChange={handleRoleSelect}
-                sx={{ flex: 1, color: "#303133" }}
-                id="role_list"
-                placeholder="请选择关联的角色"
-                size="small"
                 multiple
-                fullWidth>
-                {roleOption.map((item) => (
-                  <MenuItem value={item.value} key={item.value}>
-                    <ListItemIcon>{item.label}</ListItemIcon>
-                  </MenuItem>
-                ))}
-              </Select>
+                size="small"
+                onChange={(event, value, reason, details) => {
+                  setRoleSelectState(value)
+                }}
+                renderInput={(params) => <TextField {...params} label="请选择关联的角色" />}
+                renderOption={(props, option) => {
+                  return (
+                    <li {...props} key={option}>
+                      {option}
+                    </li>
+                  )
+                }}
+                renderTags={(tagValue, getTagProps) => {
+                  return tagValue.map((option, index) => (
+                    <Chip {...getTagProps({ index })} key={option} label={option} />
+                  ))
+                }}
+              />
             </div>
           </div>
 

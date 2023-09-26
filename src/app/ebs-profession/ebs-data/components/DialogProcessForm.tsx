@@ -25,6 +25,7 @@ import {
 } from "@/app/ebs-profession/ebs-data/types"
 import useDrawerAddProcessForm from "@/app/ebs-profession/ebs-data/hooks/useDrawerAddProcessForm"
 import DrawerAddForm from "@/app/ebs-profession/ebs-data/components/DrawerAddForm"
+import useHooksConfirm from "@/hooks/useHooksConfirm"
 
 type Props = {
   open: boolean
@@ -107,9 +108,13 @@ export default function DialogProcessForm(props: Props) {
     handleEditeProcessFormWithDrawer(item)
   }
 
-  const handleDelProcessFormWithSWR = async (id: number) => {
-    await delProcessFormApi({ id })
-    await mutateTableList(tableList?.filter((item) => item.id != id), false)
+  const { handleConfirm } = useHooksConfirm()
+
+  const handleDelProcessFormWithSWR = (id: number) => {
+    handleConfirm(async () => {
+      await delProcessFormApi({ id })
+      await mutateTableList(tableList?.filter((item) => item.id != id), false)
+    })
   }
 
   const {

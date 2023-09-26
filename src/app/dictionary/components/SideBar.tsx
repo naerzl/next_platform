@@ -15,11 +15,12 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined"
 import DialogSideBar from "./DialogSideBar"
 import useMutation from "swr/mutation"
 import { DictionaryClassData } from "../types"
-import { message, Popconfirm } from "antd"
+import { message } from "antd"
 import SideContext from "../context/sideContext"
 import { reqDeleteDictionaryClass } from "../api"
 import { iconList } from "./IconEnum"
 import Empty from "@/components/Empty"
+import useHooksConfirm from "@/hooks/useHooksConfirm"
 
 export default function sideBar() {
   // 获取上下文来共享全局变量
@@ -54,6 +55,9 @@ export default function sideBar() {
   // 添加子集和点击菜单存储被点击的层级
   const [addIndexStr, setAddIndexStr] = React.useState<string>("")
   // 关闭对话框
+
+  const { handleConfirm } = useHooksConfirm()
+
   const handleDialogClose = () => {
     setDialogOptn(false)
   }
@@ -102,19 +106,21 @@ export default function sideBar() {
   }
 
   // 点击菜单删除
-  const handleClickMenuDel = async () => {
-    if (handleId <= 0) return
-    const indexArr = addIndexStr.split("-")
-    // eslint-disable-next-line no-unused-vars
-    const arr = ctx.sideBarList
-    const resultArr = indexArr.length > 1 ? indexArr.slice(0, indexArr.length - 1) : indexArr
+  const handleClickMenuDel = () => {
+    handleConfirm(async () => {
+      if (handleId <= 0) return
+      const indexArr = addIndexStr.split("-")
+      // eslint-disable-next-line no-unused-vars
+      const arr = ctx.sideBarList
+      const resultArr = indexArr.length > 1 ? indexArr.slice(0, indexArr.length - 1) : indexArr
 
-    const id = eval(`arr[${resultArr.join("].children[")}].id`)
-    handleCloseMenu()
-    await delDictionaryClassApi({ id: handleId })
-    message.success("删除成功")
+      const id = eval(`arr[${resultArr.join("].children[")}].id`)
+      handleCloseMenu()
+      await delDictionaryClassApi({ id: handleId })
+      message.success("删除成功")
 
-    ctx.getSubClassList(id, indexArr.length > 1 ? resultArr.join("-") : "")
+      ctx.getSubClassList(id, indexArr.length > 1 ? resultArr.join("-") : "")
+    })
   }
 
   // 添加子集分类
@@ -210,18 +216,8 @@ export default function sideBar() {
           "aria-labelledby": "basic-button",
         }}>
         <MenuItem onClick={handleClickMenuEdit}>修改</MenuItem>
-        <Popconfirm
-          className="z-40"
-          title="您确定删除吗？"
-          description="删除后将无法恢复，是否确定删除?"
-          onConfirm={() => {
-            handleClickMenuDel()
-          }}
-          okText="确定"
-          cancelText="取消"
-          okButtonProps={{ className: "bg-railway_error" }}>
-          <MenuItem>删除</MenuItem>
-        </Popconfirm>
+
+        <MenuItem onClick={handleClickMenuDel}>删除</MenuItem>
       </Menu>
       <Button
         fullWidth

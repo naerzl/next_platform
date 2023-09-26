@@ -224,16 +224,18 @@ export default function ebsDataPage() {
       const newArr = res.map((item) => {
         let str = ""
         if (item.code !== "01") {
-          str = item.relationShips
-            .map((el: any) => {
-              return el.name
-            })
-            .join("-")
+          if (item.relationShips) {
+            str = item.relationShips
+              .map((el: any) => {
+                return el.name
+              })
+              .join("-")
+          }
         }
         return {
           ...item,
           value: item.id,
-          label: item.code == "01" ? item.name : str,
+          label: item.code == "01" ? item.name : str || item.name,
         }
       })
       setEbsOption(structuredClone(newArr))

@@ -4,12 +4,16 @@ import React from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import useDebounce from "@/hooks/useDebounce"
 import useSWRMutation from "swr/mutation"
-import { reqPostAddDictionary } from "../api"
+import { reqPostAddDictionary, reqPutDictionary } from "../api"
 import { message } from "antd"
 import { GetDictionaryDataOption } from "./Main"
 import { ErrorMessage } from "@hookform/error-message"
 import AddIcon from "@mui/icons-material/Add"
-import { ReqAddDictionaryParams } from "@/app/dictionary/types"
+import {
+  DictionaryData,
+  ReqAddDictionaryParams,
+  ReqPutDictionaryParams,
+} from "@/app/dictionary/types"
 import DeleteIcon from "@mui/icons-material/DeleteOutlined"
 
 interface Props {
@@ -18,31 +22,41 @@ interface Props {
   // eslint-disable-next-line no-unused-vars
   getDictionaryData: (option: GetDictionaryDataOption) => void
   class_id: number
+  editItem: null | DictionaryData
 }
 
 interface IForm {
   name: string
-  serial: string
+  serial: number
 }
 
 export default function addDidlog(props: Props) {
-  const { open, close, getDictionaryData, class_id } = props
+  const { open, close, getDictionaryData, class_id, editItem } = props
+
+  const { trigger: putDictionaryApi } = useSWRMutation("/dictionary", reqPutDictionary)
+
   const { trigger: apiTrigger } = useSWRMutation("/dictionary", reqPostAddDictionary)
+
   // 表单控制hooks
   const {
     handleSubmit,
     register,
     reset,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      name: "", // 字典名换成呢个
-      serial: "", // 字典序号
-    },
-  })
+    setValue,
+  } = useForm<IForm>()
+
+  React.useEffect(() => {
+    console.log("effect")
+    if (Boolean(editItem)) {
+      setValue("name", editItem!.name)
+      setValue("serial", editItem!.serial)
+      setProperty(JSON.parse(editItem!.properties))
+    }
+  }, [editItem])
 
   const { run: onSubmit }: { run: SubmitHandler<IForm> } = useDebounce((values: IForm) => {
-    let params = {} as ReqAddDictionaryParams
+    let params = {} as ReqAddDictionaryParams | ReqPutDictionaryParams
     params.class_id = class_id
     if (property.length > 0) {
       params.properties = JSON.stringify(property)
@@ -51,11 +65,22 @@ export default function addDidlog(props: Props) {
       })
       if (someValue) return message.warning("添加的数据不可为空")
     }
-    apiTrigger(Object.assign(params, values)).then(() => {
-      message.success("操作成功")
-      getDictionaryData({ class_id })
-      handleClose()
-    })
+
+    if (Boolean(editItem)) {
+      putDictionaryApi(
+        Object.assign(params, values, { id: editItem!.id }) as ReqPutDictionaryParams,
+      ).then(() => {
+        message.success("操作成功")
+        getDictionaryData({ class_id })
+        handleClose()
+      })
+    } else {
+      apiTrigger(Object.assign(params, values)).then(() => {
+        message.success("操作成功")
+        getDictionaryData({ class_id })
+        handleClose()
+      })
+    }
   })
 
   // 关闭弹窗 重置表单数据
@@ -86,7 +111,9 @@ export default function addDidlog(props: Props) {
   return (
     <Drawer open={open} onClose={handleClose} anchor="right">
       <div className="w-[500px] p-10">
-        <header className="text-3xl text-[#44566C] mb-8">{"添加字典"}</header>
+        <header className="text-3xl text-[#44566C] mb-8">
+          {Boolean(editItem) ? "编辑字典" : "添加字典"}
+        </header>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-8 relative">
             <div className="flex items-start flex-col">
@@ -102,6 +129,7 @@ export default function addDidlog(props: Props) {
                 {...register("name", { required: "请输入字典名称" })}
                 placeholder="请输入字典名称"
                 className="flex-1"
+                autoComplete="off"
               />
             </div>
             <ErrorMessage
@@ -126,6 +154,7 @@ export default function addDidlog(props: Props) {
                 {...register("serial", { required: "请输入字典的排序值" })}
                 placeholder="请输入字典排序值"
                 className="flex-1"
+                autoComplete="off"
               />
             </div>
             <ErrorMessage

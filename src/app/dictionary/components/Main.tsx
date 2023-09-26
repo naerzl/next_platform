@@ -36,8 +36,11 @@ export default function dictionaryMain() {
   const changeCurrentClassId = (currentId: number) => {
     setCurrentClassId(currentId)
   }
+
   const [open, setOpen] = React.useState(false)
+  const [editItem, setEditItem] = React.useState<null | DictionaryData>(null)
   const [search, setSearch] = React.useState("")
+
   const { trigger: getDictionaryApi } = useSWRMutation("/dictionary", reqGetDictionary)
   const { trigger: getDictionaryClassApi } = useSWRMutation(
     "/dictionary-class",
@@ -60,7 +63,6 @@ export default function dictionaryMain() {
   // 获取字典数据
   const getDictionaryData = React.useCallback(
     async (option?: GetDictionaryDataOption) => {
-      console.log("获取字典")
       setParams((pre) => ({
         ...pre,
         order_by: option?.order_by || pre.order_by,
@@ -96,6 +98,7 @@ export default function dictionaryMain() {
   // dialog关闭
   const handleClose = () => {
     setOpen(false)
+    setEditItem(null)
   }
 
   // 字典模糊搜索
@@ -132,6 +135,13 @@ export default function dictionaryMain() {
     eval(str + "=res.items")
     mutate(newArr, false)
   }
+
+  const handleEditDictionart = (id: number) => {
+    const dictionary = tableData.find((item) => item.id == id)
+    setEditItem(dictionary!)
+    setOpen(true)
+  }
+
   if (isLoading) {
     return <></>
   }
@@ -197,15 +207,19 @@ export default function dictionaryMain() {
                 tableData={tableData}
                 getDictionaryData={getDictionaryData}
                 handleSortTable={handleSortTable}
+                handleEditDictionart={handleEditDictionart}
               />
             </div>
           </div>
-          <AddDidlog
-            open={open}
-            close={handleClose}
-            getDictionaryData={getDictionaryData}
-            class_id={currentClassId}
-          />
+          {open && (
+            <AddDidlog
+              editItem={editItem}
+              open={open}
+              close={handleClose}
+              getDictionaryData={getDictionaryData}
+              class_id={currentClassId}
+            />
+          )}
         </div>
       </div>
     </SideContext.Provider>
