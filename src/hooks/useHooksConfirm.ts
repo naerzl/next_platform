@@ -11,6 +11,12 @@ export default function useHooksConfirm() {
       dialogProps: {
         sx: { zIndex: 50000 },
       },
+      contentProps: {
+        sx: {
+          width: "400px",
+          height: "280px",
+        },
+      },
     })
       .then(() => {
         cbFn()

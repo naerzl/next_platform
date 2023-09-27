@@ -31,6 +31,20 @@ interface Props {
   handleEditDictionart: (id: number) => void
 }
 
+function renderProperty(str: string) {
+  const arr: { key: string; value: string }[] = JSON.parse(str)
+
+  return arr.map((item, index) => {
+    return (
+      <div key={index}>
+        <span>
+          {item.key}： {item.value}
+        </span>
+      </div>
+    )
+  })
+}
+
 export default function dataTable(props: Props) {
   const { tableData, getDictionaryData, handleSortTable, handleEditDictionart } = props
 
@@ -62,14 +76,19 @@ export default function dataTable(props: Props) {
 
   const columns = [
     {
+      title: "排序",
+      dataIndex: "sort",
+      key: "sort",
+    },
+    {
       title: "字典名称",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "排序",
-      dataIndex: "sort",
-      key: "sort",
+      title: "属性",
+      dataIndex: "name",
+      key: "name",
     },
 
     {
@@ -98,8 +117,9 @@ export default function dataTable(props: Props) {
         <TableBody>
           {tableData?.map((row) => (
             <TableRow key={row.code} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-              <TableCell align="left">{row.name}</TableCell>
               <TableCell align="left">{row.serial}</TableCell>
+              <TableCell align="left">{row.name}</TableCell>
+              <TableCell align="left">{renderProperty(row.properties ?? "[]")}</TableCell>
               <TableCell align="left">
                 <div className="flex justify-start g">
                   <Tooltip title="修改字典">

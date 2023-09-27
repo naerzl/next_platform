@@ -17,6 +17,7 @@ import useDrawerAddProcess from "@/app/ebs-profession/ebs-data/hooks/useDrawerAd
 import AddProcess from "@/app/ebs-profession/ebs-data/components/AddProcess"
 import DeleteIcon from "@mui/icons-material/DeleteOutlined"
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
+import RunCircleOutlinedIcon from "@mui/icons-material/RunCircleOutlined"
 import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined"
 import useSWRMutation from "swr/mutation"
 import useHooksConfirm from "@/hooks/useHooksConfirm"
@@ -81,7 +82,6 @@ const columns = [
   },
 
   {
-    width: "150px",
     title: "操作",
     key: "action",
   },
@@ -163,7 +163,7 @@ export default function drawerProcessList(props: Props) {
               <TableHead>
                 <TableRow>
                   {columns.map((col) => (
-                    <TableCell key={col.key} sx={{ width: col.key == "action" ? "150px" : "auto" }}>
+                    <TableCell key={col.key} sx={{ width: col.key == "action" ? "336px" : "auto" }}>
                       {col.title}
                     </TableCell>
                   ))}
@@ -181,25 +181,31 @@ export default function drawerProcessList(props: Props) {
                       <TableCell align="left">{renderTableCellStage(row)}</TableCell>
                       <TableCell align="left">{row.desc}</TableCell>
                       <TableCell align="left">
-                        <div className="flex justify-start">
-                          <IconButton
-                            onClick={() => {
-                              handleOpenDialogAddForm(row)
-                            }}>
-                            <InsertDriveFileOutlinedIcon />
-                          </IconButton>
-                          <IconButton
+                        <div className="flex justify-between items-center">
+                          <Button
+                            variant="outlined"
+                            startIcon={<RunCircleOutlinedIcon />}
                             onClick={() => {
                               handleEditeProcessWithDrawer(row)
                             }}>
-                            <EditOutlinedIcon />
-                          </IconButton>
-                          <IconButton
+                            工序表单
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            startIcon={<EditOutlinedIcon />}
+                            onClick={() => {
+                              handleEditeProcessWithDrawer(row)
+                            }}>
+                            编辑
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            startIcon={<DeleteIcon />}
                             onClick={() => {
                               handleDelProcessWithSWR(row.id)
                             }}>
-                            <DeleteIcon />
-                          </IconButton>
+                            删除
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>

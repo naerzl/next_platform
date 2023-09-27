@@ -84,6 +84,7 @@ export default function dialogEBS(props: Props) {
     handleSubmit,
     reset,
     setValue,
+    trigger,
     formState: { errors },
   } = useForm<IForm>()
 
@@ -238,7 +239,16 @@ export default function dialogEBS(props: Props) {
               className="flex-1"
               label="请输入名称"
               autoComplete="off"
-              {...register("name", { required: "请输入名称" })}
+              {...register("name", {
+                required: "请输入名称",
+                maxLength: {
+                  value: 16,
+                  message: "文本字数最多16个",
+                },
+                onBlur() {
+                  trigger("name")
+                },
+              })}
             />
           </div>
           <ErrorMessage
@@ -261,7 +271,16 @@ export default function dialogEBS(props: Props) {
               label={"请输入单位"}
               autoComplete="off"
               className="flex-1"
-              {...register("unit", { required: "请输入单位" })}
+              {...register("unit", {
+                required: "请输入单位",
+                maxLength: {
+                  value: 16,
+                  message: "文本字数最多16个",
+                },
+                onBlur() {
+                  trigger("unit")
+                },
+              })}
             />
           </div>
           <ErrorMessage

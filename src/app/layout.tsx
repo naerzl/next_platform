@@ -6,7 +6,7 @@ import Nav from "@/components/Nav"
 import { SWRConfig } from "swr"
 import StyledComponentsRegistry from "@/libs/AntdRegistry"
 import "./globals.scss"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname, useRouter, useSelectedLayoutSegment } from "next/navigation"
 import { ConfirmProvider } from "material-ui-confirm"
 import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined"
 import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined"
@@ -95,6 +95,8 @@ export default function RootLayout({ children }: { children: any }) {
   //   return () => scroll_dom.current?.removeEventListener("scroll", handleScroll)
   // }, [scroll])
 
+  const segment = useSelectedLayoutSegment()
+
   // 处理展开菜单展开
   const pathname = usePathname()
 
@@ -136,7 +138,6 @@ export default function RootLayout({ children }: { children: any }) {
 
     setAccessToken(token)
 
-    console.log(accessToken, pathname)
     if (pathname != "/" && pathname != "/auth2/") {
       if (!token) {
         handleGoToLogin()
@@ -147,15 +148,19 @@ export default function RootLayout({ children }: { children: any }) {
         }
       }
     }
-  }, [])
+  }, [pathname])
 
-  // if (!accessToken && pathname != "/" && pathname != "/auth2/") {
-  //   return (
-  //     <html lang="en" id="_next">
-  //       <body className={`${inter.className} flex`}></body>
-  //     </html>
-  //   )
-  // }
+  if (!accessToken && segment && segment != "auth2") {
+    return (
+      <html lang="en" id="_next">
+        <body className={`${inter.className} flex`}>
+          <div className="container">
+            <div className="loader"></div>
+          </div>
+        </body>
+      </html>
+    )
+  }
 
   return (
     <html lang="en" id="_next">

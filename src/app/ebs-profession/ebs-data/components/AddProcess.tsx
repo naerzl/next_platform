@@ -64,6 +64,7 @@ export default function AddProcess(props: Props) {
     formState: { errors },
     register,
     setValue,
+    trigger,
   } = useForm<IForm>({})
 
   const { trigger: postProcessApi } = useSWRMutation("/process", reqPostProcess)
@@ -146,7 +147,16 @@ export default function AddProcess(props: Props) {
                   size="small"
                   fullWidth
                   error={Boolean(errors.name)}
-                  {...register("name", { required: "请输入名称" })}
+                  {...register("name", {
+                    required: "请输入名称",
+                    maxLength: {
+                      value: 16,
+                      message: "文本字数最多16个",
+                    },
+                    onBlur() {
+                      trigger("name")
+                    },
+                  })}
                   label="请输入名称"
                   autoComplete="off"
                 />
@@ -171,7 +181,16 @@ export default function AddProcess(props: Props) {
                   size="small"
                   fullWidth
                   error={Boolean(errors.percentage)}
-                  {...register("percentage", { required: "请输入工作量" })}
+                  {...register("percentage", {
+                    required: "请输入工作量",
+                    maxLength: {
+                      value: 16,
+                      message: "文本字数最多16个",
+                    },
+                    onBlur() {
+                      trigger("percentage")
+                    },
+                  })}
                   label="请输入工作量"
                   autoComplete="off"
                 />
@@ -231,6 +250,13 @@ export default function AddProcess(props: Props) {
                   error={Boolean(errors.desc)}
                   {...register("desc", {
                     required: "请输入工序说明",
+                    maxLength: {
+                      value: 16,
+                      message: "文本字数最多16个",
+                    },
+                    onBlur() {
+                      trigger("desc")
+                    },
                   })}
                   label="请输入工序说明"
                   className="flex-1"

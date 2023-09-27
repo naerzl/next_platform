@@ -44,6 +44,7 @@ export default function addDidlog(props: Props) {
     reset,
     formState: { errors },
     setValue,
+    trigger,
   } = useForm<IForm>()
 
   React.useEffect(() => {
@@ -126,7 +127,16 @@ export default function addDidlog(props: Props) {
                 fullWidth
                 size="small"
                 error={Boolean(errors.name)}
-                {...register("name", { required: "请输入字典名称" })}
+                {...register("name", {
+                  required: "请输入字典名称",
+                  maxLength: {
+                    value: 16,
+                    message: "文本字数最多16个",
+                  },
+                  onBlur() {
+                    trigger("name")
+                  },
+                })}
                 placeholder="请输入字典名称"
                 className="flex-1"
                 autoComplete="off"
@@ -150,8 +160,19 @@ export default function addDidlog(props: Props) {
                 id="serial"
                 fullWidth
                 size="small"
+                type="number"
                 error={Boolean(errors.serial)}
-                {...register("serial", { required: "请输入字典的排序值" })}
+                {...register("serial", {
+                  required: "请输入字典的排序值",
+                  max: {
+                    value: 999,
+                    message: "数值最大为999",
+                  },
+                  valueAsNumber: true,
+                  onBlur() {
+                    trigger("serial")
+                  },
+                })}
                 placeholder="请输入字典排序值"
                 className="flex-1"
                 autoComplete="off"
@@ -183,7 +204,7 @@ export default function addDidlog(props: Props) {
                     value={item.key}
                     fullWidth
                     size="small"
-                    placeholder="请输入键名"
+                    label="属性"
                     onChange={(event) => {
                       handleChangeKeyAndValueInput(event, index, "key")
                     }}
@@ -195,7 +216,7 @@ export default function addDidlog(props: Props) {
                     value={item.value}
                     fullWidth
                     size="small"
-                    placeholder="请输入键值"
+                    label="数据"
                     onChange={(event) => {
                       handleChangeKeyAndValueInput(event, index, "value")
                     }}

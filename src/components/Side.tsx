@@ -29,11 +29,11 @@ const menuList: { [key: string]: any } = {
         title: "字典库",
         open: false,
       },
-      collection: {
-        path: "/collection",
-        title: "表结构库",
-        open: false,
-      },
+      // collection: {
+      //   path: "/collection",
+      //   title: "表结构库",
+      //   open: false,
+      // },
     },
   },
   dataTemplate: {
@@ -51,11 +51,11 @@ const menuList: { [key: string]: any } = {
         title: "工程专业列表",
         open: false,
       },
-      "design-data-list": {
-        path: "/design-data-list",
-        title: "设计数据列表",
-        open: false,
-      },
+      // "design-data-list": {
+      //   path: "/design-data-list",
+      //   title: "设计数据列表",
+      //   open: false,
+      // },
     },
   },
   userManagement: {

@@ -85,13 +85,13 @@ export default function dialogSideBar(props: Props) {
     <Drawer open={open} onClose={handleClose} anchor="right">
       <div className="w-[500px] p-10">
         <header className="text-3xl text-[#44566C] mb-8">
-          {editItem ? "修改角色" : "添加角色"}
+          {editItem ? "修改部门" : "添加部门"}
         </header>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-8">
             <div className="flex items-start flex-col">
               <InputLabel htmlFor="name" className="mr-3 mb-2.5 w-24 text-left inline-block">
-                角色名称:
+                部门名称:
               </InputLabel>
               <TextField
                 id="name"
@@ -99,9 +99,9 @@ export default function dialogSideBar(props: Props) {
                 fullWidth
                 error={Boolean(errors.name)}
                 variant="outlined"
-                label="角色名称"
+                label="部门名称"
                 className="flex-1"
-                {...register("name", { required: "角色名称" })}
+                {...register("name", { required: "部门名称" })}
               />
             </div>
             <ErrorMessage
@@ -116,7 +116,7 @@ export default function dialogSideBar(props: Props) {
           <div className="mb-8">
             <div className="flex items-start flex-col">
               <InputLabel htmlFor="desc" className="mr-3  mb-2.5 w-24 text-left inline-block">
-                角色备注:
+                部门备注:
               </InputLabel>
               <TextField
                 id="desc"
@@ -124,7 +124,7 @@ export default function dialogSideBar(props: Props) {
                 fullWidth
                 error={Boolean(errors.desc)}
                 variant="outlined"
-                label="角色备注"
+                label="部门备注"
                 className="flex-1"
                 {...register("desc")}
               />

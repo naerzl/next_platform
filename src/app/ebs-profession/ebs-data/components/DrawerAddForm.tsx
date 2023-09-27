@@ -56,6 +56,7 @@ export default function DrawerAddForm(props: Props) {
     register,
     setValue,
     reset,
+    trigger,
   } = useForm<IForm>({})
 
   const { trigger: postProcessForm } = useSWRMutation("/process-form", reqPostProcessForm)
@@ -158,7 +159,16 @@ export default function DrawerAddForm(props: Props) {
                 size="small"
                 fullWidth
                 error={Boolean(errors.name)}
-                {...register("name", { required: "请输入名称" })}
+                {...register("name", {
+                  required: "请输入名称",
+                  maxLength: {
+                    value: 16,
+                    message: "文本字数最多16个",
+                  },
+                  onBlur() {
+                    trigger("name")
+                  },
+                })}
                 label="请输入名称"
               />
             </div>
@@ -249,6 +259,13 @@ export default function DrawerAddForm(props: Props) {
                 error={Boolean(errors.desc)}
                 {...register("desc", {
                   required: "请输入工序说明",
+                  maxLength: {
+                    value: 16,
+                    message: "文本字数最多16个",
+                  },
+                  onBlur() {
+                    trigger("desc")
+                  },
                 })}
                 label="请输入工序说明"
                 className="flex-1"
