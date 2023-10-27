@@ -254,7 +254,7 @@ export default function dialogEBS(props: Props) {
           <ErrorMessage
             errors={errors}
             name="name"
-            render={({ message }) => <p className="text-railway_error text-sm pl-24">{message}</p>}
+            render={({ message }) => <p className="text-railway_error text-sm ">{message}</p>}
           />
         </div>
         <div className="mb-8 relative">
@@ -286,7 +286,7 @@ export default function dialogEBS(props: Props) {
           <ErrorMessage
             errors={errors}
             name="unit"
-            render={({ message }) => <p className="text-railway_error text-sm pl-24">{message}</p>}
+            render={({ message }) => <p className="text-railway_error text-sm ">{message}</p>}
           />
         </div>
         {/*是否可循环*/}

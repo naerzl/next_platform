@@ -1,15 +1,11 @@
-import { Button, Divider, Drawer, IconButton } from "@mui/material"
+import { Button, Divider, Drawer } from "@mui/material"
 import React from "react"
 import Table from "@mui/material/Table"
 import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
 import TableCell from "@mui/material/TableCell"
 import TableBody from "@mui/material/TableBody"
-import {
-  ProcessListData,
-  ProcessRoleData,
-  TypeEBSDataList,
-} from "@/app/ebs-profession/ebs-data/types"
+import { ProcessListData, TypeEBSDataList } from "@/app/ebs-profession/ebs-data/types"
 import useSWR from "swr"
 import { reqDelProcess, reqGetProcess } from "@/app/ebs-profession/ebs-data/api"
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined"
@@ -18,11 +14,10 @@ import AddProcess from "@/app/ebs-profession/ebs-data/components/AddProcess"
 import DeleteIcon from "@mui/icons-material/DeleteOutlined"
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
 import RunCircleOutlinedIcon from "@mui/icons-material/RunCircleOutlined"
-import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined"
 import useSWRMutation from "swr/mutation"
-import useHooksConfirm from "@/hooks/useHooksConfirm"
 import useDialogProcessForm from "@/app/ebs-profession/ebs-data/hooks/useDialogProcessForm"
 import DialogProcessForm from "@/app/ebs-profession/ebs-data/components/DialogProcessForm"
+import { useConfirmationDialog } from "@/components/ConfirmationDialogProvider"
 
 type Props = {
   open: boolean
@@ -89,7 +84,9 @@ const columns = [
 
 export default function drawerProcessList(props: Props) {
   const { open, handleCloseDrawerProcess, item } = props
-  const { handleConfirm } = useHooksConfirm()
+
+  const { showConfirmationDialog: handleConfirm } = useConfirmationDialog()
+
   const handleClose = () => {
     handleCloseDrawerProcess()
   }
@@ -128,7 +125,7 @@ export default function drawerProcessList(props: Props) {
   }
 
   const handleDelProcessWithSWR = (id: number) => {
-    handleConfirm(async () => {
+    handleConfirm("你确定要删除吗？", async () => {
       //   拷贝数据
       await delProcessApi({ id })
       const newData = tableList?.filter((item) => item.id !== id)
@@ -186,7 +183,7 @@ export default function drawerProcessList(props: Props) {
                             variant="outlined"
                             startIcon={<RunCircleOutlinedIcon />}
                             onClick={() => {
-                              handleEditeProcessWithDrawer(row)
+                              handleOpenDialogAddForm(row)
                             }}>
                             工序表单
                           </Button>

@@ -9,7 +9,6 @@ import { reqDeleteDictionary, reqPutDictionary } from "../api"
 import SideContext from "../context/sideContext"
 import { message } from "antd"
 import Empty from "@/components/Empty"
-import useHooksConfirm from "@/hooks/useHooksConfirm"
 import Table from "@mui/material/Table"
 import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
@@ -17,6 +16,7 @@ import TableCell from "@mui/material/TableCell"
 import TableBody from "@mui/material/TableBody"
 import { IconButton, MenuItem, Tooltip } from "@mui/material"
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
+import { useConfirmationDialog } from "@/components/ConfirmationDialogProvider"
 
 // 排序方式（正序倒序）
 type Order = "asc" | "desc"
@@ -32,17 +32,21 @@ interface Props {
 }
 
 function renderProperty(str: string) {
-  const arr: { key: string; value: string }[] = JSON.parse(str)
+  const arr: { key: string; value: string }[] | any = JSON.parse(str)
 
-  return arr.map((item, index) => {
-    return (
-      <div key={index}>
-        <span>
-          {item.key}： {item.value}
-        </span>
-      </div>
-    )
-  })
+  if (arr instanceof Array) {
+    return arr.map((item, index) => {
+      return (
+        <div key={index}>
+          <span>
+            {item.key}： {item.value}
+          </span>
+        </div>
+      )
+    })
+  } else {
+    return <></>
+  }
 }
 
 export default function dataTable(props: Props) {
@@ -52,7 +56,7 @@ export default function dataTable(props: Props) {
 
   const ctx = React.useContext(SideContext)
 
-  const { handleConfirm } = useHooksConfirm()
+  const { showConfirmationDialog: handleConfirm } = useConfirmationDialog()
 
   if (tableData.length <= 0) {
     return (
@@ -66,7 +70,7 @@ export default function dataTable(props: Props) {
   }
 
   const handleClickDictionary = (id: number) => {
-    handleConfirm(() => {
+    handleConfirm("确认要删除吗？", () => {
       deleteDictionaryApi({ id }).then(() => {
         message.success("删除成功")
         getDictionaryData({ class_id: ctx.currentClassId })
@@ -88,7 +92,7 @@ export default function dataTable(props: Props) {
     {
       title: "属性",
       dataIndex: "name",
-      key: "name",
+      key: "proper",
     },
 
     {
@@ -116,7 +120,7 @@ export default function dataTable(props: Props) {
         </TableHead>
         <TableBody>
           {tableData?.map((row) => (
-            <TableRow key={row.code} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+            <TableRow key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
               <TableCell align="left">{row.serial}</TableCell>
               <TableCell align="left">{row.name}</TableCell>
               <TableCell align="left">{renderProperty(row.properties ?? "[]")}</TableCell>

@@ -48,8 +48,7 @@ export default function dictionaryMain() {
   )
   const { data, isLoading, mutate } = useSWR(
     "/dictionary-class",
-    (url: string) =>
-      reqGetDictionaryClass(url, { arg: { limit: DICTIONARY_CLASS_LIMIT, page: 1 } }),
+    (url: string) => reqGetDictionaryClass(url, { arg: {} }),
     { revalidateIfStale: false, revalidateOnFocus: false, revalidateOnReconnect: false },
   )
 
@@ -85,10 +84,7 @@ export default function dictionaryMain() {
   }, [currentClassId])
 
   React.useEffect(() => {
-    data?.items &&
-      data.items.length > 0 &&
-      currentClassId <= 0 &&
-      setCurrentClassId(data.items[0].id)
+    data && data.length > 0 && currentClassId <= 0 && setCurrentClassId(data[0].id)
   }, [data])
 
   // dialog打开
@@ -118,7 +114,7 @@ export default function dictionaryMain() {
   const getSubClassList = async (id: number, indexStr: string) => {
     // 如果不传indexStr的话获取第一层级的
     if (indexStr == "") {
-      const res = await getDictionaryClassApi({ limit: DICTIONARY_CLASS_LIMIT, page: 1 })
+      const res = await getDictionaryClassApi({})
       mutate(res, false)
       return
     }
@@ -128,11 +124,9 @@ export default function dictionaryMain() {
     // eslint-disable-next-line no-unused-vars
     const res = await getDictionaryClassApi({
       parent_id: id,
-      limit: DICTIONARY_CLASS_LIMIT,
-      page: 1,
     })
-    const str = "newArr.items[" + indexArr?.join("].children[") + "].children"
-    eval(str + "=res.items")
+    const str = "newArr[" + indexArr?.join("].children[") + "].children"
+    eval(str + "=res")
     mutate(newArr, false)
   }
 
@@ -149,7 +143,7 @@ export default function dictionaryMain() {
   return (
     <SideContext.Provider
       value={{
-        sideBarList: data?.items ? data.items : [],
+        sideBarList: data ? data : [],
         changeSideBarList: getDictionaryClassData,
         currentClassId,
         changeCurrentClassId,

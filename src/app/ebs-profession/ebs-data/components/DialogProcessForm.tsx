@@ -1,22 +1,14 @@
 import React from "react"
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  IconButton,
-} from "@mui/material"
+import { Button, Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material"
 import Table from "@mui/material/Table"
 import TableHead from "@mui/material/TableHead"
 import TableRow from "@mui/material/TableRow"
 import TableCell from "@mui/material/TableCell"
 import TableBody from "@mui/material/TableBody"
-import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined"
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
 import DeleteIcon from "@mui/icons-material/DeleteOutlined"
 import useSWR from "swr"
-import { reqDelProcess, reqGetProcess, reqGetProcessForm } from "@/app/ebs-profession/ebs-data/api"
+import { reqDelProcess, reqGetProcessForm } from "@/app/ebs-profession/ebs-data/api"
 import useSWRMutation from "swr/mutation"
 import {
   ProcessFormListData,
@@ -25,7 +17,7 @@ import {
 } from "@/app/ebs-profession/ebs-data/types"
 import useDrawerAddProcessForm from "@/app/ebs-profession/ebs-data/hooks/useDrawerAddProcessForm"
 import DrawerAddForm from "@/app/ebs-profession/ebs-data/components/DrawerAddForm"
-import useHooksConfirm from "@/hooks/useHooksConfirm"
+import { useConfirmationDialog } from "@/components/ConfirmationDialogProvider"
 
 type Props = {
   open: boolean
@@ -108,10 +100,10 @@ export default function DialogProcessForm(props: Props) {
     handleEditeProcessFormWithDrawer(item)
   }
 
-  const { handleConfirm } = useHooksConfirm()
+  const { showConfirmationDialog: handleConfirm } = useConfirmationDialog()
 
   const handleDelProcessFormWithSWR = (id: number) => {
-    handleConfirm(async () => {
+    handleConfirm("你确定要删除吗？", async () => {
       await delProcessFormApi({ id })
       await mutateTableList(tableList?.filter((item) => item.id != id), false)
     })

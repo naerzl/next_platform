@@ -10,7 +10,7 @@ import TableRow from "@mui/material/TableRow"
 import TableCell from "@mui/material/TableCell"
 import TableBody from "@mui/material/TableBody"
 import memberDepartmentContext from "@/app/member-department/context/memberDepartmentContext"
-import useHooksConfirm from "@/hooks/useHooksConfirm"
+import { useConfirmationDialog } from "@/components/ConfirmationDialogProvider"
 
 const select_option = [
   {
@@ -27,7 +27,9 @@ type Props = {
   tableData: UserListData[]
   // eslint-disable-next-line no-unused-vars
   handleRowEditStart: (item: UserListData) => void
+  // eslint-disable-next-line no-unused-vars
   handleDelUserListSWR: (uid: string) => void
+  // eslint-disable-next-line no-unused-vars
   handleTableCurrentPageNumberChange: (pageNum: number) => void
 }
 
@@ -97,7 +99,7 @@ export default function memberDepartmentMain(props: Props) {
   const ctx = React.useContext(memberDepartmentContext)
   const { tablePaper } = ctx
 
-  const { handleConfirm } = useHooksConfirm()
+  const { showConfirmationDialog: handleConfirm } = useConfirmationDialog()
 
   const { trigger: delUserApi } = useSWRMutation("/user", reqDelUser)
 
@@ -111,7 +113,7 @@ export default function memberDepartmentMain(props: Props) {
   }
 
   const handleClickMenuDel = () => {
-    handleConfirm(async () => {
+    handleConfirm("你确定要删除吗？", async () => {
       handleCloseMenu()
       await delUserApi({ id: handleRow.unionid, unionid: handleRow.unionid })
 

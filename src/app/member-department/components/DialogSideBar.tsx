@@ -42,6 +42,7 @@ export default function dialogSideBar(props: Props) {
     reset,
     setValue,
     formState: { errors },
+    trigger,
   } = useForm<ReqPostRolesParams>({})
 
   React.useEffect(() => {
@@ -101,15 +102,22 @@ export default function dialogSideBar(props: Props) {
                 variant="outlined"
                 label="部门名称"
                 className="flex-1"
-                {...register("name", { required: "部门名称" })}
+                {...register("name", {
+                  required: "部门名称",
+                  maxLength: {
+                    value: 16,
+                    message: "文本字数最多16个",
+                  },
+                  onBlur() {
+                    trigger("name")
+                  },
+                })}
               />
             </div>
             <ErrorMessage
               errors={errors}
               name="name"
-              render={({ message }) => (
-                <p className="text-railway_error text-sm pl-24">{message}</p>
-              )}
+              render={({ message }) => <p className="text-railway_error text-sm">{message}</p>}
             />
           </div>
 
@@ -126,15 +134,21 @@ export default function dialogSideBar(props: Props) {
                 variant="outlined"
                 label="部门备注"
                 className="flex-1"
-                {...register("desc")}
+                {...register("desc", {
+                  maxLength: {
+                    value: 16,
+                    message: "文本字数最多16个",
+                  },
+                  onBlur() {
+                    trigger("desc")
+                  },
+                })}
               />
             </div>
             <ErrorMessage
               errors={errors}
-              name="name"
-              render={({ message }) => (
-                <p className="text-railway_error text-sm pl-24">{message}</p>
-              )}
+              name="desc"
+              render={({ message }) => <p className="text-railway_error text-sm">{message}</p>}
             />
           </div>
           <DialogActions>

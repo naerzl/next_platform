@@ -126,18 +126,18 @@ export default function dataList(props: Props) {
   const [options, setOptions] = React.useState<DictionaryClassData[] | any[]>([])
   React.useEffect(() => {
     data &&
-      data.items?.length > 0 &&
+      data?.length > 0 &&
       options.length <= 0 &&
-      setOptions(data.items.map((item) => ({ ...item, isLeaf: false })))
+      setOptions(data.map((item) => ({ ...item, isLeaf: false })))
   }, [data])
 
   const loadData = async (selectedOptions: DictionaryClassData[]) => {
     const targetOption = selectedOptions[selectedOptions.length - 1] as any
     // load options lazily
     const res = await getDictionaryClassApi({ limit: 15, page: 1, parent_id: targetOption.id })
-    if (res.items && res.items.length > 0) {
+    if (res && res.length > 0) {
       setTimeout(() => {
-        targetOption.children = res.items.map((item) => ({ ...item, isLeaf: false }))
+        targetOption.children = res.map((item) => ({ ...item, isLeaf: false }))
         setOptions([...options])
       }, 800)
     } else {

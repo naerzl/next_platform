@@ -12,7 +12,6 @@ import {
 } from "@mui/material"
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined"
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator"
-import { useRouter } from "next/navigation"
 import { ReqGetAddCollectionResponse } from "@/app/collection/types"
 import memberDepartmentContext from "@/app/member-department/context/memberDepartmentContext"
 import Empty from "@/components/Empty"
@@ -21,14 +20,12 @@ import DialogSideBar from "@/app/member-department/components/DialogSideBar"
 import useMutation from "swr/mutation"
 import { reqDelRole } from "@/app/member-department/api"
 import { RolesListData } from "@/app/member-department/types"
-import useHooksConfirm from "@/hooks/useHooksConfirm"
+import { useConfirmationDialog } from "@/components/ConfirmationDialogProvider"
 
 export default function sideBar() {
   const ctx = React.useContext(memberDepartmentContext)
 
-  const router = useRouter()
-
-  const { handleConfirm } = useHooksConfirm()
+  const { showConfirmationDialog: handleConfirm } = useConfirmationDialog()
 
   // 控制分类的展开折叠  存储格式为层级（xxx-xxx-xxx）
   const [collapseOpen, setCollapseOpen] = React.useState("")
@@ -119,7 +116,7 @@ export default function sideBar() {
 
   // 点击菜单删除
   const handleClickMenuDel = () => {
-    handleConfirm(async () => {
+    handleConfirm("你确定要删除吗？", async () => {
       if (handleId <= 0) return
       const indexArr = addIndexStr.split("-")
       // eslint-disable-next-line no-unused-vars

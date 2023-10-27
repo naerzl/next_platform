@@ -57,7 +57,7 @@ export interface DictionaryClassData {
 // 获取数据列表分类响应数据
 export interface ReqGetDictionaryClassResponse {
   count: number
-  limie: number
+  limit: number
   page: number
   items: DictionaryClassData[]
 }
@@ -73,8 +73,8 @@ export interface ReqAddDictionaryClassParams {
 
 // 获取字典类别列表
 export interface ReqGetDictionaryClassParams {
-  page: string | number
-  limit: string | number
+  page?: string | number
+  limit?: string | number
   parent_id?: number
 }
 

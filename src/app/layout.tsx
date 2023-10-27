@@ -24,6 +24,7 @@ import { getV1BaseURL } from "@/libs/fetch"
 import { setCookie } from "@/libs/cookies"
 import { StatusCodes } from "http-status-codes"
 import dayjs from "dayjs"
+import { ConfirmationDialogProvider } from "@/components/ConfirmationDialogProvider"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -167,21 +168,23 @@ export default function RootLayout({ children }: { children: any }) {
       <body className={`${inter.className} flex`}>
         <StyledComponentsRegistry>
           <ConfirmProvider>
-            <SWRConfig value={{ provider: () => new Map() }}>
-              {pathname != "/" ? (
-                <>
-                  <aside className={`h-full min-w-[15rem] w-60 border-r`}>
-                    <Side />
-                  </aside>
-                  <div className="flex-1 flex  flex-col bg-[#f8fafb] min-w-[50.625rem] overflow-auto">
-                    <Nav />
-                    <main className="px-7.5 py-12  flex flex-col ">{children}</main>
-                  </div>
-                </>
-              ) : (
-                <>{children}</>
-              )}
-            </SWRConfig>
+            <ConfirmationDialogProvider>
+              <SWRConfig value={{ provider: () => new Map() }}>
+                {pathname != "/" ? (
+                  <>
+                    <aside className={`h-full min-w-[15rem] w-60 border-r`}>
+                      <Side />
+                    </aside>
+                    <div className="flex-1 flex  flex-col bg-[#f8fafb] min-w-[50.625rem] overflow-auto">
+                      <Nav />
+                      <main className="px-7.5 py-12  flex flex-col ">{children}</main>
+                    </div>
+                  </>
+                ) : (
+                  <>{children}</>
+                )}
+              </SWRConfig>
+            </ConfirmationDialogProvider>
           </ConfirmProvider>
         </StyledComponentsRegistry>
       </body>

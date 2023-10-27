@@ -52,7 +52,11 @@ export default function addDidlog(props: Props) {
     if (Boolean(editItem)) {
       setValue("name", editItem!.name)
       setValue("serial", editItem!.serial)
-      setProperty(JSON.parse(editItem!.properties))
+      if (JSON.parse(editItem!.properties) instanceof Array) {
+        setProperty(JSON.parse(editItem!.properties))
+      } else {
+        setProperty([])
+      }
     }
   }, [editItem])
 

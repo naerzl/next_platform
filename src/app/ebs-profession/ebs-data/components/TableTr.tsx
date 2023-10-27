@@ -9,7 +9,7 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined"
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined"
 import DeleteIcon from "@mui/icons-material/DeleteOutlined"
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
-import useHooksConfirm from "@/hooks/useHooksConfirm"
+import { useConfirmationDialog } from "@/components/ConfirmationDialogProvider"
 
 interface Props {
   item: TypeEBSDataList
@@ -44,7 +44,7 @@ export default function tableTr(props: Props) {
     handleOpenDrawerProcess,
   } = props
 
-  const { handleConfirm } = useHooksConfirm()
+  const { showConfirmationDialog: handleConfirm } = useConfirmationDialog()
 
   // 删除EBS结构api
   const { trigger: deleteEBSApi } = useSWRMutation("/ebs", reqDeleteEBS)
@@ -72,7 +72,7 @@ export default function tableTr(props: Props) {
   }
 
   const handleIconDel = () => {
-    handleConfirm(async () => {
+    handleConfirm("你确定要删除吗？", async () => {
       // 调佣删除接口
       await deleteEBSApi({ id: item.id, project_id: 1 })
       //   删除成功需要刷新父级节点下面的children
@@ -127,7 +127,10 @@ export default function tableTr(props: Props) {
 
   return (
     <>
-      <tr className="h-14 grid grid-cols-12 border-b">
+      <tr
+        className={
+          "h-14 grid grid-cols-12 border-b " + (item.is_system == "platform" ? "bg-amber-200" : "")
+        }>
         <td
           className="overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer col-span-3 flex justify-between items-center pl-4"
           title={item.name}

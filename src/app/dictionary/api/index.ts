@@ -1,5 +1,6 @@
 import { FetchParams } from "@/types/api"
 import {
+  DictionaryClassData,
   ReqAddDictionaryClassParams,
   ReqAddDictionaryParams,
   ReqGetDictionaryClassParams,
@@ -50,7 +51,7 @@ export const reqPostDictionaryClass = (
 export const reqGetDictionaryClass = (
   url: string,
   { arg }: FetchParams<ReqGetDictionaryClassParams>,
-): Promise<ReqGetDictionaryClassResponse> => {
+): Promise<DictionaryClassData[]> => {
   return fetcher({ url, arg })
 }
 

@@ -65,6 +65,7 @@ export default function dialogUser(props: Props) {
     formState: { errors },
     setValue,
     getValues,
+    trigger,
   } = useForm<IForm>({
     defaultValues: {
       name: "",
@@ -246,6 +247,9 @@ export default function dialogUser(props: Props) {
                     message: "手机号格式不正确",
                   },
                   onChange: onPhoneChange,
+                  onBlur() {
+                    trigger("phone")
+                  },
                 })}
                 label="请输入手机号"
                 autoComplete="off"
@@ -273,7 +277,16 @@ export default function dialogUser(props: Props) {
                 fullWidth
                 disabled={isEdit}
                 error={Boolean(errors.name)}
-                {...register("name", { required: "请输入名称" })}
+                {...register("name", {
+                  required: "请输入名称",
+                  maxLength: {
+                    value: 16,
+                    message: "文本字数最多16个",
+                  },
+                  onBlur() {
+                    trigger("name")
+                  },
+                })}
                 label="请输入名称"
                 autoComplete="off"
               />
@@ -333,6 +346,10 @@ export default function dialogUser(props: Props) {
                 error={Boolean(errors.mail)}
                 {...register("mail", {
                   pattern: { value: REGEXP_MAIL, message: "邮箱格式不正确" },
+
+                  onBlur() {
+                    trigger("mail")
+                  },
                 })}
                 label="请输入邮箱"
                 autoComplete="off"

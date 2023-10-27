@@ -20,7 +20,7 @@ import SideContext from "../context/sideContext"
 import { reqDeleteDictionaryClass } from "../api"
 import { iconList } from "./IconEnum"
 import Empty from "@/components/Empty"
-import useHooksConfirm from "@/hooks/useHooksConfirm"
+import { useConfirmationDialog } from "@/components/ConfirmationDialogProvider"
 
 export default function sideBar() {
   // 获取上下文来共享全局变量
@@ -56,7 +56,7 @@ export default function sideBar() {
   const [addIndexStr, setAddIndexStr] = React.useState<string>("")
   // 关闭对话框
 
-  const { handleConfirm } = useHooksConfirm()
+  const { showConfirmationDialog: handleConfirm } = useConfirmationDialog()
 
   const handleDialogClose = () => {
     setDialogOptn(false)
@@ -107,7 +107,7 @@ export default function sideBar() {
 
   // 点击菜单删除
   const handleClickMenuDel = () => {
-    handleConfirm(async () => {
+    handleConfirm("你确定要删除吗？", async () => {
       if (handleId <= 0) return
       const indexArr = addIndexStr.split("-")
       // eslint-disable-next-line no-unused-vars
