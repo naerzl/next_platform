@@ -116,19 +116,26 @@ export default function RootLayout({ children }: { children: any }) {
     }
   }
 
+  const [waitToken, setWaitToken] = React.useState(false)
+
   const refreshToken = async (token: string) => {
-    const resRefresh = await lrsOAuth2Instance.lrsOAuth2rRefreshToken(
-      getV1BaseURL("/refresh"),
-      `Bearer ${token}`,
-    )
-    if (resRefresh.status == StatusCodes.UNAUTHORIZED) {
-      throw new Error("401")
-    }
-    const result = await resRefresh.json()
-    if (result.code == STATUS_SUCCESS) {
-      // 设置新的cookie
-      // setCookie(OAUTH2_ACCESS_TOKEN, result.data.access_token)
-      localStorage.setItem(OAUTH2_ACCESS_TOKEN, result.data.access_token)
+    try {
+      setWaitToken(true)
+      const resRefresh = await lrsOAuth2Instance.lrsOAuth2rRefreshToken(
+        getV1BaseURL("/refresh"),
+        `Bearer ${token}`,
+      )
+      if (resRefresh.status == StatusCodes.UNAUTHORIZED) {
+        throw new Error("401")
+      }
+      const result = await resRefresh.json()
+      if (result.code == STATUS_SUCCESS) {
+        // 设置新的cookie
+        // setCookie(OAUTH2_ACCESS_TOKEN, result.data.access_token)
+        localStorage.setItem(OAUTH2_ACCESS_TOKEN, result.data.access_token)
+      }
+    } finally {
+      setWaitToken(false)
     }
   }
 
@@ -151,7 +158,7 @@ export default function RootLayout({ children }: { children: any }) {
     }
   }, [pathname])
 
-  if (!accessToken && segment && segment != "auth2") {
+  if ((!accessToken && segment && segment != "auth2") || waitToken) {
     return (
       <html lang="en" id="_next">
         <body className={`${inter.className} flex`}>

@@ -5,7 +5,7 @@ export function getCookie(key: string) {
 }
 
 export function setCookie(key: string, value: string) {
-  return Cookies.set(key, value, { domain: process.env.NEXT_PUBLIC_COOKIE_DOMAIN })
+  return Cookies.set(key, value)
 }
 
 export function removeCookie(key: string) {

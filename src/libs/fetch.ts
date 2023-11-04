@@ -1,4 +1,4 @@
-import { getCookie, setCookie } from "./cookies"
+import { getCookie, removeCookie, setCookie } from "./cookies"
 import { formDataInstance, lrsOAuth2Instance } from "./init_oauth"
 import { OAUTH2_ACCESS_TOKEN, OAUTH2_PATH_FROM, OAUTH2_TOKEN_EXPIRY, STATUS_SUCCESS } from "./const"
 import { StatusCodes } from "http-status-codes"
@@ -100,6 +100,7 @@ export async function fetcher<T>(params: FetcherOptions<T>) {
       state,
       redirect_url: location.origin + "/auth2",
     })
+
     if (res.code === STATUS_SUCCESS) {
       // 存储当前的url地址
       setCookie(OAUTH2_PATH_FROM as string, location.href)
