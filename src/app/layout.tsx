@@ -184,7 +184,11 @@ export default function RootLayout({ children }: { children: any }) {
                     </aside>
                     <div className="flex-1 flex  flex-col bg-[#f8fafb] min-w-[50.625rem] overflow-auto">
                       <Nav />
-                      <main className="px-7.5 py-12  flex flex-col ">{children}</main>
+                      <main
+                        className="px-7.5 py-12  flex flex-col "
+                        style={{ height: "calc(100vh - 64px)" }}>
+                        {children}
+                      </main>
                     </div>
                   </>
                 ) : (

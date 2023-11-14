@@ -34,6 +34,7 @@ interface Props {
   cb: (id: number, isEdit?: boolean) => void
   editItem: undefined | DictionaryClassData
   setEditItem: React.Dispatch<React.SetStateAction<DictionaryClassData | undefined>>
+  level: number
 }
 
 interface IForm {
@@ -41,9 +42,22 @@ interface IForm {
   icon: string
 }
 
+const findTitle = (level: number) => {
+  switch (level) {
+    case 1:
+      return "一级分类"
+    case 2:
+      return "二级分类"
+    case 3:
+      return "三级分类"
+    default:
+      return ""
+  }
+}
+
 export default function dialogSideBar(props: Props) {
   const ctx = React.useContext(SideContext)
-  const { open, close, parent_id, cb, editItem, setEditItem } = props
+  const { open, close, parent_id, cb, editItem, setEditItem, level } = props
 
   // 表单控制hooks
   const {
@@ -101,13 +115,13 @@ export default function dialogSideBar(props: Props) {
     <Drawer open={open} onClose={handleClose} anchor="right">
       <div className="w-[500px] p-10">
         <header className="text-3xl text-[#44566C] mb-8">
-          {Boolean(editItem) ? "修改字典" : "添加字典"}
+          {Boolean(editItem) ? `修改${findTitle(level)}` : `添加${findTitle(level)}`}
         </header>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-8 relative">
             <div className="flex items-start flex-col">
               <InputLabel htmlFor="name" className="mr-3 mb-2.5 w-24 text-left inline-block">
-                字典名称*:
+                {findTitle(level)}名称*:
               </InputLabel>
               <TextField
                 id="name"

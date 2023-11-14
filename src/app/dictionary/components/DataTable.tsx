@@ -107,9 +107,9 @@ export default function dataTable(props: Props) {
   }
 
   return (
-    <div style={{ width: "100%" }}>
+    <div style={{ width: "100%" }} className="overflow-y-auto h-full">
       <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader>
-        <TableHead sx={{ position: "sticky", top: "64px", zIndex: 5 }}>
+        <TableHead sx={{ position: "sticky", top: "0px", zIndex: 5 }}>
           <TableRow>
             {columns.map((col) => (
               <TableCell key={col.key} sx={{ width: col.key == "action" ? "150px" : "auto" }}>

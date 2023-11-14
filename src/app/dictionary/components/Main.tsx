@@ -2,7 +2,7 @@
 import React from "react"
 import SideBar from "../components/SideBar"
 import DataTable from "../components/DataTable"
-import { Breadcrumbs, IconButton, InputAdornment, InputBase } from "@mui/material"
+import { Breadcrumbs, Button, IconButton, InputAdornment, InputBase } from "@mui/material"
 import AddDidlog from "../components/AddDidlog"
 import SearchIcon from "@mui/icons-material/Search"
 import useSWRMutation from "swr/mutation"
@@ -161,42 +161,49 @@ export default function dictionaryMain() {
         </Breadcrumbs>
       </div>
 
-      <div className="flex-1 flex-shrink-0 overflow-auto bg-white border">
+      <div className="flex-1 flex-shrink-0 overflow-hidden bg-white border">
         <div className="h-full flex">
           {/* 左侧导航 */}
-          <aside className="w-60 h-full  mr-3 bg-white border-r">
+          <aside className="h-full  mr-3 bg-white border-r overflow-y-auto overflow-x-hidden">
             <SideBar />
           </aside>
           <div className="flex-1 flex flex-col  gap-y-2">
             {/* 头部搜索 */}
-            <header className="h-12 flex items-center justify-end">
-              <InputBase
-                className="w-72 border rounded-md px-2 mx-3 shadow"
-                placeholder="Search..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      type="button"
-                      edge="end"
-                      sx={{ p: "10px" }}
-                      aria-label="search"
-                      disableRipple
-                      onClick={handleClickSearch}>
-                      <SearchIcon />
-                    </IconButton>
-                  </InputAdornment>
-                }
-              />
-              <div
-                className="bg-railway_blue w-10 h-10 rounded-full flex justify-center items-center shadow"
-                onClick={handleClickOpen}>
-                <AddIcon className="text-[2.15rem] text-white" />
+            <header className="h-12 flex items-center justify-between">
+              <div>
+                <Button
+                  variant="outlined"
+                  onClick={() => {
+                    handleClickOpen()
+                  }}
+                  startIcon={<AddIcon />}>
+                  添加字典
+                </Button>
+              </div>
+              <div>
+                <InputBase
+                  className="w-72 border  px-2 mx-3 shadow"
+                  placeholder="请输入字典名称"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        type="button"
+                        edge="end"
+                        sx={{ p: "10px" }}
+                        aria-label="请输入字典名称"
+                        disableRipple
+                        onClick={handleClickSearch}>
+                        <SearchIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
               </div>
             </header>
             {/* 表格主体 */}
-            <div className="flex-1 border-t border-l min-h-[580px]">
+            <div className="flex-1 border-t border-l min-h-[580px] overflow-y-auto">
               <DataTable
                 tableData={tableData}
                 getDictionaryData={getDictionaryData}

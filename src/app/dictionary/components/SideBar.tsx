@@ -65,6 +65,7 @@ export default function sideBar() {
   // 点击添加分类
   const handleClickAddClass = () => {
     setParentId(undefined)
+    setLevel(1)
     setDialogOptn(true)
   }
 
@@ -74,15 +75,18 @@ export default function sideBar() {
     reqDeleteDictionaryClass,
   )
 
+  const [level, setLevel] = React.useState(1)
   // 控制分类的展开折叠  存储格式为层级（xxx-xxx-xxx）
-  const [collapseOpen, setCollapseOpen] = React.useState("")
+  const [collapseOpen, setCollapseOpen] = React.useState<string[]>([])
 
   // 点击菜单按钮
   const handleClickListItemButton = async (id: number, indexStr: string) => {
     // 如果展开的层级不相同 则更新
-    if (collapseOpen != indexStr) {
-      setCollapseOpen(indexStr)
+    if (collapseOpen.includes(indexStr)) {
+      setCollapseOpen((prevState) => prevState.filter((item) => item != indexStr))
       // 防止切换其它子集数据错乱的情况
+    } else {
+      setCollapseOpen(Array.from(new Set([...collapseOpen, indexStr])))
     }
     // 设置全局currentId
     ctx.changeCurrentClassId(id)
@@ -127,6 +131,7 @@ export default function sideBar() {
   const handleClickAddSub = (e: any, side: DictionaryClassData, indexStr: string) => {
     e.stopPropagation()
     setAddIndexStr(indexStr)
+    setLevel(indexStr.split("-").length + 1)
     // 向dialog组件传递父级id
     setParentId(side.id)
     // 打开弹窗
@@ -135,7 +140,7 @@ export default function sideBar() {
 
   // 添加分类后的回调函数
   const dialogSideBarCb = (id: number, isEdit?: boolean) => {
-    setCollapseOpen(addIndexStr)
+    // setCollapseOpen(addIndexStr)
     const newStr: string = isEdit ? addIndexStr.substring(0, addIndexStr.length - 2) : addIndexStr
     ctx.getSubClassList(id, newStr)
   }
@@ -171,7 +176,7 @@ export default function sideBar() {
               />
             </ListItemIcon>
           </ListItemButton>
-          <Collapse in={collapseOpen.startsWith(str)} timeout="auto" unmountOnExit>
+          <Collapse in={collapseOpen.includes(str)} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               {item.children && item.children.length > 0 ? (
                 RenderListItem(item.children, str)
@@ -227,14 +232,17 @@ export default function sideBar() {
         onClick={handleClickAddClass}>
         +
       </Button>
-      <DialogSideBar
-        open={dialogOpen}
-        close={handleDialogClose}
-        parent_id={parentId}
-        cb={dialogSideBarCb}
-        editItem={editItem}
-        setEditItem={setEditItem}
-      />
+      {dialogOpen && (
+        <DialogSideBar
+          open={dialogOpen}
+          close={handleDialogClose}
+          parent_id={parentId}
+          level={level}
+          cb={dialogSideBarCb}
+          editItem={editItem}
+          setEditItem={setEditItem}
+        />
+      )}
     </>
   )
 }
