@@ -32,7 +32,7 @@ const menuList: { [key: string]: any } = {
       // collection: {
       //   path: "/collection",
       //   title: "表结构库",
-      //   open: false,
+      //   open: false,npm
       // },
     },
   },

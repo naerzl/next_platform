@@ -239,6 +239,7 @@ export default function dialogUser(props: Props) {
                 id="phone"
                 size="small"
                 fullWidth
+                placeholder="请输入手机号"
                 error={Boolean(errors.phone)}
                 {...register("phone", {
                   required: "请输入手机号",
@@ -251,7 +252,6 @@ export default function dialogUser(props: Props) {
                     trigger("phone")
                   },
                 })}
-                label="请输入手机号"
                 autoComplete="off"
                 className="flex-1"
               />
@@ -275,6 +275,7 @@ export default function dialogUser(props: Props) {
                 id="name"
                 size="small"
                 fullWidth
+                placeholder="请输入名称"
                 disabled={isEdit}
                 error={Boolean(errors.name)}
                 {...register("name", {
@@ -287,7 +288,6 @@ export default function dialogUser(props: Props) {
                     trigger("name")
                   },
                 })}
-                label="请输入名称"
                 autoComplete="off"
               />
             </div>
@@ -343,6 +343,7 @@ export default function dialogUser(props: Props) {
                 id="mail"
                 size="small"
                 fullWidth
+                placeholder="请输入邮箱"
                 error={Boolean(errors.mail)}
                 {...register("mail", {
                   pattern: { value: REGEXP_MAIL, message: "邮箱格式不正确" },
@@ -351,7 +352,6 @@ export default function dialogUser(props: Props) {
                     trigger("mail")
                   },
                 })}
-                label="请输入邮箱"
                 autoComplete="off"
                 className="flex-1"
               />
