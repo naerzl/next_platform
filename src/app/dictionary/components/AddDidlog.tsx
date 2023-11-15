@@ -4,7 +4,7 @@ import React from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import useDebounce from "@/hooks/useDebounce"
 import useSWRMutation from "swr/mutation"
-import { reqPostAddDictionary, reqPutDictionary } from "../api"
+import { reqGetDictionary, reqPostAddDictionary, reqPutDictionary } from "../api"
 import { message } from "antd"
 import { GetDictionaryDataOption } from "./Main"
 import { ErrorMessage } from "@hookform/error-message"
@@ -37,6 +37,8 @@ export default function addDidlog(props: Props) {
 
   const { trigger: apiTrigger } = useSWRMutation("/dictionary", reqPostAddDictionary)
 
+  const { trigger: getDictionaryApi } = useSWRMutation("/dictionary", reqGetDictionary)
+
   // 表单控制hooks
   const {
     handleSubmit,
@@ -60,6 +62,16 @@ export default function addDidlog(props: Props) {
     }
   }, [editItem])
 
+  const dictionaryList = React.useRef<DictionaryData[]>([])
+  const getDictionaryList = async () => {
+    const res = await getDictionaryApi({ class_id: class_id, page: 1, limit: 100, order: "serial" })
+    dictionaryList.current = res.items || []
+  }
+
+  React.useEffect(() => {
+    getDictionaryList()
+  }, [])
+
   const { run: onSubmit }: { run: SubmitHandler<IForm> } = useDebounce((values: IForm) => {
     let params = {} as ReqAddDictionaryParams | ReqPutDictionaryParams
     params.class_id = class_id
@@ -72,6 +84,9 @@ export default function addDidlog(props: Props) {
     }
 
     if (Boolean(editItem)) {
+      const item = dictionaryList.current.find((item) => item.name == values.name)
+      if (editItem!.name != values.name && item)
+        return message.error("修改的字典名称和已有的字典重复")
       putDictionaryApi(
         Object.assign(params, values, { id: editItem!.id }) as ReqPutDictionaryParams,
       ).then(() => {
@@ -80,6 +95,9 @@ export default function addDidlog(props: Props) {
         handleClose()
       })
     } else {
+      const item = dictionaryList.current.find((item) => item.name == values.name)
+      if (item) return message.error("添加的字典名称和已有的字典重复")
+
       apiTrigger(Object.assign(params, values)).then(() => {
         message.success("操作成功")
         getDictionaryData({ class_id })

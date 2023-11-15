@@ -120,7 +120,7 @@ export default function dialogSideBar(props: Props) {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-8 relative">
             <div className="flex items-start flex-col">
-              <InputLabel htmlFor="name" className="mr-3 mb-2.5 w-24 text-left inline-block">
+              <InputLabel htmlFor="name" className="mr-3 mb-2.5 text-left inline-block">
                 {findTitle(level)}名称*:
               </InputLabel>
               <TextField

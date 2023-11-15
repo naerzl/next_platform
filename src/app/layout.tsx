@@ -6,12 +6,12 @@ import Nav from "@/components/Nav"
 import { SWRConfig } from "swr"
 import StyledComponentsRegistry from "@/libs/AntdRegistry"
 import "./globals.scss"
-import { usePathname, useRouter, useSelectedLayoutSegment } from "next/navigation"
+import { usePathname, useSelectedLayoutSegment } from "next/navigation"
 import { ConfirmProvider } from "material-ui-confirm"
 import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined"
 import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined"
 import SupervisedUserCircleOutlinedIcon from "@mui/icons-material/SupervisedUserCircleOutlined"
-import { generateRandomString, trim } from "@/libs/methods"
+import { generateRandomString } from "@/libs/methods"
 import {
   OAUTH2_ACCESS_TOKEN,
   OAUTH2_PATH_FROM,
@@ -25,6 +25,8 @@ import { setCookie } from "@/libs/cookies"
 import { StatusCodes } from "http-status-codes"
 import dayjs from "dayjs"
 import { ConfirmationDialogProvider } from "@/components/ConfirmationDialogProvider"
+import { LocalizationProvider } from "@mui/x-date-pickers"
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -174,29 +176,31 @@ export default function RootLayout({ children }: { children: any }) {
     <html lang="en" id="_next">
       <body className={`${inter.className} flex`}>
         <StyledComponentsRegistry>
-          <ConfirmProvider>
-            <ConfirmationDialogProvider>
-              <SWRConfig value={{ provider: () => new Map() }}>
-                {pathname != "/" ? (
-                  <>
-                    <aside className={`h-full min-w-[15rem] w-60 border-r`}>
-                      <Side />
-                    </aside>
-                    <div className="flex-1 flex  flex-col bg-[#f8fafb] min-w-[50.625rem] overflow-auto">
-                      <Nav />
-                      <main
-                        className="px-7.5 py-12  flex flex-col "
-                        style={{ height: "calc(100vh - 64px)" }}>
-                        {children}
-                      </main>
-                    </div>
-                  </>
-                ) : (
-                  <>{children}</>
-                )}
-              </SWRConfig>
-            </ConfirmationDialogProvider>
-          </ConfirmProvider>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <ConfirmProvider>
+              <ConfirmationDialogProvider>
+                <SWRConfig value={{ provider: () => new Map() }}>
+                  {pathname != "/" ? (
+                    <>
+                      <aside className={`h-full min-w-[15rem] w-60 border-r`}>
+                        <Side />
+                      </aside>
+                      <div className="flex-1 flex  flex-col bg-[#f8fafb] min-w-[50.625rem] overflow-auto">
+                        <Nav />
+                        <main
+                          className="px-7.5 py-12  flex flex-col "
+                          style={{ height: "calc(100vh - 64px)" }}>
+                          {children}
+                        </main>
+                      </div>
+                    </>
+                  ) : (
+                    <>{children}</>
+                  )}
+                </SWRConfig>
+              </ConfirmationDialogProvider>
+            </ConfirmProvider>
+          </LocalizationProvider>
         </StyledComponentsRegistry>
       </body>
     </html>

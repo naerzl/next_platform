@@ -77,7 +77,7 @@ export default function dialogEBS(props: Props) {
 
   const [relatedTo, setRelatedTo] = React.useState("")
 
-  const [switchState, setSwitchState] = React.useState("no")
+  const [switchState, setSwitchState] = React.useState(0)
 
   const {
     register,
@@ -96,7 +96,7 @@ export default function dialogEBS(props: Props) {
     setAutoN(null)
     setAutoH(null)
     setRelatedTo("")
-    setSwitchState("no")
+    setSwitchState(0)
   }
 
   // 提交表单事件（防抖）
@@ -112,7 +112,7 @@ export default function dialogEBS(props: Props) {
             h_subpart_code: autoH ? autoH.value : "",
             n_subpart_code: autoN ? autoN.value : "",
             subpart_class: autoSubpart ? autoSubpart.value : "",
-            related_to: relatedTo ?? "",
+            // related_to: relatedTo ?? "",
           },
           value,
         ),
@@ -128,7 +128,7 @@ export default function dialogEBS(props: Props) {
             h_subpart_code: autoH ? autoH.value : "",
             n_subpart_code: autoN ? autoN.value : "",
             subpart_class: autoSubpart ? autoSubpart.value : "",
-            related_to: relatedTo ?? "",
+            // related_to: relatedTo ?? "",
           },
           value,
         ),
@@ -148,7 +148,7 @@ export default function dialogEBS(props: Props) {
     if (isEdit) {
       setValue("name", item.name)
       setValue("unit", item.unit)
-      setSwitchState(item.is_loop)
+      setSwitchState(Number(item.is_loop))
       setRelatedTo((item.related_ebs ? item.related_ebs.id : "") as any)
       fillAutoComputedData()
       getHighOrNormalSpeed(item.subpart_class)
@@ -157,7 +157,7 @@ export default function dialogEBS(props: Props) {
 
   // 处理滑块切换时间
   const handleSwitchChange = (value: boolean) => {
-    setSwitchState(value ? "yes" : "no")
+    setSwitchState(value ? 1 : 0)
   }
 
   const [highSpeed, setHighSpeed] = React.useState<any[]>([])
@@ -297,7 +297,7 @@ export default function dialogEBS(props: Props) {
             </InputLabel>
             <Switch
               id="name"
-              checked={switchState == "yes"}
+              checked={switchState == 1}
               onChange={(event, checked) => {
                 handleSwitchChange(checked)
               }}
@@ -412,30 +412,30 @@ export default function dialogEBS(props: Props) {
           </>
         )}
 
-        {(item.is_system != "system" || !isEdit) && (
-          <div className="mb-8 relative">
-            <div className="flex items-start flex-col">
-              <InputLabel htmlFor="name" className="mr-3 mb-2.5 w-full text-left inline-block">
-                关联EBS:
-              </InputLabel>
-              <Select
-                dropdownStyle={{ zIndex: 2000 }}
-                className="w-full h-10"
-                defaultActiveFirstOption={false}
-                filterOption={false}
-                showSearch
-                allowClear
-                notFoundContent={null}
-                placeholder="搜索关联EBS节点"
-                options={ebsOption}
-                value={relatedTo}
-                onChange={(value) => {
-                  setRelatedTo(value)
-                }}
-                onSearch={handleEBSSearch}></Select>
-            </div>
-          </div>
-        )}
+        {/*{(item.is_system != "system" || !isEdit) && (*/}
+        {/*  <div className="mb-8 relative">*/}
+        {/*    <div className="flex items-start flex-col">*/}
+        {/*      <InputLabel htmlFor="name" className="mr-3 mb-2.5 w-full text-left inline-block">*/}
+        {/*        关联EBS:*/}
+        {/*      </InputLabel>*/}
+        {/*      <Select*/}
+        {/*        dropdownStyle={{ zIndex: 2000 }}*/}
+        {/*        className="w-full h-10"*/}
+        {/*        defaultActiveFirstOption={false}*/}
+        {/*        filterOption={false}*/}
+        {/*        showSearch*/}
+        {/*        allowClear*/}
+        {/*        notFoundContent={null}*/}
+        {/*        placeholder="搜索关联EBS节点"*/}
+        {/*        options={ebsOption}*/}
+        {/*        value={relatedTo}*/}
+        {/*        onChange={(value) => {*/}
+        {/*          setRelatedTo(value)*/}
+        {/*        }}*/}
+        {/*        onSearch={handleEBSSearch}></Select>*/}
+        {/*    </div>*/}
+        {/*  </div>*/}
+        {/*)}*/}
         <DialogActions>
           <Button onClick={handleCancel}>取消</Button>
           <Button type="submit" className="bg-railway_blue text-white">

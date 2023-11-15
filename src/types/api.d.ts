@@ -50,3 +50,9 @@ export interface ReqLoginPhoneCodeParams {
   state: string
   scope: string
 }
+
+export interface BasePager {
+  page: number
+  limit: number
+  count: number
+}

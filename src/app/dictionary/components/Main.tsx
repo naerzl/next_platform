@@ -164,7 +164,7 @@ export default function dictionaryMain() {
       <div className="flex-1 flex-shrink-0 overflow-hidden bg-white border">
         <div className="h-full flex">
           {/* 左侧导航 */}
-          <aside className="h-full  mr-3 bg-white border-r overflow-y-auto overflow-x-hidden">
+          <aside className="h-full  mr-3 bg-white border-r overflow-y-auto overflow-x-hidden w-1/6 max-w-sm min-w-[200px]">
             <SideBar />
           </aside>
           <div className="flex-1 flex flex-col  gap-y-2">

@@ -4,7 +4,7 @@ import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined"
 import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined"
 import ExpandLess from "@mui/icons-material/ExpandLess"
 import ExpandMore from "@mui/icons-material/ExpandMore"
-
+import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined"
 import {
   Collapse,
   List,
@@ -66,6 +66,18 @@ const menuList: { [key: string]: any } = {
       "member-department": {
         path: "/member-department",
         title: "成员部门",
+        open: false,
+      },
+    },
+  },
+  projectManagement: {
+    title: "项目管理",
+    icon: <AccountBalanceWalletOutlinedIcon />,
+    open: false,
+    children: {
+      "project-management": {
+        path: "/project-management",
+        title: "项目管理",
         open: false,
       },
     },

@@ -68,7 +68,7 @@ export interface TypeApiPutEBSParams {
   h_subpart_code: string
   n_subpart_code: string
   subpart_class: string
-  is_loop: "yes" | "no"
+  is_loop: 0 | 1
   related_to?: number | string
 }
 
