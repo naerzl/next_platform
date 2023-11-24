@@ -8,6 +8,8 @@ import { getCookie, setCookie } from "@/libs/cookies"
 import { getV1BaseURL } from "@/libs/fetch"
 import { useRouter } from "next/navigation"
 
+const ORIGIN_PATH = process.env.NEXT_PUBLIC_ORIGIN_PATH
+
 const yuanStyle = {
   background: "linear-gradient(145deg, rgba(0,129,255,0.2) 0%, #22CCE2 83%)",
 }
@@ -18,11 +20,11 @@ export default function HomePage(props: any) {
     // 补货到抛出的错误 重新初始化token 重新登录
     const res = await lrsOAuth2Instance.lrsOAuth2Initiate(getV1BaseURL("/initiate"), {
       state,
-      redirect_url: location.origin + "/auth2",
+      redirect_url: ORIGIN_PATH + "/auth2",
     })
     if (res.code === STATUS_SUCCESS) {
       // 存储当前的url地址
-      setCookie(OAUTH2_PATH_FROM as string, location.origin + "/dashboard")
+      setCookie(OAUTH2_PATH_FROM as string, ORIGIN_PATH + "/dashboard/")
       // 跳转到登录页面的地址
       location.href = res.data.location
     }

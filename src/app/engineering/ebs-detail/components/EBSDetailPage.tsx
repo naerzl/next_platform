@@ -8,6 +8,9 @@ import TableTr from "./TableTr"
 import { Breadcrumbs } from "@mui/material"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
+import permissionJson from "@/config/permission.json"
+import NoPermission from "@/components/NoPermission"
+import { LayoutContext } from "@/components/LayoutContext"
 
 // 表格每一列的字段
 const columns = [
@@ -49,6 +52,8 @@ const changeTreeArr = (arr: TypeSubsectionData[], indexStr = ""): TypeSubsection
 }
 
 export default function ebsDetailPage() {
+  const { permissionTagList } = React.useContext(LayoutContext)
+
   // 获取表格数据SWR请求
   const { trigger: getSubSectionApi } = useSWRMutation("/subsection", reqGetSubsection)
 
@@ -148,6 +153,10 @@ export default function ebsDetailPage() {
           renderTableTr(item.children)}
       </TableTr>
     ))
+  }
+
+  if (!permissionTagList.includes(permissionJson.list_of_engineering_majors_member_read)) {
+    return <NoPermission />
   }
 
   return (

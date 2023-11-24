@@ -1,4 +1,4 @@
-import { Button, Drawer, InputLabel, MenuItem, Select, TextField } from "@mui/material"
+import { Button, Drawer, IconButton, InputLabel, MenuItem, Select, TextField } from "@mui/material"
 import React from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import useDebounce from "@/hooks/useDebounce"
@@ -15,10 +15,13 @@ import {
   ProjectListData,
   PutProjectParams,
 } from "@/app/project-management/types"
-import { TYPE_OPTION } from "@/app/project-management/const"
+import { TYPE_CLASS, TYPE_OPTION } from "@/app/project-management/const"
 import { reqPostProject, reqPutProject } from "@/app/project-management/api"
 import { reqGetEBS } from "@/app/ebs-profession/ebs-data/api"
-import { TypeEBSDataList } from "@/app/ebs-profession/ebs-data/types"
+import { dateToYYYYMM } from "@/libs/methods"
+import DeleteIcon from "@mui/icons-material/DeleteOutlined"
+import AddIcon from "@mui/icons-material/Add"
+import { DatePicker } from "@mui/x-date-pickers"
 
 interface Props {
   open: boolean
@@ -26,24 +29,51 @@ interface Props {
   close: () => void
   editItem: null | ProjectListData
   getDataList: () => void
+  type: TYPE_CLASS
 }
 
-export default function AddOrEditProject(props: Props) {
-  const { open, close, editItem, getDataList } = props
+const Tamplate = [
+  {
+    key: "标段名称",
+    value: "",
+  },
+  {
+    key: "建设单位",
+    value: "",
+  },
+  {
+    key: "施工单位",
+    value: "",
+  },
+  {
+    key: "监理单位",
+    value: "",
+  },
+  {
+    key: "设计单位",
+    value: "",
+  },
+  {
+    key: "项目负责人",
+    value: "",
+  },
+]
 
-  const { trigger: postProjectApi } = useSWRMutation("/project", reqPostProject)
+export default function AddOrEditProject(props: Props) {
+  const { open, close, editItem, getDataList, type } = props
+
   const { trigger: putProjectApi } = useSWRMutation("/project", reqPutProject)
   const { trigger: getEBSApi } = useSWRMutation("/ebs", reqGetEBS)
 
-  const [ebsList, setEBSList] = React.useState<TypeEBSDataList[]>([])
-  const getEBSDataList = async () => {
-    const res = await getEBSApi({ level: 1 })
-    setEBSList(res)
-  }
-
-  React.useEffect(() => {
-    getEBSDataList()
-  }, [])
+  // const [ebsList, setEBSList] = React.useState<TypeEBSDataList[]>([])
+  // const getEBSDataList = async () => {
+  //   const res = await getEBSApi({ level: 1 })
+  //   setEBSList(res)
+  // }
+  //
+  // React.useEffect(() => {
+  //   getEBSDataList()
+  // }, [])
 
   const handleClose = () => {
     close()
@@ -56,27 +86,18 @@ export default function AddOrEditProject(props: Props) {
       setValue("cost", editItem.cost)
       setValue("creator", editItem.creator)
       setValue("abbreviation", editItem.abbreviation)
-      setCompletedAt(Number(editItem.completed_at))
-      setExpiredAt(dayjs(editItem.expired_at))
-      setStartedAt(dayjs(editItem.started_at))
-      const descObj: DescJsonType = JSON.parse(editItem.desc || "{}")
+      setProjectType(type == "zheng" ? "official" : "trial")
+      setExpiredAt(dayjs(editItem.expired_at).utc())
+      const descObj: any = JSON.parse(editItem.desc || "[]")
 
-      setValue("construction_organization", descObj.construction_organization)
-      setValue("construction_unit", descObj.construction_unit)
-      setValue("section_name", descObj.section_name)
-      setValue("supervising_unit", descObj.supervising_unit)
-      setValue("design_unit", descObj.design_unit)
-      setValue("leader", descObj.leader)
+      console.log(descObj)
+      // setProperty(JSON.parse(descObj))
     }
   }, [editItem])
 
   const [expiredAt, setExpiredAt] = React.useState<Dayjs | null>(dayjs(new Date()))
 
-  const [startedAt, setStartedAt] = React.useState<Dayjs | null>(dayjs(new Date()))
-
-  const [completedAt, setCompletedAt] = React.useState(0)
-
-  const [projectType, setProjectType] = React.useState(0)
+  const [projectType, setProjectType] = React.useState("null")
 
   const {
     handleSubmit,
@@ -89,27 +110,28 @@ export default function AddOrEditProject(props: Props) {
 
   const { run: onSubmit }: { run: SubmitHandler<PostProjectParams & DescJsonType> } = useDebounce(
     async (values: PostProjectParams & DescJsonType) => {
-      if (!completedAt || !expiredAt || !startedAt) return message.error("请填写完数据在进行提交")
-
-      const descObj: DescJsonType = {
-        construction_organization: values.construction_organization,
-        construction_unit: values.construction_unit,
-        section_name: values.section_name,
-        supervising_unit: values.supervising_unit,
-        design_unit: values.design_unit,
-        leader: values.leader,
+      if (!expiredAt) return message.error("请填写完数据在进行提交")
+      if (projectType == "null") return message.error("请选择项目类型")
+      if (property.length > 0) {
+        const someValue = property.some((item) => {
+          return item.value == "" || item.key == ""
+        })
+        if (someValue && type == "zheng") return message.warning("添加的数据不可为空")
       }
 
       const params = {
         name: values.name,
         cost: values.cost,
-        creator: values.creator,
-        abbreviation: values.abbreviation,
-        completed_at: String(completedAt),
-        expired_at: expiredAt!.format("YYYY-MM-DD HH:mm:ss"),
-        started_at: startedAt!.format("YYYY-MM-DD HH:mm:ss"),
-        desc: JSON.stringify(descObj),
+        // creator: values.creator,
+        // abbreviation: values.abbreviation,
+
+        desc: JSON.stringify(property),
+        class: projectType,
       } as PutProjectParams
+
+      if (type == "yan") {
+        params.expired_at = dateToYYYYMM(expiredAt!)
+      }
 
       if (Boolean(editItem)) {
         params.id = editItem!.id
@@ -122,31 +144,50 @@ export default function AddOrEditProject(props: Props) {
     },
   )
 
+  const [property, setProperty] = React.useState<{ key: string; value: string }[]>(Tamplate)
+
+  const handleChangeKeyAndValueInput = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    index: number,
+    type: "key" | "value",
+  ) => {
+    const newProperty = structuredClone(property)
+    newProperty[index][type] = event.target.value
+    setProperty(newProperty)
+  }
+
+  const handleDelProperty = (index: number) => {
+    const newProperty = structuredClone(property)
+    newProperty.splice(index, 1)
+    setProperty(newProperty)
+  }
+
   return (
     <Drawer open={open} onClose={handleClose} anchor="right">
       <div className="w-[500px] p-10">
         <header className="text-3xl text-[#44566C] mb-8">
-          {!!editItem ? "修改项目信息" : "添加项目信息"}
+          {type == "zheng" ? "转正信息填写" : "修改项目信息"}
         </header>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-8 relative">
             <div className="flex items-start flex-col">
               <InputLabel htmlFor="name" className="mr-3 w-full text-left mb-2.5" required>
-                项目名称:
+                项目全称:
               </InputLabel>
               <TextField
                 variant="outlined"
                 id="name"
                 size="small"
                 fullWidth
+                disabled={type == "yan"}
                 error={Boolean(errors.name)}
                 {...register("name", {
-                  required: "请输入项目名称",
+                  required: "请输入项目全称",
                   onBlur() {
                     trigger("name")
                   },
                 })}
-                placeholder="项目名称"
+                placeholder="项目全称"
                 autoComplete="off"
               />
             </div>
@@ -170,6 +211,7 @@ export default function AddOrEditProject(props: Props) {
                 id="creator"
                 size="small"
                 fullWidth
+                disabled
                 error={Boolean(errors.creator)}
                 {...register("creator", {
                   required: "请输入创建者",
@@ -199,13 +241,9 @@ export default function AddOrEditProject(props: Props) {
                 id="abbreviation"
                 size="small"
                 fullWidth
+                disabled
                 error={Boolean(errors.abbreviation)}
-                {...register("abbreviation", {
-                  required: "请输入项目简称",
-                  onBlur() {
-                    trigger("abbreviation")
-                  },
-                })}
+                {...register("abbreviation")}
                 autoComplete="off"
               />
             </div>
@@ -220,8 +258,37 @@ export default function AddOrEditProject(props: Props) {
 
           <div className="mb-8 relative">
             <div className="flex items-start flex-col">
+              <InputLabel htmlFor="name" className="mr-3 w-full text-left mb-2.5" required>
+                项目状态:
+              </InputLabel>
+
+              <Select
+                MenuProps={{ sx: { zIndex: 1702, height: "400px" } }}
+                sx={{ flex: 1, color: "#303133", zIndex: 1602 }}
+                id="role_list"
+                size="small"
+                value={projectType}
+                disabled
+                onChange={(event) => {
+                  setProjectType(event.target.value)
+                }}
+                fullWidth>
+                <MenuItem value={"null"}>
+                  <i className="text-[#c2c2c2]">请选择一个项目类型</i>
+                </MenuItem>
+                {TYPE_OPTION.map((item: any) => (
+                  <MenuItem value={item.value} key={item.value}>
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
+          </div>
+
+          <div className="mb-8 relative">
+            <div className="flex items-start flex-col">
               <InputLabel htmlFor="cost" className="mr-3 w-full text-left mb-2.5" required>
-                工程造价:
+                工程造价（元）:
               </InputLabel>
               <TextField
                 placeholder="工程造价"
@@ -248,255 +315,120 @@ export default function AddOrEditProject(props: Props) {
             />
           </div>
 
-          <div className="mb-8 relative">
-            <div className="flex items-start flex-col">
-              <InputLabel htmlFor="section_name" className="mr-3 w-full text-left mb-2.5" required>
-                标段名称:
-              </InputLabel>
-              <TextField
-                placeholder="标段名称"
-                variant="outlined"
-                id="section_name"
-                size="small"
-                fullWidth
-                error={Boolean(errors.section_name)}
-                {...register("section_name", {
-                  required: "请输入标段名称",
-                  onBlur() {
-                    trigger("section_name")
-                  },
-                })}
-                autoComplete="off"
-              />
-            </div>
-            <ErrorMessage
-              errors={errors}
-              name="section_name"
-              render={({ message }) => (
-                <p className="text-railway_error text-sm absolute">{message}</p>
-              )}
-            />
-          </div>
-          <div className="mb-8 relative">
-            <div className="flex items-start flex-col">
-              <InputLabel
-                htmlFor="construction_unit"
-                className="mr-3 w-full text-left mb-2.5"
-                required>
-                建设单位:
-              </InputLabel>
-              <TextField
-                placeholder="建设单位"
-                variant="outlined"
-                id="construction_unit"
-                size="small"
-                fullWidth
-                error={Boolean(errors.construction_unit)}
-                {...register("construction_unit", {
-                  required: "请输入建设单位",
-                  onBlur() {
-                    trigger("construction_unit")
-                  },
-                })}
-                autoComplete="off"
-              />
-            </div>
-            <ErrorMessage
-              errors={errors}
-              name="construction_unit"
-              render={({ message }) => (
-                <p className="text-railway_error text-sm absolute">{message}</p>
-              )}
-            />
-          </div>
-          <div className="mb-8 relative">
-            <div className="flex items-start flex-col">
-              <InputLabel
-                htmlFor="construction_organization"
-                className="mr-3 w-full text-left mb-2.5"
-                required>
-                施工单位:
-              </InputLabel>
-              <TextField
-                placeholder="施工单位"
-                variant="outlined"
-                id="construction_organization"
-                size="small"
-                fullWidth
-                error={Boolean(errors.construction_organization)}
-                {...register("construction_organization", {
-                  required: "请输入施工单位",
-                  onBlur() {
-                    trigger("construction_organization")
-                  },
-                })}
-                autoComplete="off"
-              />
-            </div>
-            <ErrorMessage
-              errors={errors}
-              name="construction_organization"
-              render={({ message }) => (
-                <p className="text-railway_error text-sm absolute">{message}</p>
-              )}
-            />
-          </div>
-          <div className="mb-8 relative">
-            <div className="flex items-start flex-col">
-              <InputLabel
-                htmlFor="supervising_unit"
-                className="mr-3 w-full text-left mb-2.5"
-                required>
-                监理单位:
-              </InputLabel>
-              <TextField
-                placeholder="监理单位"
-                variant="outlined"
-                id="supervising_unit"
-                size="small"
-                fullWidth
-                error={Boolean(errors.supervising_unit)}
-                {...register("supervising_unit", {
-                  required: "请输入监理单位",
-                  onBlur() {
-                    trigger("supervising_unit")
-                  },
-                })}
-                autoComplete="off"
-              />
-            </div>
-            <ErrorMessage
-              errors={errors}
-              name="supervising_unit"
-              render={({ message }) => (
-                <p className="text-railway_error text-sm absolute">{message}</p>
-              )}
-            />
-          </div>
-          <div className="mb-8 relative">
-            <div className="flex items-start flex-col">
-              <InputLabel htmlFor="design_unit" className="mr-3 w-full text-left mb-2.5" required>
-                设计单位:
-              </InputLabel>
-              <TextField
-                placeholder="设计单位"
-                variant="outlined"
-                id="design_unit"
-                size="small"
-                fullWidth
-                error={Boolean(errors.design_unit)}
-                {...register("design_unit", {
-                  required: "请输入设计单位",
-                  onBlur() {
-                    trigger("design_unit")
-                  },
-                })}
-                autoComplete="off"
-              />
-            </div>
-            <ErrorMessage
-              errors={errors}
-              name="design_unit"
-              render={({ message }) => (
-                <p className="text-railway_error text-sm absolute">{message}</p>
-              )}
-            />
-          </div>
-          <div className="mb-8 relative">
-            <div className="flex items-start flex-col">
-              <InputLabel htmlFor="leader" className="mr-3 w-full text-left mb-2.5" required>
-                项目负责人:
-              </InputLabel>
-              <TextField
-                placeholder="项目负责人"
-                variant="outlined"
-                id="leader"
-                size="small"
-                fullWidth
-                error={Boolean(errors.leader)}
-                {...register("leader", {
-                  required: "请输入项目负责人",
-                  onBlur() {
-                    trigger("leader")
-                  },
-                })}
-                autoComplete="off"
-              />
-            </div>
-            <ErrorMessage
-              errors={errors}
-              name="leader"
-              render={({ message }) => (
-                <p className="text-railway_error text-sm absolute">{message}</p>
-              )}
-            />
-          </div>
+          {type == "zheng" && (
+            <>
+              <div
+                className="bg-railway_blue w-10 h-10 rounded-full flex justify-center items-center shadow cursor-pointer"
+                onClick={() => {
+                  setProperty((prevState) => [...prevState, { value: "", key: "" }])
+                }}>
+                <AddIcon className="text-[2.15rem] text-white" />
+              </div>
 
-          <div className="mb-8 relative">
-            <div className="flex items-start flex-col">
-              <InputLabel htmlFor="name" className="mr-3 w-full text-left mb-2.5" required>
-                平台项目过期时间:
-              </InputLabel>
-              <DateTimePicker
-                // views={["year", "month", "day"]}
-                format="YYYY-MM-DD HH:mm"
-                ampm={false}
-                label="到货日期"
-                value={expiredAt}
-                className="w-full"
-                onChange={(newValue) => {
-                  setExpiredAt(newValue)
-                }}
-              />
-            </div>
-          </div>
-
-          <div className="mb-8 relative">
-            <div className="flex items-start flex-col">
-              <InputLabel htmlFor="name" className="mr-3 w-full text-left mb-2.5" required>
-                项目开始时间:
-              </InputLabel>
-              <DateTimePicker
-                // views={["year", "month", "day"]}
-                format="YYYY-MM-DD HH:mm"
-                ampm={false}
-                label="到货日期"
-                value={startedAt}
-                className="w-full"
-                onChange={(newValue) => {
-                  setStartedAt(newValue)
-                }}
-              />
-            </div>
-          </div>
-
-          <div className="mb-8 relative">
-            <div className="flex items-start flex-col">
-              <InputLabel htmlFor="name" className="mr-3 w-full text-left mb-2.5" required>
-                项目关联的专业:
-              </InputLabel>
-
-              <Select
-                MenuProps={{ sx: { zIndex: 1702, height: "400px" } }}
-                sx={{ flex: 1, color: "#303133", zIndex: 1602 }}
-                id="role_list"
-                size="small"
-                value={completedAt}
-                onChange={(event) => {
-                  setCompletedAt(Number(event.target.value))
-                }}
-                fullWidth>
-                <MenuItem value={0}>
-                  <i>请选择一个项目类型</i>
-                </MenuItem>
-                {ebsList.map((item) => (
-                  <MenuItem value={item.id} key={item.id}>
-                    {item.name}
-                  </MenuItem>
+              <div className="w-full mb-8">
+                {property.map((item, index) => (
+                  <div key={index} className="w-full flex h-10 gap-2 mt-2.5">
+                    <div className="flex-1">
+                      <TextField
+                        variant="outlined"
+                        value={item.key}
+                        fullWidth
+                        size="small"
+                        label="属性"
+                        onChange={(event) => {
+                          handleChangeKeyAndValueInput(event, index, "key")
+                        }}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <TextField
+                        variant="outlined"
+                        value={item.value}
+                        fullWidth
+                        size="small"
+                        label="数据"
+                        onChange={(event) => {
+                          handleChangeKeyAndValueInput(event, index, "value")
+                        }}
+                      />
+                    </div>
+                    <IconButton
+                      onClick={() => {
+                        handleDelProperty(index)
+                      }}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </div>
                 ))}
-              </Select>
+              </div>
+            </>
+          )}
+
+          {type != "zheng" && (
+            <div className="mb-8 relative">
+              <div className="flex items-start flex-col">
+                <InputLabel htmlFor="name" className="mr-3 w-full text-left mb-2.5" required>
+                  平台项目过期时间:
+                </InputLabel>
+                <DatePicker
+                  // views={["year", "month", "day"]}
+                  format="YYYY-MM-DD"
+                  value={expiredAt}
+                  className="w-full"
+                  onChange={(newValue) => {
+                    setExpiredAt(newValue)
+                  }}
+                />
+              </div>
             </div>
-          </div>
+          )}
+
+          {/*<div className="mb-8 relative">*/}
+          {/*  <div className="flex items-start flex-col">*/}
+          {/*    <InputLabel htmlFor="name" className="mr-3 w-full text-left mb-2.5" required>*/}
+          {/*      项目开始时间:*/}
+          {/*    </InputLabel>*/}
+          {/*    <DateTimePicker*/}
+          {/*      // views={["year", "month", "day"]}*/}
+          {/*      format="YYYY-MM-DD HH:mm"*/}
+          {/*      ampm={false}*/}
+          {/*      label="到货日期"*/}
+          {/*      value={startedAt}*/}
+          {/*      className="w-full"*/}
+          {/*      onChange={(newValue) => {*/}
+          {/*        setStartedAt(newValue)*/}
+          {/*      }}*/}
+          {/*    />*/}
+          {/*  </div>*/}
+          {/*</div>*/}
+
+          {/*<div className="mb-8 relative">*/}
+          {/*  <div className="flex items-start flex-col">*/}
+          {/*    <InputLabel htmlFor="name" className="mr-3 w-full text-left mb-2.5" required>*/}
+          {/*      项目关联的专业:*/}
+          {/*    </InputLabel>*/}
+
+          {/*    <Select*/}
+          {/*      MenuProps={{ sx: { zIndex: 1702, height: "400px" } }}*/}
+          {/*      sx={{ flex: 1, color: "#303133", zIndex: 1602 }}*/}
+          {/*      id="role_list"*/}
+          {/*      size="small"*/}
+          {/*      value={completedAt}*/}
+          {/*      onChange={(event) => {*/}
+          {/*        setCompletedAt(Number(event.target.value))*/}
+          {/*      }}*/}
+          {/*      fullWidth>*/}
+          {/*      <MenuItem value={0}>*/}
+          {/*        <i>请选择一个项目类型</i>*/}
+          {/*      </MenuItem>*/}
+          {/*      {ebsList.map((item) => (*/}
+          {/*        <MenuItem value={item.id} key={item.id}>*/}
+          {/*          {item.name}*/}
+          {/*        </MenuItem>*/}
+          {/*      ))}*/}
+          {/*    </Select>*/}
+          {/*  </div>*/}
+          {/*</div>*/}
 
           {/*<div className="mb-8 relative">*/}
           {/*  <div className="flex items-start flex-col">*/}

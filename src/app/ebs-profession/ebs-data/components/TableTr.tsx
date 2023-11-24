@@ -10,6 +10,9 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined"
 import DeleteIcon from "@mui/icons-material/DeleteOutlined"
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
 import { useConfirmationDialog } from "@/components/ConfirmationDialogProvider"
+import { displayWithPermission } from "@/libs/methods"
+import permissionJson from "@/config/permission.json"
+import { LayoutContext } from "@/components/LayoutContext"
 
 interface Props {
   item: TypeEBSDataList
@@ -36,6 +39,9 @@ export type Type_Is_system = "platform" | "system" | "userdefined"
 
 export default function tableTr(props: Props) {
   const ctx = React.useContext(EBSDataContext)
+
+  const { permissionTagList } = React.useContext(LayoutContext)
+
   const {
     item,
     handleGetParentChildren,
@@ -87,19 +93,19 @@ export default function tableTr(props: Props) {
 
   const initHave2and5 = async () => {
     // 计算当前项的子集还有没有数据
-    let count = 0
-    if (item.childrenCount) {
-      for (const key in item.childrenCount) {
-        // @ts-ignore
-        count += item.childrenCount[key]
-      }
-      if (count <= 0) {
-        setHaveChildren(false)
-      }
-      if (item.children!.length > 0) {
-        setHaveChildren(true)
-      }
-    }
+    // let count = 0
+    // if (item.childrenCount) {
+    //   for (const key in item.childrenCount) {
+    //     // @ts-ignore
+    //     count += item.childrenCount[key]
+    //   }
+    //   if (count <= 0) {
+    //     setHaveChildren(false)
+    //   }
+    //   if (item.children!.length > 0) {
+    //     setHaveChildren(true)
+    //   }
+    // }
   }
 
   React.useEffect(() => {
@@ -135,7 +141,6 @@ export default function tableTr(props: Props) {
           className="overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer col-span-3 flex justify-between items-center pl-4"
           title={item.name}
           onClick={() => {
-            if (!haveChildren) return
             if (props.children) {
               handleClickClose()
             } else {
@@ -146,13 +151,9 @@ export default function tableTr(props: Props) {
             className="flex-1 flex-shrink-0  overflow-hidden text-ellipsis whitespace-nowrap"
             style={{ textIndent: `${(item.level - 1) * 16}px` }}>
             {props.children ? (
-              <i
-                className="iconfont  icon-xiangxiajiantou  text-[14px] font-bold mr-1.5"
-                style={haveChildren ? {} : { visibility: "hidden" }}></i>
+              <i className="iconfont  icon-xiangxiajiantou  text-[14px] font-bold mr-1.5"></i>
             ) : (
-              <i
-                style={haveChildren ? {} : { visibility: "hidden" }}
-                className="iconfont icon-xiangyoujiantou text-[14px] font-bold mr-1.5"></i>
+              <i className="iconfont icon-xiangyoujiantou text-[14px] font-bold mr-1.5"></i>
             )}
 
             <span>{item.name}</span>
@@ -175,7 +176,11 @@ export default function tableTr(props: Props) {
         <td className="flex justify-between items-center pl-4">{item.h_subpart_code}</td>
         <td className="flex justify-between items-center pl-4">{item.n_subpart_code}</td>
         <td className="flex justify-between items-center pl-4">
-          <Switch checked={item.is_loop == "yes"}></Switch>
+          <Switch
+            checked={item.is_loop == 1}
+            disabled={
+              !permissionTagList.includes(permissionJson.list_of_ebs_majors_member_update)
+            }></Switch>
         </td>
         <td className="flex flex-col items-center justify-center  text-ellipsis overflow-hidden">
           <p>{item.related_ebs ? item.related_ebs.code : ""}</p>
@@ -196,16 +201,30 @@ export default function tableTr(props: Props) {
                 sx: { boxShadow: "none" },
               }}>
               <div className="flex">
-                <MenuItem onClick={handleIconLookProcess} sx={{ p: 0 }}>
-                  <div className="flex gap-x-1.5 items-center">
-                    <Tooltip title="查看工序">
-                      <IconButton>
-                        <SearchOutlinedIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </div>
-                </MenuItem>
-                <MenuItem onClick={handleIconAdd} sx={{ p: 0 }}>
+                {item.is_loop == 1 && item.name.includes("#桩") && (
+                  <MenuItem
+                    onClick={handleIconLookProcess}
+                    sx={{ p: 0 }}
+                    style={displayWithPermission(
+                      permissionTagList,
+                      permissionJson.ebs_specialty_list_process_member_read,
+                    )}>
+                    <div className="flex gap-x-1.5 items-center">
+                      <Tooltip title="查看工序">
+                        <IconButton>
+                          <SearchOutlinedIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </div>
+                  </MenuItem>
+                )}
+                <MenuItem
+                  onClick={handleIconAdd}
+                  sx={{ p: 0 }}
+                  style={displayWithPermission(
+                    permissionTagList,
+                    permissionJson.list_of_ebs_majors_member_write,
+                  )}>
                   <div className="flex gap-x-1.5 items-center">
                     <Tooltip title="添加EBS结构">
                       <IconButton>
@@ -214,7 +233,13 @@ export default function tableTr(props: Props) {
                     </Tooltip>
                   </div>
                 </MenuItem>
-                <MenuItem onClick={handleIconEdit} sx={{ p: 0 }}>
+                <MenuItem
+                  onClick={handleIconEdit}
+                  sx={{ p: 0 }}
+                  style={displayWithPermission(
+                    permissionTagList,
+                    permissionJson.list_of_ebs_majors_member_update,
+                  )}>
                   <div className="flex gap-x-1.5 items-center">
                     <Tooltip title="修改EBS结构">
                       <IconButton>
@@ -223,7 +248,13 @@ export default function tableTr(props: Props) {
                     </Tooltip>
                   </div>
                 </MenuItem>
-                <MenuItem onClick={handleIconDel} sx={{ p: 0 }}>
+                <MenuItem
+                  onClick={handleIconDel}
+                  sx={{ p: 0 }}
+                  style={displayWithPermission(
+                    permissionTagList,
+                    permissionJson.list_of_ebs_majors_member_delete,
+                  )}>
                   <div className="flex gap-x-1.5 items-center">
                     <Tooltip title="删除EBS结构">
                       <IconButton>

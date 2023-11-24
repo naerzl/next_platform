@@ -14,11 +14,12 @@ import useDebounce from "@/hooks/useDebounce"
 import useSWRMutation from "swr/mutation"
 import { useForm, SubmitHandler } from "react-hook-form"
 import { ErrorMessage } from "@hookform/error-message"
-import { reqPostDictionaryClass, reqPutDictionaryClass } from "../api"
+import { reqGetDictionaryClass, reqPostDictionaryClass, reqPutDictionaryClass } from "../api"
 import { message } from "antd"
 import {
   DictionaryClassData,
   ReqAddDictionaryClassParams,
+  ReqGetDictionaryClassParams,
   ReqPutDictionaryClassParams,
 } from "../types"
 import { iconList } from "./IconEnum"
@@ -77,10 +78,27 @@ export default function dialogSideBar(props: Props) {
     reqPostDictionaryClass,
   )
 
+  const { trigger: getCollectionClassApi } = useSWRMutation(
+    "/dictionary-class",
+    reqGetDictionaryClass,
+  )
+
   const { trigger: putCollectionClassApi } = useSWRMutation(
     "/dictionary-class",
     reqPutDictionaryClass,
   )
+
+  const [collectionClassList, setCollectionClassList] = React.useState<DictionaryClassData[]>([])
+  const getCollectionClassListData = async () => {
+    const params = {} as ReqGetDictionaryClassParams
+    if (parent_id) params.parent_id = parent_id
+    const res = await getCollectionClassApi(params)
+    setCollectionClassList(res)
+  }
+
+  React.useEffect(() => {
+    getCollectionClassListData()
+  }, [parent_id])
 
   // 表单提交事件
   const { run: onSubmit }: { run: SubmitHandler<IForm> } = useDebounce(async (values: IForm) => {
@@ -91,8 +109,12 @@ export default function dialogSideBar(props: Props) {
     }
     // 拼接出请求需要的参数
     if (editItem) {
+      const item = collectionClassList.find((item) => item.name == values.name)
+      if (editItem.name != values.name && item) return message.error("该字典已存在，确认修改？")
       await putCollectionClassApi({ ...obj, id: editItem.id } as ReqPutDictionaryClassParams)
     } else {
+      const item = collectionClassList.find((item) => item.name == values.name)
+      if (item) return message.error("该字典已存在，确认添加？")
       await postCollectionClassApi(parent_id ? { ...obj, parent_id } : obj)
     }
 

@@ -24,7 +24,8 @@ export interface TypeEBSDataList {
   name: string
   level: number
   unit: string
-  is_loop: "yes" | "no"
+  is_loop: 1 | 0
+  class: "ordinary" | "persistent"
   is_system: "platform" | "system" | "userdefined" | "null"
   has_structure: string
   structure_status: string
@@ -38,6 +39,7 @@ export interface TypeEBSDataList {
     none: number
   }
   related_ebs: TypeEBSDataList
+  parent_is_loop?: boolean
 }
 
 /*创建EBS结构 请求参数*/
@@ -141,13 +143,16 @@ export interface ProcessFormListData {
   is_loop: number
   created_at: string
   updated_at: string
+  class: "ordinary" | "persistent"
   roles: ProcessRoleData[]
+  datum_class: string
 }
 
 export interface TypeApiPostProcessFormParams {
   process_id: number
   name: string
   desc: string
-  is_loop: number
+  class: "ordinary" | "persistent"
   role_flags: string
+  datum_class: string
 }

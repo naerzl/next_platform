@@ -15,6 +15,8 @@ import {
 } from "@mui/material"
 import { usePathname, useRouter } from "next/navigation"
 import SupervisedUserCircleOutlinedIcon from "@mui/icons-material/SupervisedUserCircleOutlined"
+import permissionJson from "@/config/permission.json"
+import { LayoutContext } from "@/components/LayoutContext"
 
 export const dynamic = "force-dynamic"
 
@@ -23,10 +25,12 @@ const menuList: { [key: string]: any } = {
     title: "公共库",
     icon: <ArchiveOutlinedIcon />,
     open: false,
+    permissionTag: permissionJson.public_library_module_read,
     children: {
       dictionary: {
         path: "/dictionary",
         title: "字典库",
+        permissionTag: permissionJson.dictionary_base_member_read,
         open: false,
       },
       // collection: {
@@ -40,16 +44,19 @@ const menuList: { [key: string]: any } = {
     title: "数据模板",
     icon: <TuneOutlinedIcon />,
     open: false,
+    permissionTag: permissionJson.data_template_module_read,
     children: {
       "ebs-profession": {
         path: "/ebs-profession",
         title: "EBS专业列表",
         open: false,
+        permissionTag: permissionJson.list_of_ebs_majors_member_read,
       },
       engineering: {
         path: "/engineering",
         title: "工程专业列表",
         open: false,
+        permissionTag: permissionJson.list_of_engineering_majors_member_read,
       },
       // "design-data-list": {
       //   path: "/design-data-list",
@@ -58,27 +65,29 @@ const menuList: { [key: string]: any } = {
       // },
     },
   },
-  userManagement: {
-    title: "用户管理",
-    icon: <SupervisedUserCircleOutlinedIcon />,
-    open: false,
-    children: {
-      "member-department": {
-        path: "/member-department",
-        title: "成员部门",
-        open: false,
-      },
-    },
-  },
+  // userManagement: {
+  //   title: "用户管理",
+  //   icon: <SupervisedUserCircleOutlinedIcon />,
+  //   open: false,
+  //   children: {
+  //     "member-department": {
+  //       path: "/member-department",
+  //       title: "成员部门",
+  //       open: false,
+  //     },
+  //   },
+  // },
   projectManagement: {
     title: "项目管理",
     icon: <AccountBalanceWalletOutlinedIcon />,
     open: false,
+    permissionTag: permissionJson.item_management_module_read,
     children: {
       "project-management": {
         path: "/project-management",
         title: "项目管理",
         open: false,
+        permissionTag: permissionJson.item_list_member_read,
       },
     },
   },
@@ -91,6 +100,12 @@ function side() {
   const router = useRouter()
 
   const [openList, setOpen] = React.useState<string[]>([])
+
+  const ctxLayout = React.useContext(LayoutContext)
+
+  function displayWithPermission(tag: string) {
+    return ctxLayout.permissionTagList.includes(tag) ? {} : { display: "none" }
+  }
 
   // 处理展开合并方法
   const handleClickOpen = (key: string) => {
@@ -142,7 +157,7 @@ function side() {
           </ListSubheader>
         }>
         {Object.keys(menuList).map((key, index) => (
-          <div key={index}>
+          <div key={index} style={displayWithPermission(menuList[key].permissionTag)}>
             <ListItemButton
               sx={{ color: "#44566c" }}
               onClick={() => {
@@ -160,6 +175,7 @@ function side() {
                 {Object.keys(menuList[key].children).map((k, i) => (
                   <ListItemButton
                     key={i}
+                    style={displayWithPermission(menuList[key].children[k].permissionTag)}
                     sx={
                       pathName.startsWith(menuList[key].children[k].path)
                         ? { bgcolor: "#eef0f1" }

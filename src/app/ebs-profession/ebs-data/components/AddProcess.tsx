@@ -44,10 +44,6 @@ const stageOption = [
     value: 1,
   },
   {
-    label: "",
-    value: 2,
-  },
-  {
     label: "结束",
     value: 3,
   },
@@ -75,7 +71,8 @@ export default function AddProcess(props: Props) {
     setValue("name", item.name)
     setValue("desc", item.desc)
     setValue("percentage", item.percentage)
-    setStage(stageOption.find((i) => i.value == item.stage)!.label)
+    const obj = stageOption.find((i) => i.value == item.stage)
+    setStage(obj ? obj.label : "")
   }
 
   React.useEffect(() => {
@@ -88,19 +85,25 @@ export default function AddProcess(props: Props) {
     if (Boolean(editItem)) {
       let params = {
         stage: stageOption.find((i) => i.label == stage)?.value,
+        percentage: values.percentage,
+        name: values.name,
+        desc: values.desc,
       } as TypeApiPutProcessParams
       params.id = editItem!.id
 
-      await putProcessApi(Object.assign(params, values))
+      await putProcessApi(params)
 
       cb(Object.assign(params), false)
     } else {
       let params = {
         stage: stageOption.find((i) => i.label == stage)?.value,
+        percentage: values.percentage,
+        name: values.name,
+        desc: values.desc,
       } as TypeApiPostProcessParams
       params.ebs_id = item.id
 
-      const res = await postProcessApi(Object.assign(params, values))
+      const res = await postProcessApi(params)
       const newRes = structuredClone(res)
 
       cb(Object.assign(newRes, params, values), true)
@@ -116,7 +119,7 @@ export default function AddProcess(props: Props) {
   >([])
 
   const getRoleAndSection = async () => {
-    getRoleApi({ class: "normal" }).then((roleRes) => {
+    getRoleApi({ class: "normal", is_client: 1 }).then((roleRes) => {
       roleRes &&
         setRoleOption(roleRes.map((item) => ({ ...item, label: item.name, value: item.flag })))
     })
@@ -157,7 +160,7 @@ export default function AddProcess(props: Props) {
                       trigger("name")
                     },
                   })}
-                  label="请输入名称"
+                  placeholder="请输入名称"
                   autoComplete="off"
                 />
               </div>
@@ -172,41 +175,53 @@ export default function AddProcess(props: Props) {
 
             <div className="mb-8">
               <div className="flex items-start flex-col">
-                <InputLabel htmlFor="percentage" className="mr-3 w-20 text-left mb-2.5">
-                  工作量:
+                <InputLabel htmlFor="percentage" className="mr-3 w-20 text-left mb-2.5" required>
+                  工作量%:
                 </InputLabel>
                 <TextField
                   variant="outlined"
                   id="percentage"
                   size="small"
                   fullWidth
+                  type="number"
                   error={Boolean(errors.percentage)}
                   {...register("percentage", {
-                    required: "请输入工作量",
-                    maxLength: {
-                      value: 16,
-                      message: "文本字数最多16个",
+                    required: "请输入工作量%",
+                    max: {
+                      value: 100,
+                      message: "最大值为100",
+                    },
+                    min: {
+                      value: 0,
+                      message: "最小值为0",
                     },
                     onBlur() {
                       trigger("percentage")
                     },
                   })}
-                  label="请输入工作量"
+                  placeholder="请输入工作量"
                   autoComplete="off"
                 />
               </div>
+              <ErrorMessage
+                errors={errors}
+                name="percentage"
+                render={({ message }) => (
+                  <p className="text-railway_error text-sm absolute">{message}</p>
+                )}
+              />
             </div>
 
             <div className="mb-8 relative">
               <div className="flex items-start flex-col">
-                <InputLabel htmlFor="stage" className="mr-3 w-20 text-left mb-2.5" required>
+                <InputLabel htmlFor="stage" className="mr-3 w-20 text-left mb-2.5">
                   标识:
                 </InputLabel>
 
                 <Autocomplete
                   disablePortal
                   id="h_subpart_code"
-                  options={stageOption.map((item) => item.label)}
+                  options={stageOption.map((item) => item?.label)}
                   fullWidth
                   value={stage}
                   size="small"
@@ -239,7 +254,7 @@ export default function AddProcess(props: Props) {
 
             <div className="mb-8 relative">
               <div className="flex items-start flex-col">
-                <InputLabel htmlFor="desc" className="mr-3 w-20 text-left mb-2.5" required>
+                <InputLabel htmlFor="desc" className="mr-3 w-20 text-left mb-2.5">
                   工序说明:
                 </InputLabel>
                 <TextField
@@ -248,17 +263,8 @@ export default function AddProcess(props: Props) {
                   size="small"
                   fullWidth
                   error={Boolean(errors.desc)}
-                  {...register("desc", {
-                    required: "请输入工序说明",
-                    maxLength: {
-                      value: 16,
-                      message: "文本字数最多16个",
-                    },
-                    onBlur() {
-                      trigger("desc")
-                    },
-                  })}
-                  label="请输入工序说明"
+                  {...register("desc")}
+                  placeholder="请输入工序说明"
                   className="flex-1"
                   autoComplete="off"
                 />

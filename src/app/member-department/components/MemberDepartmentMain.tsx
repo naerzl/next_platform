@@ -1,6 +1,6 @@
 "use client"
 import React from "react"
-import { Menu, MenuItem, Pagination } from "@mui/material"
+import { Button, Menu, MenuItem, Pagination } from "@mui/material"
 import { RolesListData, UserListData } from "@/app/member-department/types"
 import { reqDelUser } from "@/app/member-department/api"
 import useSWRMutation from "swr/mutation"
@@ -11,6 +11,7 @@ import TableCell from "@mui/material/TableCell"
 import TableBody from "@mui/material/TableBody"
 import memberDepartmentContext from "@/app/member-department/context/memberDepartmentContext"
 import { useConfirmationDialog } from "@/components/ConfirmationDialogProvider"
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
 
 const select_option = [
   {
@@ -132,9 +133,11 @@ export default function memberDepartmentMain(props: Props) {
 
   return (
     <>
-      <div style={{ width: "100%", position: "relative", height: "100%", paddingBottom: "38px" }}>
+      <div
+        style={{ width: "100%", position: "relative", height: "100%" }}
+        className="overflow-y-auto">
         <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader>
-          <TableHead sx={{ position: "sticky", top: "64px", zIndex: 5 }}>
+          <TableHead sx={{ position: "sticky", top: "0", zIndex: 5 }}>
             <TableRow>
               {columns.map((col) => (
                 <TableCell key={col.key} sx={{ width: col.key == "action" ? "150px" : "auto" }}>
@@ -199,18 +202,6 @@ export default function memberDepartmentMain(props: Props) {
               ))}
           </TableBody>
         </Table>
-        <div className="absolute bottom-0 w-full flex justify-end">
-          {Boolean(tablePaper.count && tablePaper.count > 0) && (
-            <Pagination
-              count={Math.ceil(tablePaper.count / tablePaper.limit)}
-              variant="outlined"
-              shape="rounded"
-              onChange={(event, page) => {
-                handleTableCurrentPageNumberChange(page)
-              }}
-            />
-          )}
-        </div>
       </div>
     </>
   )

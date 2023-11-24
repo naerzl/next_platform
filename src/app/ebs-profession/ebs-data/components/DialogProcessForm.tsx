@@ -18,6 +18,10 @@ import {
 import useDrawerAddProcessForm from "@/app/ebs-profession/ebs-data/hooks/useDrawerAddProcessForm"
 import DrawerAddForm from "@/app/ebs-profession/ebs-data/components/DrawerAddForm"
 import { useConfirmationDialog } from "@/components/ConfirmationDialogProvider"
+import { DATUM_CLASS } from "@/app/ebs-profession/ebs-data/const"
+import { displayWithPermission } from "@/libs/methods"
+import permissionJson from "@/config/permission.json"
+import { LayoutContext } from "@/components/LayoutContext"
 
 type Props = {
   open: boolean
@@ -31,10 +35,6 @@ const stageEnum = [
     value: 1,
   },
   {
-    label: "",
-    value: 2,
-  },
-  {
     label: "结束",
     value: 3,
   },
@@ -46,15 +46,15 @@ function renderTableCellStage(item: ProcessListData) {
 
 const columns = [
   {
-    title: "序号",
-    dataIndex: "index",
-    key: "index",
-    align: "left",
-  },
-  {
     title: "表单名称",
     dataIndex: "name",
     key: "name",
+    align: "left",
+  },
+  {
+    title: "工序类型",
+    dataIndex: "type",
+    key: "type",
     align: "left",
   },
   {
@@ -69,6 +69,12 @@ const columns = [
     key: "identifying",
     align: "left",
   },
+  {
+    title: "表单说明",
+    dataIndex: "shuoming",
+    key: "shuoming",
+    align: "left",
+  },
 
   {
     width: "150px",
@@ -78,23 +84,27 @@ const columns = [
 ]
 
 const renderTableCellRole = (arr: ProcessRoleData[]) => {
-  return arr.map((item) => item.flag_name).join(",")
+  return arr?.map((item) => item.flag_name).join(",")
 }
 
 export default function DialogProcessForm(props: Props) {
   const { open, handleCloseDialogAddForm, item } = props
 
-  const { data: tableList, mutate: mutateTableList } = useSWR(
-    () => (item.id ? `/process-form?process_id =${item.id}` : null),
-    (url: string) => reqGetProcessForm(url, { arg: { process_id: +item.id } }),
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    },
-  )
+  const { permissionTagList } = React.useContext(LayoutContext)
 
   const { trigger: delProcessFormApi } = useSWRMutation("/process-form", reqDelProcess)
+  const { trigger: getProcessFormApi } = useSWRMutation("/process-form", reqGetProcessForm)
+
+  const [tableList, setTableList] = React.useState<ProcessFormListData[]>([])
+
+  const getProcessFormListData = async () => {
+    const res = await getProcessFormApi({ process_id: +item.id })
+    setTableList(res || [])
+  }
+
+  React.useEffect(() => {
+    getProcessFormListData()
+  }, [])
 
   const handleEditeProcessWithDrawer = (item: ProcessFormListData) => {
     handleEditeProcessFormWithDrawer(item)
@@ -105,7 +115,7 @@ export default function DialogProcessForm(props: Props) {
   const handleDelProcessFormWithSWR = (id: number) => {
     handleConfirm("你确定要删除吗？", async () => {
       await delProcessFormApi({ id })
-      await mutateTableList(tableList?.filter((item) => item.id != id), false)
+      getProcessFormListData()
     })
   }
 
@@ -125,7 +135,7 @@ export default function DialogProcessForm(props: Props) {
       const index = newList?.findIndex((item) => item.id == item.id)
       newList![index!] = item
     }
-    await mutateTableList(newList, false)
+    getProcessFormListData()
   }
 
   return (
@@ -133,17 +143,20 @@ export default function DialogProcessForm(props: Props) {
       <Dialog
         onClose={handleCloseDialogAddForm}
         open={open}
-        sx={{ zIndex: 1700 }}
-        className="custom">
+        sx={{ zIndex: 1700, ".MuiPaper-root": { maxWidth: "none" } }}>
         <DialogTitle>工序名称:{item.name}</DialogTitle>
         <div className="px-6">
           <span className="mr-3">工作量：{item.percentage}%</span>
-          <span>标识：{renderTableCellStage(item)}</span>
+          <span className="mr-3">标识：{renderTableCellStage(item)}</span>
         </div>
         <DialogContent sx={{ width: "80vw", height: "80vh" }}>
           <div>
             <header>
               <Button
+                style={displayWithPermission(
+                  permissionTagList,
+                  permissionJson.ebs_specialty_list_process_member_write,
+                )}
                 variant="contained"
                 className="bg-railway_blue"
                 onClick={() => {
@@ -152,7 +165,7 @@ export default function DialogProcessForm(props: Props) {
                 新建表单
               </Button>
             </header>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader>
+            <Table sx={{ minWidth: "70vw" }} aria-label="simple table" stickyHeader>
               <TableHead>
                 <TableRow>
                   {columns.map((col) => (
@@ -166,21 +179,32 @@ export default function DialogProcessForm(props: Props) {
                 {tableList &&
                   tableList.map((row, index) => (
                     <TableRow key={row.id}>
-                      <TableCell component="th" scope="row">
-                        {index + 1}
-                      </TableCell>
                       <TableCell align="left">{row.name}</TableCell>
+                      <TableCell align="left">
+                        {DATUM_CLASS.find((item) => item.value == row.datum_class)?.label}
+                      </TableCell>
                       <TableCell align="left">{renderTableCellRole(row.roles)}</TableCell>
+                      <TableCell align="left">
+                        {row.class == "ordinary" ? "普通任务" : "持续性任务"}
+                      </TableCell>
                       <TableCell align="left">{row.desc}</TableCell>
                       <TableCell align="left">
                         <div className="flex justify-start">
                           <IconButton
+                            style={displayWithPermission(
+                              permissionTagList,
+                              permissionJson.ebs_specialty_list_process_member_update,
+                            )}
                             onClick={() => {
                               handleEditeProcessWithDrawer(row)
                             }}>
                             <EditOutlinedIcon />
                           </IconButton>
                           <IconButton
+                            style={displayWithPermission(
+                              permissionTagList,
+                              permissionJson.ebs_specialty_list_process_member_delete,
+                            )}
                             onClick={() => {
                               handleDelProcessFormWithSWR(row.id)
                             }}>

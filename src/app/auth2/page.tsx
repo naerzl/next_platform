@@ -25,7 +25,7 @@ export default function auth2() {
             `${process.env.NEXT_PUBLIC_AUTH_PATH}/firstchangepassword?t=${res.data.access_token}`,
           )
         } else {
-          router.push(getCookie(OAUTH2_PATH_FROM as string) || "/")
+          router.push("/dashboard/")
         }
       })
     // @ts-ignore

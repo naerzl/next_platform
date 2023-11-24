@@ -13,8 +13,13 @@ import IconButton from "@mui/material/IconButton"
 import SearchIcon from "@mui/icons-material/Search"
 import { reqGetSubsection } from "@/app/engineering/api"
 import useSWR from "swr"
+import permissionJson from "@/config/permission.json"
+import NoPermission from "@/components/NoPermission"
+import { LayoutContext } from "@/components/LayoutContext"
 
 export default function ebsProfessionPage() {
+  const { permissionTagList } = React.useContext(LayoutContext)
+
   const [swrState, setSwrState] = React.useState({
     parent_id: "",
     name: "",
@@ -71,6 +76,10 @@ export default function ebsProfessionPage() {
     setSwrState((prevState) => ({ ...prevState, name: value }))
   }
 
+  if (!permissionTagList.includes(permissionJson.list_of_engineering_majors_member_read)) {
+    return <NoPermission />
+  }
+
   return (
     <>
       <h3 className="font-bold text-[1.875rem]">工程专业列表</h3>
@@ -107,9 +116,9 @@ export default function ebsProfessionPage() {
           />
         </div>
       </header>
-      <div className="bg-white border custom-scroll-bar shadow-sm min-h-[570px]">
+      <div className="bg-white border custom-scroll-bar shadow-sm flex-1 overflow-y-auto">
         <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader>
-          <TableHead sx={{ position: "sticky", top: "64px", zIndex: 5 }}>
+          <TableHead sx={{ position: "sticky", top: "0", zIndex: 5 }}>
             <TableRow>
               {columns.map((col) => (
                 <TableCell key={col.key} sx={{ width: col.key == "action" ? "150px" : "auto" }}>

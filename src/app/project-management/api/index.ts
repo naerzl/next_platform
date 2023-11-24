@@ -1,6 +1,7 @@
 import { fetcher } from "@/libs/fetch"
 import { FetchParams } from "@/types/api"
 import {
+  GetProjectParams,
   GetProjectResponse,
   PostProjectParams,
   PutProjectParams,
@@ -9,7 +10,7 @@ import {
 // 获取项目管理记录
 export const reqGetProject = (
   url: string,
-  { arg }: FetchParams<{ page?: number; limit?: number; name?: string; creator?: string }>,
+  { arg }: FetchParams<GetProjectParams>,
 ): Promise<GetProjectResponse> => fetcher({ url, arg })
 
 export const reqPostProject = (url: string, { arg }: FetchParams<PostProjectParams>) =>

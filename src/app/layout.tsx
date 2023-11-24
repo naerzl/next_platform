@@ -6,7 +6,7 @@ import Nav from "@/components/Nav"
 import { SWRConfig } from "swr"
 import StyledComponentsRegistry from "@/libs/AntdRegistry"
 import "./globals.scss"
-import { usePathname, useSelectedLayoutSegment } from "next/navigation"
+import { usePathname, useRouter, useSelectedLayoutSegment } from "next/navigation"
 import { ConfirmProvider } from "material-ui-confirm"
 import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined"
 import TuneOutlinedIcon from "@mui/icons-material/TuneOutlined"
@@ -27,6 +27,9 @@ import dayjs from "dayjs"
 import { ConfirmationDialogProvider } from "@/components/ConfirmationDialogProvider"
 import { LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
+import { getPermissionCurrentUser } from "@/app/api"
+import { PermissionData } from "@/types/api"
+import { LayoutContext } from "@/components/LayoutContext"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -103,6 +106,8 @@ export default function RootLayout({ children }: { children: any }) {
   // 处理展开菜单展开
   const pathname = usePathname()
 
+  const router = useRouter()
+
   const handleGoToLogin = async () => {
     const state = generateRandomString()
     // 补货到抛出的错误 重新初始化token 重新登录
@@ -160,7 +165,49 @@ export default function RootLayout({ children }: { children: any }) {
     }
   }, [pathname])
 
-  if ((!accessToken && segment && segment != "auth2") || waitToken) {
+  const [waitWithProjectAndPermission, setWaitWithProjectAndPermission] = React.useState(false)
+
+  const [permission, setPermission] = React.useState<PermissionData[]>([])
+
+  const [permissionTagList, setPermissionTagList] = React.useState<string[]>([])
+
+  const getProjectList = async () => {
+    try {
+      setWaitWithProjectAndPermission(true)
+      const res = await getPermissionCurrentUser("/permission/current/user")
+      if (!res || res.length <= 0) {
+        localStorage.removeItem(OAUTH2_ACCESS_TOKEN)
+        router.push(process.env.NEXT_PUBLIC_WEB_PATH!)
+        return
+      }
+      setPermission(res)
+      let obj: any = {}
+      setPermissionTagList(
+        res.map((item) => {
+          const tag = item.permission + "_" + item.action
+          const str = tag.trim()
+          obj[str] = str
+          return str
+        }),
+      )
+
+      console.log(JSON.stringify(obj))
+    } finally {
+      setWaitWithProjectAndPermission(false)
+    }
+  }
+
+  React.useEffect(() => {
+    if (!pathname.startsWith("/auth2") && pathname != "/") {
+      getProjectList()
+    }
+  }, [pathname])
+
+  if (
+    (!accessToken && segment && segment != "auth2") ||
+    waitToken ||
+    waitWithProjectAndPermission
+  ) {
     return (
       <html lang="en" id="_next">
         <body className={`${inter.className} flex`}>
@@ -175,33 +222,35 @@ export default function RootLayout({ children }: { children: any }) {
   return (
     <html lang="en" id="_next">
       <body className={`${inter.className} flex`}>
-        <StyledComponentsRegistry>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <ConfirmProvider>
-              <ConfirmationDialogProvider>
-                <SWRConfig value={{ provider: () => new Map() }}>
-                  {pathname != "/" ? (
-                    <>
-                      <aside className={`h-full min-w-[15rem] w-60 border-r`}>
-                        <Side />
-                      </aside>
-                      <div className="flex-1 flex  flex-col bg-[#f8fafb] min-w-[50.625rem] overflow-auto">
-                        <Nav />
-                        <main
-                          className="px-7.5 py-12  flex flex-col "
-                          style={{ height: "calc(100vh - 64px)" }}>
-                          {children}
-                        </main>
-                      </div>
-                    </>
-                  ) : (
-                    <>{children}</>
-                  )}
-                </SWRConfig>
-              </ConfirmationDialogProvider>
-            </ConfirmProvider>
-          </LocalizationProvider>
-        </StyledComponentsRegistry>
+        <LayoutContext.Provider value={{ permissionTagList, permissionList: permission }}>
+          <StyledComponentsRegistry>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <ConfirmProvider>
+                <ConfirmationDialogProvider>
+                  <SWRConfig value={{ provider: () => new Map() }}>
+                    {pathname != "/" ? (
+                      <>
+                        <aside className={`h-full min-w-[15rem] w-60 border-r`}>
+                          <Side />
+                        </aside>
+                        <div className="flex-1 flex  flex-col bg-[#f8fafb] min-w-[50.625rem] overflow-auto">
+                          <Nav />
+                          <main
+                            className="px-7.5 py-12  flex flex-col "
+                            style={{ height: "calc(100vh - 64px)" }}>
+                            {children}
+                          </main>
+                        </div>
+                      </>
+                    ) : (
+                      <>{children}</>
+                    )}
+                  </SWRConfig>
+                </ConfirmationDialogProvider>
+              </ConfirmProvider>
+            </LocalizationProvider>
+          </StyledComponentsRegistry>
+        </LayoutContext.Provider>
       </body>
     </html>
   )

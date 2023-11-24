@@ -1,5 +1,6 @@
 export const TYPE_OPTION = [
-  { value: 1, label: "铁路" },
-  { value: 2, label: "公路" },
-  { value: 3, label: "市政" },
+  { value: "official", label: "正式" },
+  { value: "trial", label: "试用" },
 ]
+
+export type TYPE_CLASS = "zheng" | "yan"

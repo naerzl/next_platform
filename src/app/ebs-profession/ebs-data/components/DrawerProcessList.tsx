@@ -18,6 +18,9 @@ import useSWRMutation from "swr/mutation"
 import useDialogProcessForm from "@/app/ebs-profession/ebs-data/hooks/useDialogProcessForm"
 import DialogProcessForm from "@/app/ebs-profession/ebs-data/components/DialogProcessForm"
 import { useConfirmationDialog } from "@/components/ConfirmationDialogProvider"
+import { displayWithPermission } from "@/libs/methods"
+import permissionJson from "@/config/permission.json"
+import { LayoutContext } from "@/components/LayoutContext"
 
 type Props = {
   open: boolean
@@ -87,21 +90,26 @@ export default function drawerProcessList(props: Props) {
 
   const { showConfirmationDialog: handleConfirm } = useConfirmationDialog()
 
+  const { permissionTagList } = React.useContext(LayoutContext)
+
   const handleClose = () => {
     handleCloseDrawerProcess()
   }
 
-  const { data: tableList, mutate: mutateTableList } = useSWR(
-    () => (item.id ? `/process?ebs_id=${item.id}` : null),
-    (url: string) => reqGetProcess(url, { arg: { ebs_id: item.id } }),
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    },
-  )
+  const [tableList, setTableList] = React.useState<ProcessListData[]>([])
+
+  const { trigger: getProcessApi } = useSWRMutation("/process", reqGetProcess)
 
   const { trigger: delProcessApi } = useSWRMutation("/process", reqDelProcess)
+
+  const getProcessListData = async () => {
+    const res = await getProcessApi({ ebs_id: item.id })
+    setTableList(res || [])
+  }
+
+  React.useEffect(() => {
+    getProcessListData()
+  }, [])
 
   const {
     handleCloseDrawerAddProcess,
@@ -121,7 +129,7 @@ export default function drawerProcessList(props: Props) {
       newData![index] = item
     }
 
-    await mutateTableList(newData, false)
+    getProcessListData()
   }
 
   const handleDelProcessWithSWR = (id: number) => {
@@ -129,7 +137,7 @@ export default function drawerProcessList(props: Props) {
       //   拷贝数据
       await delProcessApi({ id })
       const newData = tableList?.filter((item) => item.id !== id)
-      await mutateTableList(newData, false)
+      getProcessListData()
     })
   }
 
@@ -145,6 +153,10 @@ export default function drawerProcessList(props: Props) {
             <Divider sx={{ my: 1.5 }} />
             <div className="flex justify-end">
               <Button
+                style={displayWithPermission(
+                  permissionTagList,
+                  permissionJson.ebs_specialty_list_process_member_write,
+                )}
                 variant="contained"
                 className="bg-railway_blue"
                 startIcon={<AddOutlinedIcon />}
@@ -182,12 +194,17 @@ export default function drawerProcessList(props: Props) {
                           <Button
                             variant="outlined"
                             startIcon={<RunCircleOutlinedIcon />}
+                            color="success"
                             onClick={() => {
                               handleOpenDialogAddForm(row)
                             }}>
                             工序表单
                           </Button>
                           <Button
+                            style={displayWithPermission(
+                              permissionTagList,
+                              permissionJson.ebs_specialty_list_process_member_update,
+                            )}
                             variant="outlined"
                             startIcon={<EditOutlinedIcon />}
                             onClick={() => {
@@ -196,8 +213,13 @@ export default function drawerProcessList(props: Props) {
                             编辑
                           </Button>
                           <Button
+                            style={displayWithPermission(
+                              permissionTagList,
+                              permissionJson.ebs_specialty_list_process_member_delete,
+                            )}
                             variant="outlined"
                             startIcon={<DeleteIcon />}
+                            color="error"
                             onClick={() => {
                               handleDelProcessWithSWR(row.id)
                             }}>

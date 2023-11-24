@@ -26,6 +26,8 @@ import { RolesListData } from "@/app/member-department/types"
 import useSWRMutation from "swr/mutation"
 import { reqGetRole } from "@/app/member-department/api"
 import { reqPostProcessForm, reqPutProcessForm } from "@/app/ebs-profession/ebs-data/api"
+import { DATUM_CLASS } from "@/app/ebs-profession/ebs-data/const"
+import { message } from "antd"
 
 type Props = {
   open: boolean
@@ -63,11 +65,14 @@ export default function DrawerAddForm(props: Props) {
   const { trigger: putProcessForm } = useSWRMutation("/process-form", reqPutProcessForm)
 
   const { run: onSubmit }: { run: SubmitHandler<IForm> } = useDebounce(async (values: IForm) => {
+    if (datumClass == "null") return message.error("请选择一个工序类型")
+
     if (Boolean(editItem)) {
       const params = {
         id: editItem!.id,
-        is_loop: switchState,
+        class: switchState == 1 ? "persistent" : "ordinary",
         process_id: processItem.id,
+        datum_class: datumClass,
       } as TypeApiPostProcessFormParams & { id: number }
 
       let roles = roleSelectState.map((roleFlag) => {
@@ -85,8 +90,9 @@ export default function DrawerAddForm(props: Props) {
       cb(Object.assign(params, { roles: rolesList } as any), false)
     } else {
       const params = {
-        is_loop: switchState,
+        class: switchState == 1 ? "persistent" : "ordinary",
         process_id: processItem.id,
+        datum_class: datumClass,
       } as TypeApiPostProcessFormParams
 
       let roles = roleSelectState.map((roleFlag) => {
@@ -115,7 +121,7 @@ export default function DrawerAddForm(props: Props) {
   >([])
 
   const getRoleAndSection = async () => {
-    getRoleApi({ class: "normal" }).then((roleRes) => {
+    getRoleApi({ class: "normal", is_client: 1 }).then((roleRes) => {
       roleRes &&
         setRoleOption(roleRes.map((item) => ({ ...item, label: item.name, value: item.flag })))
     })
@@ -127,6 +133,8 @@ export default function DrawerAddForm(props: Props) {
 
   const [switchState, setSwitchState] = React.useState(0)
 
+  const [datumClass, setDatumClass] = React.useState("null")
+
   const handleSwitchChange = (checked: boolean) => {
     setSwitchState(checked ? 1 : 0)
   }
@@ -135,8 +143,11 @@ export default function DrawerAddForm(props: Props) {
     if (editItem) {
       setValue("name", editItem.name)
       setValue("desc", editItem.desc)
-      setRoleSelectState(editItem.roles.map((item) => item.flag_name))
-      setSwitchState(editItem.is_loop)
+      if (editItem.roles) {
+        setRoleSelectState(editItem.roles.map((item) => item.flag_name))
+      }
+      setSwitchState(editItem.class == "persistent" ? 1 : 0)
+      setDatumClass(editItem.datum_class)
     }
   }, [editItem])
 
@@ -196,6 +207,34 @@ export default function DrawerAddForm(props: Props) {
             </div>
           </div>
 
+          <div className="mb-8 relative">
+            <div className="flex items-start flex-col">
+              <InputLabel
+                htmlFor="name"
+                className="mr-3 mb-2.5 w-full text-left inline-block"
+                required>
+                工序类型：
+              </InputLabel>
+              <Select
+                value={datumClass}
+                onChange={(event) => {
+                  setDatumClass(event.target.value)
+                }}
+                MenuProps={{ sx: { zIndex: 1702 } }}
+                sx={{ flex: 1, zIndex: 1602 }}
+                id="role_list"
+                size="small"
+                fullWidth>
+                <MenuItem value="null">请选择一个工序类型</MenuItem>
+                {DATUM_CLASS.map((item) => (
+                  <MenuItem value={item.value} key={item.value}>
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
+          </div>
+
           <div className="mb-8">
             <div className="flex items-start flex-col">
               <InputLabel htmlFor="percentage" className="mr-3 w-20 text-left mb-2.5">
@@ -248,7 +287,7 @@ export default function DrawerAddForm(props: Props) {
 
           <div className="mb-8 relative">
             <div className="flex items-start flex-col">
-              <InputLabel htmlFor="desc" className="mr-3 w-20 text-left mb-2.5" required>
+              <InputLabel htmlFor="desc" className="mr-3 w-20 text-left mb-2.5">
                 表单说明:
               </InputLabel>
               <TextField
@@ -257,16 +296,7 @@ export default function DrawerAddForm(props: Props) {
                 size="small"
                 fullWidth
                 error={Boolean(errors.desc)}
-                {...register("desc", {
-                  required: "请输入工序说明",
-                  maxLength: {
-                    value: 16,
-                    message: "文本字数最多16个",
-                  },
-                  onBlur() {
-                    trigger("desc")
-                  },
-                })}
+                {...register("desc")}
                 label="请输入工序说明"
                 className="flex-1"
               />

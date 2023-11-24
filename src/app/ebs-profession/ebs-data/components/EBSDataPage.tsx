@@ -18,6 +18,9 @@ import Typography from "@mui/material/Typography"
 import DrawerProcessList from "@/app/ebs-profession/ebs-data/components/DrawerProcessList"
 import useAuthSettingDialog from "@/app/member-department/hooks/useAuthSettingDialog"
 import useDrawerProcess from "@/app/ebs-profession/ebs-data/hooks/useDrawerProcess"
+import permissionJson from "@/config/permission.json"
+import NoPermission from "@/components/NoPermission"
+import { LayoutContext } from "@/components/LayoutContext"
 
 // 表格每一列的字段
 const columns = [
@@ -89,6 +92,8 @@ export default function ebsDataPage() {
 
   const searchParams = useSearchParams()
 
+  const { permissionTagList } = React.useContext(LayoutContext)
+
   const {
     dialogOpen,
     isEdit,
@@ -151,32 +156,14 @@ export default function ebsDataPage() {
         level: record.level + 1,
       })
 
-      if (res.length > 0) {
-        const codeArr = res.map((item) => item.code)
-        // 获取子节点
-        const resCount = await getCodeCountApi({
-          code: JSON.stringify(codeArr),
-          level: record.level + 2,
-        })
-        if (Object.keys(resCount).length > 0) {
-          const childrenArr = res.map((item) => ({
-            ...item,
-            childrenCount: resCount[String(item.code) as any] || {
-              platform: 0,
-              system: 0,
-              userdefined: 0,
-              none: 0,
-            },
-          }))
-          renderTreeArr(childrenArr, record.key as string)
-        } else {
-          const childrenArr = res.map((item) => ({
-            ...item,
-            childrenCount: { platform: 0, system: 0, userdefined: 0, none: 0 },
-          }))
-          renderTreeArr(childrenArr, record.key as string)
+      const newRes = res.map((item) => {
+        if (record.is_loop == 1 || record.parent_is_loop) {
+          return { ...item, parent_is_loop: true }
         }
-      }
+        return item
+      })
+
+      renderTreeArr(newRes, record.key!)
     } else {
       renderTreeArrOfCloseChildren(record.key as string)
     }
@@ -277,6 +264,10 @@ export default function ebsDataPage() {
     THEAD_POSITION.current = DOM_THEAD.current?.getBoundingClientRect() as DOMRect
   }, [])
 
+  if (!permissionTagList.includes(permissionJson.list_of_ebs_majors_member_read)) {
+    return <NoPermission />
+  }
+
   return (
     <EBSDataContext.Provider value={{ handleExpandChange, tableData }}>
       <h3 className="font-bold text-[1.875rem]">EBS模板</h3>
@@ -293,10 +284,10 @@ export default function ebsDataPage() {
           </Typography>
         </Breadcrumbs>
       </div>
-      <div className="bg-white border ">
+      <div className="bg-white border flex-1 overflow-y-auto custom-scroll-bar">
         <div className="h-full  ebs_data custom-scroll-bar">
           <table className="w-full h-full border-spacing-0 border-separate custom-table table-fixed">
-            <thead className="h-12 text-sm sticky top-[64px] z-10" ref={DOM_THEAD}>
+            <thead className="h-12 text-sm sticky top-0 z-10" ref={DOM_THEAD}>
               <tr className="grid grid-cols-12 h-full border-b bg-white">
                 {columns.map((col, index) => (
                   <th

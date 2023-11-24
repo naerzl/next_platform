@@ -42,7 +42,7 @@ const select_option = [
 ]
 
 const params = {
-  status: "normal",
+  // status: "normal",
 } as ReqGetUserListParams
 
 export default function memberDepartmentPage() {
@@ -64,8 +64,8 @@ export default function memberDepartmentPage() {
   )
 
   const { data: sideBarList, mutate: mutateSideBar } = useSWR(
-    () => "/role ",
-    (url) => reqGetRole(url, { arg: {} }),
+    () => "/role",
+    (url) => reqGetRole(url, { arg: { is_client: 0 } }),
     {
       revalidateIfStale: false,
       revalidateOnFocus: false,
@@ -118,7 +118,7 @@ export default function memberDepartmentPage() {
   const getSubClassList = async (id: number, indexStr: string) => {
     // 如果不传indexStr的话获取第一层级的
     if (indexStr == "") {
-      const res = await getRoleApi({})
+      const res = await getRoleApi({ is_client: 0 })
       await mutateSideBar(res, false)
       return
     }
@@ -126,7 +126,7 @@ export default function memberDepartmentPage() {
     // 深拷贝数据
     const newArr = structuredClone(sideBarList)
     // eslint-disable-next-line no-unused-vars
-    const res = await getRoleApi({ parent_id: id })
+    const res = await getRoleApi({ parent_id: id, is_client: 0 })
     const str = "newArr[" + indexArr?.join("].children[") + "].children"
     eval(str + "=res")
     await mutateSideBar(newArr, false)
@@ -160,6 +160,7 @@ export default function memberDepartmentPage() {
           // eslint-disable-next-line no-unused-vars
           const res = await getRoleApi({
             parent_id: eval("newSideBar[" + indexArr?.join("].children[") + "]").id,
+            is_client: 1,
           })
           eval(str + "=res")
         }
@@ -224,25 +225,25 @@ export default function memberDepartmentPage() {
         </div>
         <header className="flex justify-between mb-6">
           <div>
-            <span>账号状态：</span>
-            <Select value={apiParams.status} onChange={handleChange} size="small" className="w-32">
-              {select_option.map((item) => (
-                <MenuItem value={item.value} key={item.value}>
-                  <ListItemIcon>{item.label}</ListItemIcon>
-                </MenuItem>
-              ))}
-            </Select>
+            {/*<span>账号状态：</span>*/}
+            {/*<Select value={apiParams.status} onChange={handleChange} size="small" className="w-32">*/}
+            {/*  {select_option.map((item) => (*/}
+            {/*    <MenuItem value={item.value} key={item.value}>*/}
+            {/*      <ListItemIcon>{item.label}</ListItemIcon>*/}
+            {/*    </MenuItem>*/}
+            {/*  ))}*/}
+            {/*</Select>*/}
           </div>
           <div>
-            <Button
-              variant="contained"
-              startIcon={<SettingsOutlinedIcon />}
-              className="bg-railway_blue mr-2.5"
-              onClick={() => {
-                handleOpenDialogAuthSetting()
-              }}>
-              权限设置
-            </Button>
+            {/*<Button*/}
+            {/*  variant="contained"*/}
+            {/*  startIcon={<SettingsOutlinedIcon />}*/}
+            {/*  className="bg-railway_blue mr-2.5"*/}
+            {/*  onClick={() => {*/}
+            {/*    handleOpenDialogAuthSetting()*/}
+            {/*  }}>*/}
+            {/*  权限设置*/}
+            {/*</Button>*/}
             <Button
               variant="contained"
               className="bg-railway_blue"

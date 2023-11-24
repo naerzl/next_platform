@@ -1,6 +1,6 @@
 import { OAUTH2_ACCESS_TOKEN } from "./const"
 import { getCookie } from "./cookies"
-import dayjs from "dayjs"
+import dayjs, { Dayjs } from "dayjs"
 import tz from "dayjs/plugin/timezone"
 import utc from "dayjs/plugin/utc"
 
@@ -88,7 +88,7 @@ export function trim(str: string, ch: string) {
   return start > 0 || end < str.length ? str.substring(start, end) : str
 }
 
-export function dateToYYYYMM(date: string | Date) {
+export function dateToYYYYMM(date: string | Date | Dayjs) {
   dayjs.extend(tz)
   dayjs.extend(utc)
   return dayjs(date).tz("UTC").format("YYYY-MM-DD HH:mm:ss")
@@ -98,4 +98,8 @@ export function dateToUTCCustom(date: string | Date, type: string) {
   dayjs.extend(tz)
   dayjs.extend(utc)
   return dayjs(date).tz("UTC").format(type)
+}
+
+export function displayWithPermission(arr: string[], tag: string) {
+  return arr.includes(tag) ? {} : { display: "none" }
 }

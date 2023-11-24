@@ -17,6 +17,9 @@ import TableBody from "@mui/material/TableBody"
 import { IconButton, MenuItem, Tooltip } from "@mui/material"
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
 import { useConfirmationDialog } from "@/components/ConfirmationDialogProvider"
+import { displayWithPermission } from "@/libs/methods"
+import permissionJson from "@/config/permission.json"
+import { LayoutContext } from "@/components/LayoutContext"
 
 // 排序方式（正序倒序）
 type Order = "asc" | "desc"
@@ -57,6 +60,8 @@ export default function dataTable(props: Props) {
   const ctx = React.useContext(SideContext)
 
   const { showConfirmationDialog: handleConfirm } = useConfirmationDialog()
+
+  const { permissionTagList } = React.useContext(LayoutContext)
 
   if (tableData.length <= 0) {
     return (
@@ -128,6 +133,10 @@ export default function dataTable(props: Props) {
                 <div className="flex justify-start g">
                   <Tooltip title="修改字典">
                     <IconButton
+                      style={displayWithPermission(
+                        permissionTagList,
+                        permissionJson.dictionary_base_member_update,
+                      )}
                       onClick={() => {
                         handleEditDictionart(row.id)
                       }}>
@@ -137,6 +146,10 @@ export default function dataTable(props: Props) {
 
                   <Tooltip title="删除字典">
                     <IconButton
+                      style={displayWithPermission(
+                        permissionTagList,
+                        permissionJson.dictionary_base_member_delete,
+                      )}
                       onClick={() => {
                         handleClickDictionary(row.id)
                       }}>

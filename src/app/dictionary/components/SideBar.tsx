@@ -21,14 +21,20 @@ import { reqDeleteDictionaryClass } from "../api"
 import { iconList } from "./IconEnum"
 import Empty from "@/components/Empty"
 import { useConfirmationDialog } from "@/components/ConfirmationDialogProvider"
+import { displayWithPermission } from "@/libs/methods"
+import permissionJson from "@/config/permission.json"
+import { LayoutContext } from "@/components/LayoutContext"
 
 export default function sideBar() {
   // 获取上下文来共享全局变量
   const ctx = React.useContext(SideContext)
+
   // 控制菜单的位置
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   // 控制菜单关闭和打开
   const open = Boolean(anchorEl)
+
+  const { permissionTagList } = React.useContext(LayoutContext)
 
   // 获取到点击菜单要处理的Class 的id
   const [handleId, setHandleId] = React.useState(0)
@@ -164,16 +170,23 @@ export default function sideBar() {
             <ListItemIcon className="w-14 justify-end">
               {str?.split("-").length < 3 && (
                 <AddOutlinedIcon
+                  style={displayWithPermission(
+                    permissionTagList,
+                    permissionJson.dictionary_base_member_write,
+                  )}
                   fontSize="small"
                   onClick={(e) => handleClickAddSub(e, item, str)}
                 />
               )}
-              <DragIndicatorIcon
-                fontSize="small"
-                onClick={(e) => {
-                  handleClickCaidanIcon(e, item.id, str)
-                }}
-              />
+              {(permissionTagList.includes(permissionJson.dictionary_base_member_update) ||
+                permissionTagList.includes(permissionJson.dictionary_base_member_update)) && (
+                <DragIndicatorIcon
+                  fontSize="small"
+                  onClick={(e) => {
+                    handleClickCaidanIcon(e, item.id, str)
+                  }}
+                />
+              )}
             </ListItemIcon>
           </ListItemButton>
           <Collapse in={collapseOpen.includes(str)} timeout="auto" unmountOnExit>
@@ -196,8 +209,6 @@ export default function sideBar() {
         <List
           sx={{
             width: "100%",
-            maxWidth: "15rem",
-            minWidth: "15rem",
             color: "#303133",
           }}
           component="nav"
@@ -220,16 +231,34 @@ export default function sideBar() {
         MenuListProps={{
           "aria-labelledby": "basic-button",
         }}>
-        <MenuItem onClick={handleClickMenuEdit}>修改</MenuItem>
+        <MenuItem
+          onClick={handleClickMenuEdit}
+          style={displayWithPermission(
+            permissionTagList,
+            permissionJson.dictionary_base_member_update,
+          )}>
+          修改
+        </MenuItem>
 
-        <MenuItem onClick={handleClickMenuDel}>删除</MenuItem>
+        <MenuItem
+          onClick={handleClickMenuDel}
+          style={displayWithPermission(
+            permissionTagList,
+            permissionJson.dictionary_base_member_delete,
+          )}>
+          删除
+        </MenuItem>
       </Menu>
       <Button
         fullWidth
         variant="outlined"
         sx={{ fontSize: "1.5rem" }}
         className="h-12 border"
-        onClick={handleClickAddClass}>
+        onClick={handleClickAddClass}
+        style={displayWithPermission(
+          permissionTagList,
+          permissionJson.dictionary_base_member_write,
+        )}>
         +
       </Button>
       {dialogOpen && (

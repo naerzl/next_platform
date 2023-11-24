@@ -15,6 +15,10 @@ import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
 import AddIcon from "@mui/icons-material/Add"
 import { message } from "antd"
+import permissionJson from "@/config/permission.json"
+import { LayoutContext } from "@/components/LayoutContext"
+import NoPermission from "@/components/NoPermission"
+import { displayWithPermission } from "@/libs/methods"
 
 // 获取字典列表数据函数的参数类型
 export interface GetDictionaryDataOption {
@@ -36,6 +40,8 @@ export default function dictionaryMain() {
   const changeCurrentClassId = (currentId: number) => {
     setCurrentClassId(currentId)
   }
+
+  const { permissionTagList } = React.useContext(LayoutContext)
 
   const [open, setOpen] = React.useState(false)
   const [editItem, setEditItem] = React.useState<null | DictionaryData>(null)
@@ -136,6 +142,10 @@ export default function dictionaryMain() {
     setOpen(true)
   }
 
+  if (!permissionTagList.includes(permissionJson.dictionary_base_member_read)) {
+    return <NoPermission />
+  }
+
   if (isLoading) {
     return <></>
   }
@@ -172,6 +182,10 @@ export default function dictionaryMain() {
             <header className="h-12 flex items-center justify-between">
               <div>
                 <Button
+                  style={displayWithPermission(
+                    permissionTagList,
+                    permissionJson.dictionary_base_member_write,
+                  )}
                   variant="outlined"
                   onClick={() => {
                     handleClickOpen()

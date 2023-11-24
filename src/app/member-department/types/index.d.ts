@@ -65,6 +65,7 @@ export interface ReqGetRolesParams {
   name?: string
   desc?: string
   class?: RoleClassType
+  is_client: 0 | 1
 }
 
 export interface ReqPostRolesParams {

@@ -157,11 +157,11 @@ export default function dialogUser(props: Props) {
   const { trigger: getRoleApi } = useSWRMutation("/role", reqGetRole)
 
   const getRoleAndSection = async () => {
-    getRoleApi({ class: "normal" }).then((roleRes) => {
+    getRoleApi({ class: "normal", is_client: 0 }).then((roleRes) => {
       roleRes &&
         setRoleOption(roleRes.map((item) => ({ ...item, label: item.name, value: item.flag })))
     })
-    getRoleApi({ class: "special" }).then((sectionRes) => {
+    getRoleApi({ class: "special", is_client: 0 }).then((sectionRes) => {
       sectionRes &&
         setSectionOption(
           sectionRes.map((item) => ({ ...item, title: item.name, value: item.flag })),
@@ -188,9 +188,15 @@ export default function dialogUser(props: Props) {
   const onPhoneChange = () => {
     let phone = getValues("phone")
     if (REGEXP_PHONE.test(phone)) {
-      getUserExistedApi({ phone }).then((res) => {
-        setFormValue(res)
-      })
+      getUserExistedApi({ phone })
+        .then((res) => {
+          setFormValue(res)
+        })
+        .catch(() => {
+          setValue("name", "")
+          setValue("mail", "")
+          setStatus("正常")
+        })
     }
   }
 
@@ -200,7 +206,7 @@ export default function dialogUser(props: Props) {
     return new Promise(async (resolve) => {
       console.log(node)
       const { id, pos } = node
-      const res = await getRoleApi({ class: "special", parent_id: id })
+      const res = await getRoleApi({ class: "special", parent_id: id, is_client: 0 })
       const reslut = res.map((item) => ({ ...item, title: item.name, value: item.flag }))
       const indexArr = pos.split("-")
       indexArr.splice(0, 1)
@@ -399,24 +405,24 @@ export default function dialogUser(props: Props) {
             </div>
           </div>
 
-          <div className="mb-8">
-            <div className="flex items-start flex-col">
-              <InputLabel htmlFor="section_list" className="mr-3 w-20 text-left mb-2.5">
-                部门:
-              </InputLabel>
-              <TreeSelect
-                placement="topLeft"
-                style={{ width: "100%" }}
-                value={sectionValue}
-                dropdownStyle={{ maxHeight: 400, overflow: "auto", zIndex: 2000 }}
-                placeholder="选择一个部门"
-                onSelect={handleSectionSelectChange}
-                loadData={onLoadData}
-                size="large"
-                treeData={sectionOption}
-              />
-            </div>
-          </div>
+          {/*<div className="mb-8">*/}
+          {/*  <div className="flex items-start flex-col">*/}
+          {/*    <InputLabel htmlFor="section_list" className="mr-3 w-20 text-left mb-2.5">*/}
+          {/*      部门:*/}
+          {/*    </InputLabel>*/}
+          {/*    <TreeSelect*/}
+          {/*      placement="topLeft"*/}
+          {/*      style={{ width: "100%" }}*/}
+          {/*      value={sectionValue}*/}
+          {/*      dropdownStyle={{ maxHeight: 400, overflow: "auto", zIndex: 2000 }}*/}
+          {/*      placeholder="选择一个部门"*/}
+          {/*      onSelect={handleSectionSelectChange}*/}
+          {/*      loadData={onLoadData}*/}
+          {/*      size="large"*/}
+          {/*      treeData={sectionOption}*/}
+          {/*    />*/}
+          {/*  </div>*/}
+          {/*</div>*/}
 
           <DialogActions>
             <Button onClick={handleClose}>取消</Button>

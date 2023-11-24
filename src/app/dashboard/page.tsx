@@ -1,7 +1,7 @@
 import React from "react"
 
 function Page() {
-  return <div>dashboard</div>
+  return <div>你好</div>
 }
 
 export default Page

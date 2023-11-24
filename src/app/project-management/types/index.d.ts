@@ -1,5 +1,12 @@
 import { BasePager } from "@/types/api"
 
+export interface GetProjectParams {
+  page?: number
+  limit?: number
+  name?: string
+  creator?: string
+}
+
 export interface PostProjectParams {
   name: string
   creator: string
@@ -23,6 +30,7 @@ export interface PutProjectParams {
   started_at: string
   completed_at: string
   project_type: string
+  class: string
 }
 
 export interface ProjectListData {
@@ -38,11 +46,12 @@ export interface ProjectListData {
   project_type: string
   created_at: string
   updated_at: string
+  class: string
 }
 
 export interface GetProjectResponse {
   items: ProjectListData[]
-  page: BasePager
+  pager: BasePager
 }
 
 export interface DescJsonType {

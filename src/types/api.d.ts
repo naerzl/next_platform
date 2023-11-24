@@ -56,3 +56,10 @@ export interface BasePager {
   limit: number
   count: number
 }
+
+export interface PermissionData {
+  id: number
+  name: string
+  permission: string
+  action: string
+}
