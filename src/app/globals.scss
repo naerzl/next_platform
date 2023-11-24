@@ -1,0 +1,212 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "//at.alicdn.com/t/c/font_4191244_22b4puf1e81.css";
+
+body,
+html {
+  height: 100%;
+}
+.color {
+  color: #bfa;
+}
+.max-main {
+  max-height: calc(100vh - 64px);
+}
+
+.min-main {
+  min-height: calc(100vh - 64px);
+}
+
+.ant-message-custom-content {
+  display: flex;
+  align-items: center;
+}
+
+.design_data {
+  .tags_box:hover {
+    .tags_item {
+      display: flex !important;
+    }
+  }
+  ._fff > .MuiTreeItem-content {
+    background-color: #fff;
+  }
+
+  ._ff8a48 {
+   & > .MuiTreeItem-content {
+      background-color: #ff8a48;
+     color: #fff;
+    }
+  }
+  &,.MUI-tree-item{
+    & > .MuiTreeItem-content {
+      color: #0162b1;
+    }
+  }
+}
+
+.page_main {
+  height: calc(100% - 2.5rem - 2.75rem);
+}
+
+.bg-transparent {
+  .ant-select-selector {
+    background-color: transparent !important;
+  }
+}
+
+.ebs_data {
+  .ant-switch-checked {
+    background-color: #0162b1 !important;
+  }
+}
+
+.ant-input-search {
+  .ant-input,
+  .ant-input-group-addon {
+    border-radius: 0 !important;
+    .ant-btn {
+      border-radius: 0 !important;
+    }
+  }
+}
+.custom-scroll-bar {
+  /*定义滚动条宽高及背景，宽高分别对应横竖滚动条的尺寸*/
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  /*定义滚动条的轨道颜色、内阴影及圆角*/
+  &::-webkit-scrollbar-track {
+    // box-shadow: inset 0 0 .0313rem rgba(0, 0, 0, .3);
+    background-color: #fff;
+    border-radius: 8px;
+  }
+
+  /*定义滑块颜色、内阴影及圆角*/
+  &::-webkit-scrollbar-thumb {
+    width: 4px;
+    border-radius: 8px;
+    box-shadow: inset 0 0 0.0313rem rgba(0, 0, 0, 0.3);
+    background-color: #eaedf0;
+
+    &:active {
+      background-color: #eaedf0;
+    }
+  }
+}
+
+//.custom-table{
+//  tr:nth-child(2n-1){
+//    background-color: #f8fafb;
+//  }
+//}
+
+.ant-table-thead {
+  .ant-table-cell {
+    background-color: #fff !important;
+  }
+}
+
+.custom-select {
+  .ant-select-selector {
+    border-radius: 0 !important;
+  }
+}
+
+.h-10{
+  .ant-select-selector{
+    height: 100% !important;
+    .ant-select-selection-search-input{
+      height: 100% !important;
+    }
+    .ant-select-selection-placeholder,.ant-select-selection-item{
+      line-height: 40px!important;
+    }
+  }
+}
+
+
+.ant-input-group-addon {
+  .ant-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.custom-modal {
+  .ant-modal-content {
+    padding: 30px 40px !important;
+  }
+}
+
+.ant-table-header,.ant-table-sticky-holder{
+  top:64px !important;
+}
+
+.css-1f8bwsm{
+  color: #303133 !important;
+}
+
+.css-3dzjca-MuiPaper-root-MuiPopover-paper-MuiMenu-paper{
+  box-shadow: 0 2px 8px 2px rgba(#ccc,0.5);
+}
+
+.MuiSpeedDial-root{
+  .MuiButtonBase-root{
+    background: #fafafa;
+  }
+  &> .MuiButtonBase-root{
+    width: 40px;
+    height: 40px;
+    background: #0162B1;
+  }
+
+}
+
+.custom{
+  .css-1t1j96h-MuiPaper-root-MuiDialog-paper{
+    max-width: none;
+  }
+}
+
+.ant-message{
+  z-index: 9999999 !important;
+}
+
+.loader {
+  -webkit-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+  border: 3px solid #ddd;
+  border-top: 3px solid #42a5f5;
+  border-radius: 50%;
+  height: 75px;
+  width: 75px;
+}
+
+@-webkit-keyframes spin {
+  to {
+    border-top-color: #ec407a;
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  to {
+    border-top-color: #ec407a;
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+.container {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+

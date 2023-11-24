@@ -1,0 +1,20 @@
+{
+    "public_library_module_read": "public_library_module_read",
+    "dictionary_base_member_read": "dictionary_base_member_read",
+    "dictionary_base_member_write": "dictionary_base_member_write",
+    "dictionary_base_member_update": "dictionary_base_member_update",
+    "dictionary_base_member_delete": "dictionary_base_member_delete",
+    "data_template_module_read": "data_template_module_read",
+    "list_of_ebs_majors_member_read": "list_of_ebs_majors_member_read",
+    "list_of_ebs_majors_member_write": "list_of_ebs_majors_member_write",
+    "list_of_ebs_majors_member_update": "list_of_ebs_majors_member_update",
+    "list_of_ebs_majors_member_delete": "list_of_ebs_majors_member_delete",
+    "ebs_specialty_list_process_member_read": "ebs_specialty_list_process_member_read",
+    "ebs_specialty_list_process_member_write": "ebs_specialty_list_process_member_write",
+    "ebs_specialty_list_process_member_update": "ebs_specialty_list_process_member_update",
+    "ebs_specialty_list_process_member_delete": "ebs_specialty_list_process_member_delete",
+    "list_of_engineering_majors_member_read": "list_of_engineering_majors_member_read",
+    "item_management_module_read": "item_management_module_read",
+    "item_list_member_read": "item_list_member_read",
+    "item_list_member_update": "item_list_member_update"
+}
