@@ -17,6 +17,7 @@ import useSWR from "swr"
 import permissionJson from "@/config/permission.json"
 import NoPermission from "@/components/NoPermission"
 import { LayoutContext } from "@/components/LayoutContext"
+import { dateToYYYYMM } from "@/libs/methods"
 
 export default function ebsProfessionPage() {
   const { permissionTagList } = React.useContext(LayoutContext)
@@ -98,7 +99,7 @@ export default function ebsProfessionPage() {
         <div>
           <InputBase
             className="w-[18.125rem] h-10 border  px-2 shadow bg-white"
-            placeholder="搜索模板名称"
+            placeholder="搜索EBS专业名称"
             onBlur={(event) => {
               handleClickSearch(event.target.value)
             }}
@@ -138,12 +139,12 @@ export default function ebsProfessionPage() {
                   <TableCell align="left">{row.name}</TableCell>
                   <TableCell align="left">
                     <div className="flex justify-between">
-                      {row.created_at ? dayjs(row.created_at).format("YYYY-MM-DD HH:mm:ss") : ""}
+                      {row.created_at ? dateToYYYYMM(row.created_at) : ""}
                     </div>
                   </TableCell>
                   <TableCell align="left">
                     <div className="flex justify-between">
-                      {row.updated_at ? dayjs(row.updated_at).format("YYYY-MM-DD HH:mm:ss") : ""}
+                      {row.updated_at ? dateToYYYYMM(row.updated_at) : ""}
                     </div>
                   </TableCell>
                   <TableCell align="left">

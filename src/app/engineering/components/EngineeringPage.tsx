@@ -97,7 +97,7 @@ export default function ebsProfessionPage() {
         <div>
           <InputBase
             className="w-[18.125rem] h-10 border  px-2 shadow bg-white"
-            placeholder="搜索模板名称"
+            placeholder="搜索专业名称"
             onBlur={(event) => {
               handleClickSearch(event.target.value)
             }}
