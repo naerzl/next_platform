@@ -297,7 +297,7 @@ export default function DrawerAddForm(props: Props) {
                 fullWidth
                 error={Boolean(errors.desc)}
                 {...register("desc")}
-                label="请输入工序说明"
+                label="请输入表单说明"
                 className="flex-1"
               />
             </div>
