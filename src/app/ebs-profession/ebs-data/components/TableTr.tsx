@@ -70,6 +70,7 @@ export default function tableTr(props: Props) {
   const handleIconLookProcess = () => {
     // 查看工序
     handleOpenDrawerProcess(item)
+    handleCloseMenu()
   }
 
   const handleIconEdit = () => {
