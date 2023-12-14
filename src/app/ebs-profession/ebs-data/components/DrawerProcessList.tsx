@@ -6,13 +6,9 @@ import TableRow from "@mui/material/TableRow"
 import TableCell from "@mui/material/TableCell"
 import TableBody from "@mui/material/TableBody"
 import { ProcessListData, TypeEBSDataList } from "@/app/ebs-profession/ebs-data/types"
-import useSWR from "swr"
-import { reqDelProcess, reqGetProcess } from "@/app/ebs-profession/ebs-data/api"
+import { reqDelProcess, reqPutEBS } from "@/app/ebs-profession/ebs-data/api"
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined"
 import useDrawerAddProcess from "@/app/ebs-profession/ebs-data/hooks/useDrawerAddProcess"
-import AddProcess from "@/app/ebs-profession/ebs-data/components/AddProcess"
-import DeleteIcon from "@mui/icons-material/DeleteOutlined"
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
 import RunCircleOutlinedIcon from "@mui/icons-material/RunCircleOutlined"
 import useSWRMutation from "swr/mutation"
 import useDialogProcessForm from "@/app/ebs-profession/ebs-data/hooks/useDialogProcessForm"
@@ -21,11 +17,19 @@ import { useConfirmationDialog } from "@/components/ConfirmationDialogProvider"
 import { displayWithPermission } from "@/libs/methods"
 import permissionJson from "@/config/permission.json"
 import { LayoutContext } from "@/components/LayoutContext"
+import DialogApplyProcess from "@/app/ebs-profession/ebs-data/components/DialogApplyProcess"
+import { reqGetProcess, reqGetTagsList } from "@/app/process-list/api"
+import {
+  ProcessListDataType,
+  TagsListDataType,
+  TypeApiGetProcessParams,
+} from "@/app/process-list/types"
 
 type Props = {
   open: boolean
   handleCloseDrawerProcess: () => void
   item: TypeEBSDataList
+  handleOpenDrawerProcess: (item: TypeEBSDataList) => void
 }
 
 const stageEnum = [
@@ -43,8 +47,11 @@ const stageEnum = [
   },
 ]
 
-function renderTableCellStage(item: ProcessListData) {
-  return stageEnum.find((el) => el.value == +item.stage)?.label
+function renderProperty(str: string[] | null) {
+  if (str) {
+    return str.join(",")
+  }
+  return ""
 }
 
 const columns = [
@@ -60,12 +67,7 @@ const columns = [
     key: "name",
     align: "left",
   },
-  {
-    title: "工作量%",
-    dataIndex: "duration",
-    key: "duration",
-    align: "left",
-  },
+
   {
     title: "标识",
     dataIndex: "identifying",
@@ -86,9 +88,7 @@ const columns = [
 ]
 
 export default function drawerProcessList(props: Props) {
-  const { open, handleCloseDrawerProcess, item } = props
-
-  const { showConfirmationDialog: handleConfirm } = useConfirmationDialog()
+  const { open, handleCloseDrawerProcess, item, handleOpenDrawerProcess } = props
 
   const { permissionTagList } = React.useContext(LayoutContext)
 
@@ -96,53 +96,65 @@ export default function drawerProcessList(props: Props) {
     handleCloseDrawerProcess()
   }
 
-  const [tableList, setTableList] = React.useState<ProcessListData[]>([])
+  const [tableList, setTableList] = React.useState<ProcessListDataType[]>([])
 
   const { trigger: getProcessApi } = useSWRMutation("/process", reqGetProcess)
 
-  const { trigger: delProcessApi } = useSWRMutation("/process", reqDelProcess)
+  const { trigger: getTagsListApi } = useSWRMutation("/tag", reqGetTagsList)
 
-  const getProcessListData = async () => {
-    const res = await getProcessApi({ ebs_id: item.id })
+  const getProcessListData = async (tags?: string[]) => {
+    debugger
+    let tagsArr = JSON.parse(item.tags)
+
+    let params = {
+      tags: tags
+        ? JSON.stringify(tags)
+        : tagsArr.length > 0
+        ? JSON.stringify([tagsArr[tagsArr.length - 1]])
+        : JSON.stringify([""]),
+    } as TypeApiGetProcessParams
+
+    if (!tags && item.tags && JSON.parse(item.tags).length <= 0) {
+      return
+    }
+    const res = await getProcessApi(params)
     setTableList(res || [])
   }
 
+  const [tagsList, setTagsList] = React.useState<TagsListDataType[]>([])
+
+  const getTagsListData = async () => {
+    const res = await getTagsListApi({})
+    setTagsList(res)
+  }
+
+  function findTagsName(tags: string[] | null) {
+    if (tagsList.length <= 0 || !tags) return ""
+
+    return tags
+      .map((tag) => {
+        const item = tagsList.find((item) => item.flag == tag)
+        return item ? item.name : ""
+      })
+      .join(",")
+  }
+
   React.useEffect(() => {
+    getTagsListData()
     getProcessListData()
   }, [])
 
-  const {
-    handleCloseDrawerAddProcess,
-    handleOpenDrawerAddProcess,
-    drawerAddProcessOpen,
-    editItem,
-    handleEditeProcessWithDrawer,
-  } = useDrawerAddProcess()
-
-  const addProcessCallBack = async (item: ProcessListData, isAdd: boolean) => {
-    const newData = structuredClone(tableList)
-    console.log(item)
-    if (isAdd) {
-      newData?.push(item)
-    } else {
-      const index = newData?.findIndex((row) => row.id == item.id) as number
-      newData![index] = item
-    }
-
-    getProcessListData()
-  }
-
-  const handleDelProcessWithSWR = (id: number) => {
-    handleConfirm("你确定要删除吗？", async () => {
-      //   拷贝数据
-      await delProcessApi({ id })
-      const newData = tableList?.filter((item) => item.id !== id)
-      getProcessListData()
-    })
-  }
+  const { handleCloseDrawerAddProcess, handleOpenDrawerAddProcess, dialogApplyProcessOpen } =
+    useDrawerAddProcess()
 
   const { handleOpenDialogAddForm, handleCloseDialogAddForm, dialogAddFormOpen, formItem } =
     useDialogProcessForm()
+
+  const handleAppleCallBack = (processList: ProcessListDataType[], tags: string[]) => {
+    console.log(tags)
+    handleOpenDrawerProcess({ ...item, tags: JSON.stringify(tags) })
+    getProcessListData(tags)
+  }
 
   return (
     <>
@@ -151,20 +163,40 @@ export default function drawerProcessList(props: Props) {
           <header className="text-3xl text-[#44566C] mb-8">
             <div>节点名称：{item.name}</div>
             <Divider sx={{ my: 1.5 }} />
-            <div className="flex justify-end">
+            <div className="flex justify-start gap-x-2">
               <Button
+                sx={
+                  JSON.parse(item.tags).length > 0
+                    ? {
+                        color: "rgba(0, 0, 0, 0.26) !important",
+                        bgcolor: "rgba(0, 0, 0, 0.12) !important",
+                      }
+                    : {}
+                }
                 style={displayWithPermission(
                   permissionTagList,
                   permissionJson.ebs_specialty_list_process_member_write,
                 )}
+                disabled={JSON.parse(item.tags).length > 0}
                 variant="contained"
                 className="bg-railway_blue"
                 startIcon={<AddOutlinedIcon />}
                 onClick={() => {
                   handleOpenDrawerAddProcess()
                 }}>
-                新建工序
+                关联工序
               </Button>
+              {/*<Button*/}
+              {/*  style={displayWithPermission(*/}
+              {/*    permissionTagList,*/}
+              {/*    permissionJson.ebs_specialty_list_process_member_write,*/}
+              {/*  )}*/}
+              {/*  variant="outlined"*/}
+              {/*  color="error"*/}
+              {/*  startIcon={<AddOutlinedIcon />}*/}
+              {/*  onClick={() => {}}>*/}
+              {/*  停用工序*/}
+              {/*</Button>*/}
             </div>
           </header>
           <div style={{ width: "100%", height: "100%", paddingBottom: "38px" }}>
@@ -172,7 +204,7 @@ export default function drawerProcessList(props: Props) {
               <TableHead>
                 <TableRow>
                   {columns.map((col) => (
-                    <TableCell key={col.key} sx={{ width: col.key == "action" ? "336px" : "auto" }}>
+                    <TableCell key={col.key} sx={{ width: col.key == "action" ? "200px" : "auto" }}>
                       {col.title}
                     </TableCell>
                   ))}
@@ -183,11 +215,10 @@ export default function drawerProcessList(props: Props) {
                   tableList.map((row, index) => (
                     <TableRow key={row.id}>
                       <TableCell component="th" scope="row">
-                        {index + 1}
+                        {row.serial}
                       </TableCell>
                       <TableCell align="left">{row.name}</TableCell>
-                      <TableCell align="left">{row.percentage}</TableCell>
-                      <TableCell align="left">{renderTableCellStage(row)}</TableCell>
+                      <TableCell align="left">{findTagsName(row.tags)}</TableCell>
                       <TableCell align="left">{row.desc}</TableCell>
                       <TableCell align="left">
                         <div className="flex justify-between items-center">
@@ -200,31 +231,6 @@ export default function drawerProcessList(props: Props) {
                             }}>
                             工序表单
                           </Button>
-                          <Button
-                            style={displayWithPermission(
-                              permissionTagList,
-                              permissionJson.ebs_specialty_list_process_member_update,
-                            )}
-                            variant="outlined"
-                            startIcon={<EditOutlinedIcon />}
-                            onClick={() => {
-                              handleEditeProcessWithDrawer(row)
-                            }}>
-                            编辑
-                          </Button>
-                          <Button
-                            style={displayWithPermission(
-                              permissionTagList,
-                              permissionJson.ebs_specialty_list_process_member_delete,
-                            )}
-                            variant="outlined"
-                            startIcon={<DeleteIcon />}
-                            color="error"
-                            onClick={() => {
-                              handleDelProcessWithSWR(row.id)
-                            }}>
-                            删除
-                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -234,20 +240,20 @@ export default function drawerProcessList(props: Props) {
           </div>
         </div>
       </Drawer>
-      {drawerAddProcessOpen && (
-        <AddProcess
-          open={drawerAddProcessOpen}
-          item={item}
-          editItem={editItem}
-          handleCloseDrawerAddProcess={handleCloseDrawerAddProcess}
-          cb={addProcessCallBack}
-        />
-      )}
+
       {dialogAddFormOpen && (
         <DialogProcessForm
           open={dialogAddFormOpen}
           handleCloseDialogAddForm={handleCloseDialogAddForm}
           item={formItem}
+        />
+      )}
+      {dialogApplyProcessOpen && (
+        <DialogApplyProcess
+          open={dialogApplyProcessOpen}
+          handleCloseDialogAddForm={handleCloseDrawerAddProcess}
+          item={item}
+          cb={handleAppleCallBack}
         />
       )}
     </>

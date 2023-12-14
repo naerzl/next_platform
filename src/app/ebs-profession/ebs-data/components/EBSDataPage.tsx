@@ -70,6 +70,11 @@ const columns = [
     key: "关联",
   },
   {
+    title: "是否实体",
+    dataIndex: "是否实体",
+    key: "是否实体",
+  },
+  {
     title: "操作",
     dataIndex: "操作",
     key: "操作",
@@ -269,7 +274,7 @@ export default function ebsDataPage() {
   }
 
   return (
-    <EBSDataContext.Provider value={{ handleExpandChange, tableData }}>
+    <EBSDataContext.Provider value={{ handleExpandChange, tableData, handleGetParentChildren }}>
       <h3 className="font-bold text-[1.875rem]">EBS模板</h3>
       <div className="mb-9 mt-7">
         <Breadcrumbs aria-label="breadcrumb" separator=">">
@@ -288,7 +293,9 @@ export default function ebsDataPage() {
         <div className="h-full  ebs_data custom-scroll-bar">
           <table className="w-full h-full border-spacing-0 border-separate custom-table table-fixed">
             <thead className="h-12 text-sm sticky top-0 z-10" ref={DOM_THEAD}>
-              <tr className="grid grid-cols-12 h-full border-b bg-white">
+              <tr
+                className="grid  h-full border-b bg-white"
+                style={{ gridTemplateColumns: "repeat(13, minmax(0, 1fr))" }}>
                 {columns.map((col, index) => (
                   <th
                     className={`text-left p-4 ${index == 0 ? "col-span-3" : ""}`}
@@ -300,21 +307,24 @@ export default function ebsDataPage() {
             </thead>
             <tbody>{renderTableTr(tableData)}</tbody>
           </table>
-          <DialogEBS
-            open={dialogOpen}
-            item={item}
-            changeDialogOpen={changeDialogOpen}
-            deletedDataList={deletedDataList}
-            addType={addType}
-            isEdit={isEdit}
-            handleGetParentChildren={handleGetParentChildren}
-            changeIsEdit={changeIsEdit}
-            ebsOption={ebsOption}
-            getEBSOption={getEBSOption}></DialogEBS>
+          {dialogOpen && (
+            <DialogEBS
+              open={dialogOpen}
+              item={item}
+              changeDialogOpen={changeDialogOpen}
+              deletedDataList={deletedDataList}
+              addType={addType}
+              isEdit={isEdit}
+              handleGetParentChildren={handleGetParentChildren}
+              changeIsEdit={changeIsEdit}
+              ebsOption={ebsOption}
+              getEBSOption={getEBSOption}></DialogEBS>
+          )}
         </div>
 
         {drawerProcessOpen && (
           <DrawerProcessList
+            handleOpenDrawerProcess={handleOpenDrawerProcess}
             open={drawerProcessOpen}
             handleCloseDrawerProcess={handleCloseDrawerProcess}
             item={ebsItemWithProcess}

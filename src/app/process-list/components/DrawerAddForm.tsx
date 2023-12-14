@@ -13,12 +13,12 @@ import {
   TextField,
 } from "@mui/material"
 import {
-  ProcessFormListData,
-  ProcessListData,
+  ProcessFormListDataType,
+  ProcessListDataType,
   TypeApiPostProcessFormParams,
   TypeApiPostProcessParams,
   TypeApiPutProcessParams,
-} from "@/app/ebs-profession/ebs-data/types"
+} from "@/app/process-list/types"
 import { ErrorMessage } from "@hookform/error-message"
 import { SubmitHandler, useForm } from "react-hook-form"
 import useDebounce from "@/hooks/useDebounce"
@@ -28,13 +28,12 @@ import { reqGetRole } from "@/app/member-department/api"
 import { reqPostProcessForm, reqPutProcessForm } from "@/app/ebs-profession/ebs-data/api"
 import { DATUM_CLASS } from "@/app/ebs-profession/ebs-data/const"
 import { message } from "antd"
-import { ProcessListDataType } from "@/app/process-list/types"
 
 type Props = {
   open: boolean
-  editItem: ProcessFormListData | null
+  editItem: ProcessFormListDataType | null
   handleCloseDrawerAddForm: () => void
-  cb: (item: ProcessFormListData, isAdd: boolean) => void
+  cb: (item: ProcessFormListDataType, isAdd: boolean) => void
   processItem: ProcessListDataType
 }
 

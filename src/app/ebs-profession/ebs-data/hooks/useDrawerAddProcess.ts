@@ -1,27 +1,27 @@
 import React from "react"
 import { ProcessListData } from "@/app/ebs-profession/ebs-data/types"
 
-export default function useDrawerAddProcess() {
-  const [drawerAddProcessOpen, setDrawerAddProcessOpen] = React.useState(false)
+export default function useDialogApplyProcess() {
+  const [dialogApplyProcessOpen, setDialogApplyProcessOpen] = React.useState(false)
 
   const [editItem, setEditItem] = React.useState<null | ProcessListData>(null)
 
   const handleCloseDrawerAddProcess = () => {
-    setDrawerAddProcessOpen(false)
+    setDialogApplyProcessOpen(false)
 
     setEditItem(null)
   }
   const handleOpenDrawerAddProcess = () => {
-    setDrawerAddProcessOpen(true)
+    setDialogApplyProcessOpen(true)
   }
 
   const handleEditeProcessWithDrawer = (item: ProcessListData) => {
     setEditItem(item)
-    setDrawerAddProcessOpen(true)
+    setDialogApplyProcessOpen(true)
   }
 
   return {
-    drawerAddProcessOpen,
+    dialogApplyProcessOpen,
     handleCloseDrawerAddProcess,
     handleOpenDrawerAddProcess,
     editItem,
