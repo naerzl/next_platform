@@ -7,22 +7,17 @@ import TableCell from "@mui/material/TableCell"
 import TableBody from "@mui/material/TableBody"
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined"
 import DeleteIcon from "@mui/icons-material/DeleteOutlined"
-import useSWR from "swr"
 import { reqDelProcess, reqGetProcessForm } from "@/app/ebs-profession/ebs-data/api"
 import useSWRMutation from "swr/mutation"
-import {
-  ProcessFormListData,
-  ProcessListData,
-  ProcessRoleData,
-} from "@/app/ebs-profession/ebs-data/types"
+import { ProcessFormListData, ProcessRoleData } from "@/app/ebs-profession/ebs-data/types"
 import useDrawerAddProcessForm from "@/app/ebs-profession/ebs-data/hooks/useDrawerAddProcessForm"
-import DrawerAddForm from "@/app/ebs-profession/ebs-data/components/DrawerAddForm"
+import DrawerAddForm from "@/app/process-list/components/DrawerAddForm"
 import { useConfirmationDialog } from "@/components/ConfirmationDialogProvider"
 import { DATUM_CLASS } from "@/app/ebs-profession/ebs-data/const"
 import { displayWithPermission } from "@/libs/methods"
 import permissionJson from "@/config/permission.json"
 import { LayoutContext } from "@/components/LayoutContext"
-import { ProcessListDataType } from "@/app/process-list/types"
+import { ProcessFormListDataType, ProcessListDataType } from "@/app/process-list/types"
 
 type Props = {
   open: boolean
@@ -128,14 +123,10 @@ export default function DialogProcessForm(props: Props) {
     handleEditeProcessFormWithDrawer,
   } = useDrawerAddProcessForm()
 
-  const handleAddOrEditProcessFormCallBack = async (item: ProcessFormListData, isAdd: boolean) => {
-    const newList = structuredClone(tableList)
-    if (isAdd) {
-      newList?.push(item)
-    } else {
-      const index = newList?.findIndex((item) => item.id == item.id)
-      newList![index!] = item
-    }
+  const handleAddOrEditProcessFormCallBack = async (
+    item: ProcessFormListDataType,
+    isAdd: boolean,
+  ) => {
     getProcessFormListData()
   }
 

@@ -79,6 +79,8 @@ export default function dialogEBS(props: Props) {
 
   const [switchState, setSwitchState] = React.useState(0)
 
+  const [isCorporeal, setIsCorporeal] = React.useState(0)
+
   const {
     register,
     handleSubmit,
@@ -112,6 +114,8 @@ export default function dialogEBS(props: Props) {
             h_subpart_code: autoH ? autoH.value : "",
             n_subpart_code: autoN ? autoN.value : "",
             subpart_class: autoSubpart ? autoSubpart.value : "",
+            is_corporeal: isCorporeal,
+            tags: item.tags ?? "[]",
             // related_to: relatedTo ?? "",
           },
           value,
@@ -128,6 +132,7 @@ export default function dialogEBS(props: Props) {
             h_subpart_code: autoH ? autoH.value : "",
             n_subpart_code: autoN ? autoN.value : "",
             subpart_class: autoSubpart ? autoSubpart.value : "",
+            is_corporeal: isCorporeal,
             // related_to: relatedTo ?? "",
           },
           value,
@@ -149,6 +154,7 @@ export default function dialogEBS(props: Props) {
       setValue("name", item.name)
       setValue("unit", item.unit)
       setSwitchState(Number(item.is_loop))
+      setIsCorporeal(Number(item.is_corporeal))
       setRelatedTo((item.related_ebs ? item.related_ebs.id : "") as any)
       fillAutoComputedData()
       getHighOrNormalSpeed(item.subpart_class)
@@ -304,6 +310,22 @@ export default function dialogEBS(props: Props) {
             />
           </div>
         </div>
+
+        <div className="mb-8 relative">
+          <div className="flex items-start flex-col">
+            <InputLabel htmlFor="name" className="mr-3 mb-2.5 w-full text-left inline-block">
+              <span>(选填)</span>是否实体：
+            </InputLabel>
+            <Switch
+              id="name"
+              checked={isCorporeal == 1}
+              onChange={(event, checked) => {
+                setIsCorporeal(checked ? 1 : 0)
+              }}
+            />
+          </div>
+        </div>
+
         <div className="mb-8 relative">
           <div className="flex items-start flex-col">
             <InputLabel

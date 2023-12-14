@@ -40,6 +40,8 @@ export interface TypeEBSDataList {
   }
   related_ebs: TypeEBSDataList
   parent_is_loop?: boolean
+  is_corporeal: number
+  tags: string
 }
 
 /*创建EBS结构 请求参数*/
@@ -52,6 +54,7 @@ export interface TypeApiPostEBSParams {
   related_to?: number | string
   h_subpart_code?: string
   n_subpart_code?: string
+  is_corporeal: 0 | 1
 }
 
 /*创建EBS结构 响应结果*/
@@ -72,6 +75,8 @@ export interface TypeApiPutEBSParams {
   subpart_class: string
   is_loop: 0 | 1
   related_to?: number | string
+  is_corporeal: 0 | 1
+  tags: string
 }
 
 /*获取EBS指定code 接口的相应数据*/

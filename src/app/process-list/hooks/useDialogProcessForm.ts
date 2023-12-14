@@ -1,5 +1,4 @@
 import React from "react"
-import { ProcessListData } from "@/app/ebs-profession/ebs-data/types"
 import { ProcessListDataType } from "@/app/process-list/types"
 
 export default function useDialogProcessForm() {

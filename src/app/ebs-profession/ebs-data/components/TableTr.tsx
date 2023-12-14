@@ -70,6 +70,7 @@ export default function tableTr(props: Props) {
   const handleIconLookProcess = () => {
     // 查看工序
     handleOpenDrawerProcess(item)
+    handleCloseMenu()
   }
 
   const handleIconEdit = () => {
@@ -134,9 +135,8 @@ export default function tableTr(props: Props) {
   return (
     <>
       <tr
-        className={
-          "h-14 grid grid-cols-12 border-b " + (item.is_system == "platform" ? "bg-amber-200" : "")
-        }>
+        className={"h-14 grid  border-b " + (item.is_system == "platform" ? "bg-amber-200" : "")}
+        style={{ gridTemplateColumns: "repeat(13, minmax(0, 1fr))" }}>
         <td
           className="overflow-hidden text-ellipsis whitespace-nowrap cursor-pointer col-span-3 flex justify-between items-center pl-4"
           title={item.name}
@@ -187,6 +187,14 @@ export default function tableTr(props: Props) {
           <p>{item.related_ebs ? item.related_ebs.name : ""}</p>
         </td>
         <td className="flex justify-between items-center pl-4">
+          <Switch
+            checked={item.is_corporeal == 1}
+            disabled={
+              !permissionTagList.includes(permissionJson.list_of_ebs_majors_member_update)
+            }></Switch>
+        </td>
+
+        <td className="flex justify-between items-center pl-4">
           <div className="text-[#757575] flex gap-x-2.5 w-[6.25rem] justify-start">
             <i
               className="iconfont icon-gengduo text-[1.25rem] cursor-pointer"
@@ -201,7 +209,7 @@ export default function tableTr(props: Props) {
                 sx: { boxShadow: "none" },
               }}>
               <div className="flex">
-                {item.is_loop == 1 && item.name.includes("#桩") && (
+                {item.is_corporeal == 1 && (
                   <MenuItem
                     onClick={handleIconLookProcess}
                     sx={{ p: 0 }}

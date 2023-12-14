@@ -58,6 +58,12 @@ const menuList: { [key: string]: any } = {
         open: false,
         permissionTag: permissionJson.list_of_engineering_majors_member_read,
       },
+      processList: {
+        path: "/process-list",
+        title: "工序设置",
+        open: false,
+        permissionTag: permissionJson.list_of_engineering_majors_member_read,
+      },
       // "design-data-list": {
       //   path: "/design-data-list",
       //   title: "设计数据列表",
