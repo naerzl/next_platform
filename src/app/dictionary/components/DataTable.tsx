@@ -85,11 +85,6 @@ export default function dataTable(props: Props) {
 
   const columns = [
     {
-      title: "排序",
-      dataIndex: "sort",
-      key: "sort",
-    },
-    {
       title: "字典名称",
       dataIndex: "name",
       key: "name",
@@ -112,7 +107,7 @@ export default function dataTable(props: Props) {
   }
 
   return (
-    <div style={{ width: "100%" }} className="overflow-y-auto h-full">
+    <div style={{ width: "100%" }} className="overflow-y-auto h-full custom-scroll-bar">
       <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader>
         <TableHead sx={{ position: "sticky", top: "0px", zIndex: 5 }}>
           <TableRow>
@@ -126,7 +121,6 @@ export default function dataTable(props: Props) {
         <TableBody>
           {tableData?.map((row) => (
             <TableRow key={row.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-              <TableCell align="left">{row.serial}</TableCell>
               <TableCell align="left">{row.name}</TableCell>
               <TableCell align="left">{renderProperty(row.properties ?? "[]")}</TableCell>
               <TableCell align="left">

@@ -157,7 +157,7 @@ export default function dialogEBS(props: Props) {
       setIsCorporeal(Number(item.is_corporeal))
       setRelatedTo((item.related_ebs ? item.related_ebs.id : "") as any)
       fillAutoComputedData()
-      getHighOrNormalSpeed(item.subpart_class)
+      item.subpart_class && getHighOrNormalSpeed(item.subpart_class)
     }
   }, [isEdit])
 

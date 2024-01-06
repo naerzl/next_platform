@@ -2,7 +2,14 @@
 import React from "react"
 import SideBar from "../components/SideBar"
 import DataTable from "../components/DataTable"
-import { Breadcrumbs, Button, IconButton, InputAdornment, InputBase } from "@mui/material"
+import {
+  Breadcrumbs,
+  Button,
+  IconButton,
+  InputAdornment,
+  InputBase,
+  Pagination,
+} from "@mui/material"
 import AddDidlog from "../components/AddDidlog"
 import SearchIcon from "@mui/icons-material/Search"
 import useSWRMutation from "swr/mutation"
@@ -10,7 +17,7 @@ import useSWR from "swr"
 import { DictionaryData, ReqGetDictionaryParams } from "../types"
 import { reqGetDictionary, reqGetDictionaryClass } from "../api"
 import SideContext from "../context/sideContext"
-import { DICTIONARY_CLASS_LIMIT, DICTIONARY_LIMIT } from "../const"
+import { DICTIONARY_LIMIT } from "../const"
 import Link from "@mui/material/Link"
 import Typography from "@mui/material/Typography"
 import AddIcon from "@mui/icons-material/Add"
@@ -19,6 +26,7 @@ import permissionJson from "@/config/permission.json"
 import { LayoutContext } from "@/components/LayoutContext"
 import NoPermission from "@/components/NoPermission"
 import { displayWithPermission } from "@/libs/methods"
+import { BasePager } from "@/types/api"
 
 // 获取字典列表数据函数的参数类型
 export interface GetDictionaryDataOption {
@@ -41,6 +49,8 @@ export default function dictionaryMain() {
     setCurrentClassId(currentId)
   }
 
+  React.useEffect(() => {}, [])
+
   const { permissionTagList } = React.useContext(LayoutContext)
 
   const [open, setOpen] = React.useState(false)
@@ -61,6 +71,8 @@ export default function dictionaryMain() {
   // 表格数据
   const [tableData, setTableData] = React.useState<DictionaryData[]>([])
 
+  const [pager, setPager] = React.useState<BasePager>({} as BasePager)
+
   const getDictionaryClassData = React.useCallback(async () => {
     // 获取字典分类
   }, [])
@@ -68,18 +80,17 @@ export default function dictionaryMain() {
   // 获取字典数据
   const getDictionaryData = React.useCallback(
     async (option?: GetDictionaryDataOption) => {
-      setParams((pre) => ({
-        ...pre,
-        order_by: option?.order_by || pre.order_by,
-        class_id: option?.class_id || pre.class_id,
-      }))
+      const cloneParams = structuredClone(params)
+      if (option) {
+        Object.assign(cloneParams, option)
+        cloneParams.page = 1
+      }
+
+      setParams(cloneParams)
       // 获取字典数据
-      getDictionaryApi({
-        ...params,
-        order_by: option?.order_by || params.order_by,
-        class_id: option?.class_id || params.class_id,
-      }).then((res) => {
+      getDictionaryApi(cloneParams).then((res) => {
         setTableData(res.items)
+        setPager({ page: res.page, limit: res.limit, count: res.count })
       })
     },
     [currentClassId],
@@ -142,6 +153,26 @@ export default function dictionaryMain() {
     setOpen(true)
   }
 
+  const handlePaginationChange = async (val: any, type: keyof ReqGetDictionaryParams) => {
+    let newParams = {} as ReqGetDictionaryParams
+    for (let swrStateKey in params) {
+      // @ts-ignore
+      if (params[swrStateKey] && params[swrStateKey] != "null") {
+        // @ts-ignore
+        newParams[swrStateKey] = params[swrStateKey]
+      }
+    }
+    if (type == "limit") {
+      newParams.page = 1
+    }
+    // @ts-ignore
+    newParams[type] = val
+    setParams(newParams)
+    const res = await getDictionaryApi(newParams)
+    setTableData(res.items)
+    setPager({ page: res.page, limit: res.limit, count: res.count })
+  }
+
   if (!permissionTagList.includes(permissionJson.dictionary_base_member_read)) {
     return <NoPermission />
   }
@@ -174,7 +205,7 @@ export default function dictionaryMain() {
       <div className="flex-1 flex-shrink-0 overflow-hidden bg-white border">
         <div className="h-full flex">
           {/* 左侧导航 */}
-          <aside className="h-full  mr-3 bg-white border-r overflow-y-auto overflow-x-hidden w-1/6 max-w-sm min-w-[200px]">
+          <aside className="h-full  mr-3 bg-white border-r overflow-y-auto overflow-x-hidden w-1/6 max-w-sm min-w-[200px] custom-scroll-bar">
             <SideBar />
           </aside>
           <div className="flex-1 flex flex-col  gap-y-2">
@@ -217,13 +248,37 @@ export default function dictionaryMain() {
               </div>
             </header>
             {/* 表格主体 */}
-            <div className="flex-1 border-t border-l min-h-[580px] overflow-y-auto">
-              <DataTable
-                tableData={tableData}
-                getDictionaryData={getDictionaryData}
-                handleSortTable={handleSortTable}
-                handleEditDictionart={handleEditDictionart}
-              />
+            <div className="flex-1 border-t border-l  overflow-hidden ">
+              <div className="overflow-y-auto h-full pb-8 relative">
+                <DataTable
+                  tableData={tableData}
+                  getDictionaryData={getDictionaryData}
+                  handleSortTable={handleSortTable}
+                  handleEditDictionart={handleEditDictionart}
+                />
+                <div className="absolute bottom-0 w-full flex justify-center items-center gap-x-2 bg-white border-t">
+                  <span>共{pager.count}条</span>
+                  <select
+                    value={params.limit}
+                    className="border"
+                    onChange={(event) => {
+                      handlePaginationChange(event.target.value, "limit")
+                    }}>
+                    <option value={10}>10条/页</option>
+                    <option value={20}>20条/页</option>
+                    <option value={50}>50条/页</option>
+                  </select>
+                  <Pagination
+                    page={params.page}
+                    count={pager.count ? Math.ceil(pager.count / pager.limit) : 1}
+                    variant="outlined"
+                    shape="rounded"
+                    onChange={(event, page) => {
+                      handlePaginationChange(page, "page")
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           </div>
           {open && (

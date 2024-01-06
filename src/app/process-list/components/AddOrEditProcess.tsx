@@ -276,11 +276,17 @@ export default function AddOrEditProcess(props: Props) {
                           placeholder="标识名称"
                           className="border outline-railway_blue w-40 indent-1"
                           ref={D_selectInputName}
+                          onKeyDown={(event) => {
+                            event.stopPropagation()
+                          }}
                         />
                         <input
                           placeholder="标识"
                           className="border outline-railway_blue w-40 indent-1"
                           ref={D_selectInputFlag}
+                          onKeyDown={(event) => {
+                            event.stopPropagation()
+                          }}
                         />
                         <IconButton
                           onClick={() => {

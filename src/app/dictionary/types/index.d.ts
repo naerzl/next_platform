@@ -10,8 +10,8 @@ export interface ReqAddDictionaryParams {
 export interface ReqGetDictionaryParams {
   order: "serial"
   name?: string
-  page: string | number
-  limit: string | number
+  page: number
+  limit: number
   order_by?: "desc" | "asc"
   class_id: number
 }
@@ -28,7 +28,7 @@ export interface ReqPutDictionaryParams {
 // 获取数据列表响应数据
 export interface ReqGetDictionaryResponse {
   count: number
-  limie: number
+  limit: number
   page: number
   items: DictionaryData[]
 }
