@@ -53,7 +53,6 @@ export default function addDidlog(props: Props) {
     console.log("effect")
     if (Boolean(editItem)) {
       setValue("name", editItem!.name)
-      setValue("serial", editItem!.serial)
       if (JSON.parse(editItem!.properties) instanceof Array) {
         setProperty(JSON.parse(editItem!.properties))
       } else {
@@ -169,42 +168,6 @@ export default function addDidlog(props: Props) {
               name="name"
               render={({ message }) => (
                 <p className="text-railway_error text-sm  absolute ">{message}</p>
-              )}
-            />
-          </div>
-          <div className="mb-8 relative">
-            <div className="flex items-start flex-col">
-              <InputLabel htmlFor="serial" className="mr-3 mb-2.5 w-24 text-left inline-block">
-                排序*:
-              </InputLabel>
-              <TextField
-                variant="outlined"
-                id="serial"
-                fullWidth
-                size="small"
-                type="number"
-                error={Boolean(errors.serial)}
-                {...register("serial", {
-                  required: "请输入字典的排序值",
-                  max: {
-                    value: 999,
-                    message: "数值最大为999",
-                  },
-                  valueAsNumber: true,
-                  onBlur() {
-                    trigger("serial")
-                  },
-                })}
-                placeholder="请输入字典排序值"
-                className="flex-1"
-                autoComplete="off"
-              />
-            </div>
-            <ErrorMessage
-              errors={errors}
-              name="serial"
-              render={({ message }) => (
-                <p className="text-railway_error text-sm absolute">{message}</p>
               )}
             />
           </div>
