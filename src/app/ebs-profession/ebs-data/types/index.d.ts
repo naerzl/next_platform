@@ -42,6 +42,18 @@ export interface TypeEBSDataList {
   parent_is_loop?: boolean
   is_corporeal: number
   tags: string
+  extend: {
+    id: number
+    project_sp_id: number
+    project_si_id: number
+    serial: number
+    ebs_id: number
+    name: string
+    period: string
+    scheduled_start_at: string
+    status: string
+  }
+  is_can_select: number
 }
 
 /*创建EBS结构 请求参数*/
