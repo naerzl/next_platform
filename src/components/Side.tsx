@@ -69,6 +69,12 @@ const menuList: { [key: string]: any } = {
       //   title: "设计数据列表",
       //   open: false,
       // },
+      "material-loss-coefficient": {
+        path: "/material-loss-coefficient",
+        title: "损耗系数管理",
+        permissionTag: permissionJson.list_of_engineering_majors_member_read,
+        open: false,
+      },
     },
   },
   // userManagement: {

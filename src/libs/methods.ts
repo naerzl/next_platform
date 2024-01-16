@@ -4,8 +4,6 @@ import dayjs, { Dayjs } from "dayjs"
 import tz from "dayjs/plugin/timezone"
 import utc from "dayjs/plugin/utc"
 
-// oauth1.0发送statement
-
 export const dynamicsSetRemByMobile = () => {
   let remRatio = 16 / 1920
   window.onresize = () => {
